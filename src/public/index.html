@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elvin Jhon — Creative Developer</title>
+  <meta name="description" content="Elvin Jhon - Creative Developer from Zamboanga del Norte, Philippines">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/output.css">
+  <style>
+    .hero-bg-grid{background-image:linear-gradient(rgba(14,165,233,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,.03) 1px,transparent 1px);background-size:60px 60px}
+    .hero-radial{background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(14,165,233,.15),transparent)}
+    .blob{filter:blur(80px);opacity:.4}
+    .photo-ring{background:conic-gradient(from 0deg,#0ea5e9,#06b6d4,#8b5cf6,#ec4899,#f97316,#0ea5e9);padding:4px;border-radius:9999px}
+    .photo-ring-inner{background:#020617;border-radius:9999px;padding:4px}
+    .gallery-img{transition:all .7s cubic-bezier(.23,1,.32,1)}
+    .gallery-img:hover{transform:scale(1.05) rotate(-1deg);box-shadow:0 25px 60px rgba(14,165,233,.2)}
+  </style>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader" class="fixed inset-0 z-[100] bg-dark-950 flex items-center justify-center transition-opacity duration-500">
+    <div class="text-center">
+      <div class="w-12 h-12 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-dark-400 font-mono text-sm tracking-widest uppercase">Loading</p>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="glass rounded-2xl px-6 py-3 flex items-center justify-between">
+        <a href="#home" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-primary-500/25">
+            <span class="text-white font-bold text-lg">EJ</span>
+          </div>
+          <span class="text-white font-bold text-xl hidden sm:block">Elvin<span class="text-primary-400">Jhon</span></span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#home" class="nav-link text-sm font-medium tracking-wide uppercase">Home</a>
+          <a href="#about" class="nav-link text-sm font-medium tracking-wide uppercase">About</a>
+          <a href="#skills" class="nav-link text-sm font-medium tracking-wide uppercase">Skills</a>
+          <a href="#gallery" class="nav-link text-sm font-medium tracking-wide uppercase">Gallery</a>
+          <a href="#projects" class="nav-link text-sm font-medium tracking-wide uppercase">Projects</a>
+          <a href="#contact" class="btn-primary text-sm !py-2.5 !px-6"><i class="fas fa-paper-plane mr-2"></i>Contact</a>
+        </div>
+        <button id="menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl glass glass-hover">
+          <div class="flex flex-col gap-1.5" id="hamburger">
+            <span class="w-5 h-0.5 bg-white rounded transition-all duration-300 origin-center"></span>
+            <span class="w-5 h-0.5 bg-white rounded transition-all duration-300"></span>
+            <span class="w-3 h-0.5 bg-white rounded transition-all duration-300 origin-center"></span>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden max-w-7xl mx-auto px-6 overflow-hidden transition-all duration-500 max-h-0 opacity-0">
+      <div class="glass rounded-2xl p-6 mt-2 flex flex-col gap-4">
+        <a href="#home" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Home</a>
+        <a href="#about" class="nav-link py-2 text-sm font-medium uppercase mobile-link">About</a>
+        <a href="#skills" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Skills</a>
+        <a href="#gallery" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Gallery</a>
+        <a href="#projects" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Projects</a>
+        <a href="#contact" class="btn-primary text-sm text-center mt-2"><i class="fas fa-paper-plane mr-2"></i>Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================ -->
+  <!-- HERO SECTION                                 -->
+  <!-- ============================================ -->
+  <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 hero-bg-grid"></div>
+    <div class="absolute inset-0 hero-radial"></div>
+    <div class="blob absolute top-20 -left-32 w-96 h-96 bg-primary-500/30 rounded-full animate-float"></div>
+    <div class="blob absolute bottom-20 -right-32 w-96 h-96 bg-violet-500/20 rounded-full animate-float" style="animation-delay:-3s"></div>
+    <div class="floating-particle w-2 h-2 top-[20%] left-[10%]" style="--duration:7s;--delay:0s"></div>
+    <div class="floating-particle w-3 h-3 top-[60%] left-[80%]" style="--duration:5s;--delay:-2s"></div>
+    <div class="floating-particle w-1.5 h-1.5 top-[80%] left-[20%]" style="--duration:8s;--delay:-4s"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-32">
+      <div class="flex flex-col lg:flex-row items-center gap-16">
+        <!-- Text -->
+        <div class="flex-1 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-fade-in-down">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+            </span>
+            <span class="text-sm text-dark-300 font-medium">Available for opportunities</span>
+          </div>
+
+          <p class="text-primary-400 font-mono text-lg mb-4 animate-fade-in-up opacity-0" style="animation-delay:0.2s">&lt;Hello World /&gt;</p>
+
+          <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-tight mb-6 animate-fade-in-up opacity-0" style="animation-delay:0.4s">
+            I'm <span class="text-gradient">Elvin</span><br><span class="text-white">Jhon</span>
+          </h1>
+
+          <p class="text-dark-400 text-lg md:text-xl max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed animate-fade-in-up opacity-0" style="animation-delay:0.6s">
+            A creative developer from Zamboanga del Norte, Philippines. Crafting beautiful digital experiences through clean code and innovative design.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up opacity-0" style="animation-delay:0.8s">
+            <a href="#projects" class="btn-primary text-center"><i class="fas fa-rocket mr-2"></i>View My Work</a>
+            <a href="#contact" class="btn-outline text-center"><i class="fas fa-envelope mr-2"></i>Get in Touch</a>
+          </div>
+
+          <!-- Social Links -->
+          <div class="flex gap-4 mt-10 justify-center lg:justify-start animate-fade-in-up opacity-0" style="animation-delay:1s">
+            <a href="https://www.facebook.com/elvinsanity98" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-blue-500 transition-colors">
+              <i class="fab fa-facebook text-lg"></i>
+            </a>
+            <a href="https://www.instagram.com/elvinsanity98/" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-pink-500 transition-colors">
+              <i class="fab fa-instagram text-lg"></i>
+            </a>
+            <a href="https://www.tiktok.com/@eejay4u" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-white transition-colors">
+              <i class="fab fa-tiktok text-lg"></i>
+            </a>
+            <a href="mailto:elvinjhon17@gmail.com" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-red-400 transition-colors">
+              <i class="fas fa-envelope text-lg"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Profile Photo -->
+        <div class="flex-shrink-0 animate-fade-in opacity-0" style="animation-delay:0.6s">
+          <div class="relative">
+            <div class="absolute -inset-4 rounded-full border-2 border-dashed border-primary-500/20 animate-spin-slow"></div>
+            <div class="absolute -inset-8 rounded-full border border-dashed border-violet-500/10 animate-spin-slow" style="animation-direction:reverse;animation-duration:12s"></div>
+            <div class="photo-ring animate-morph">
+              <div class="photo-ring-inner">
+                <img src="/images/488660735_2371591046531353_6045187639079457194_n.jpg" alt="Elvin Jhon" class="w-64 h-64 md:w-80 md:h-80 rounded-full object-cover">
+              </div>
+            </div>
+            <div class="absolute -top-4 -right-4 glass rounded-2xl px-4 py-2 animate-float shadow-xl">
+              <span class="text-2xl">🚀</span><span class="text-sm font-semibold text-white ml-2">Developer</span>
+            </div>
+            <div class="absolute -bottom-4 -left-4 glass rounded-2xl px-4 py-2 animate-float shadow-xl" style="animation-delay:-2s">
+              <span class="text-2xl">💡</span><span class="text-sm font-semibold text-white ml-2">Creative</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce-slow">
+        <span class="text-dark-500 text-xs font-mono uppercase tracking-widest">Scroll</span>
+        <div class="w-6 h-10 rounded-full border-2 border-dark-600 flex justify-center pt-2">
+          <div class="w-1.5 h-3 bg-primary-400 rounded-full animate-bounce"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- ABOUT SECTION                                -->
+  <!-- ============================================ -->
+  <section id="about" class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 hero-radial opacity-50"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20 reveal">
+        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// Who am I</p>
+        <h2 class="section-heading text-white">About <span class="text-gradient">Me</span></h2>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <!-- Photo -->
+        <div class="reveal">
+          <div class="relative">
+            <div class="rounded-3xl overflow-hidden glass p-2">
+              <img src="/images/500229051_2415160588841065_7344430105648193327_n.jpg" alt="Elvin Jhon" class="w-full h-[500px] object-cover rounded-2xl" loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-transparent to-transparent rounded-2xl"></div>
+            </div>
+            <div class="absolute -bottom-6 -right-6 glass rounded-2xl p-6 shadow-2xl animate-float">
+              <span class="text-4xl font-black text-gradient">3+</span>
+              <p class="text-dark-400 text-sm mt-1">Years<br>Experience</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Text -->
+        <div class="reveal">
+          <h3 class="text-3xl font-bold text-white mb-6">
+            Hey, I'm <span class="text-gradient">Elvin Jhon!</span>
+          </h3>
+          <p class="text-dark-300 leading-relaxed mb-4">
+            I'm a passionate and creative full-stack developer from <strong class="text-white">Dela Paz, Liloy, Zamboanga del Norte</strong>. I love building beautiful, functional, and user-centered digital experiences that make an impact.
+          </p>
+          <p class="text-dark-300 leading-relaxed mb-4">
+            I specialize in modern web technologies and enjoy transforming ideas into reality. Whether it's a stunning website, a powerful web application, or anything in between — I've got you covered.
+          </p>
+          <p class="text-dark-300 leading-relaxed mb-8">
+            When I'm not coding, you can find me exploring new places, creating content, or connecting with awesome people on social media.
+          </p>
+
+          <!-- Info Cards -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="glass rounded-xl p-4">
+              <i class="fas fa-user text-primary-400 mb-2"></i>
+              <p class="text-dark-400 text-xs uppercase tracking-wide">Name</p>
+              <p class="text-white font-semibold">Elvin Jhon</p>
+            </div>
+            <div class="glass rounded-xl p-4">
+              <i class="fas fa-map-marker-alt text-primary-400 mb-2"></i>
+              <p class="text-dark-400 text-xs uppercase tracking-wide">Location</p>
+              <p class="text-white font-semibold text-sm">Liloy, Zamboanga del Norte</p>
+            </div>
+            <div class="glass rounded-xl p-4">
+              <i class="fas fa-envelope text-primary-400 mb-2"></i>
+              <p class="text-dark-400 text-xs uppercase tracking-wide">Email</p>
+              <p class="text-white font-semibold text-sm">elvinjhon17@gmail.com</p>
+            </div>
+            <div class="glass rounded-xl p-4">
+              <i class="fas fa-phone text-primary-400 mb-2"></i>
+              <p class="text-dark-400 text-xs uppercase tracking-wide">Phone</p>
+              <p class="text-white font-semibold">09555763599</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 mt-8">
+            <a href="#contact" class="btn-primary"><i class="fas fa-download mr-2"></i>Download CV</a>
+            <a href="#projects" class="btn-outline"><i class="fas fa-arrow-right mr-2"></i>My Projects</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-24">
+        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="20">0</div><p class="text-dark-400 text-sm">Projects</p></div>
+        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="15">0</div><p class="text-dark-400 text-sm">Happy Clients</p></div>
+        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="3">0</div><p class="text-dark-400 text-sm">Years Exp.</p></div>
+        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="500">0</div><p class="text-dark-400 text-sm">Cups of Coffee</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- SKILLS SECTION                               -->
+  <!-- ============================================ -->
+  <section id="skills" class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 hero-bg-grid"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20 reveal">
+        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// What I know</p>
+        <h2 class="section-heading text-white">My <span class="text-gradient">Skills</span></h2>
+        <p class="section-subheading mx-auto mt-4">Technologies I use to build amazing things</p>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Frontend -->
+        <div class="card glow-border reveal">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center"><i class="fas fa-palette text-2xl text-blue-400"></i></div>
+            <div><h3 class="text-xl font-bold text-white">Frontend</h3><p class="text-dark-400 text-sm">Client-side</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-badge text-blue-300"><i class="fab fa-react mr-1.5"></i>React</span>
+            <span class="skill-badge text-cyan-300"><i class="fas fa-wind mr-1.5"></i>Tailwind</span>
+            <span class="skill-badge text-blue-300"><i class="fab fa-js mr-1.5"></i>TypeScript</span>
+            <span class="skill-badge text-green-300"><i class="fab fa-vuejs mr-1.5"></i>Vue.js</span>
+            <span class="skill-badge text-orange-300"><i class="fab fa-html5 mr-1.5"></i>HTML5</span>
+            <span class="skill-badge text-purple-300"><i class="fab fa-css3-alt mr-1.5"></i>CSS3</span>
+          </div>
+        </div>
+        <!-- Backend -->
+        <div class="card glow-border reveal">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center"><i class="fas fa-server text-2xl text-green-400"></i></div>
+            <div><h3 class="text-xl font-bold text-white">Backend</h3><p class="text-dark-400 text-sm">Server-side</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-badge text-green-300"><i class="fab fa-node-js mr-1.5"></i>Node.js</span>
+            <span class="skill-badge text-red-300"><i class="fas fa-fire mr-1.5"></i>Express</span>
+            <span class="skill-badge text-blue-300"><i class="fab fa-python mr-1.5"></i>Python</span>
+            <span class="skill-badge text-purple-300"><i class="fas fa-gem mr-1.5"></i>GraphQL</span>
+            <span class="skill-badge text-orange-300"><i class="fas fa-bolt mr-1.5"></i>REST APIs</span>
+          </div>
+        </div>
+        <!-- Database -->
+        <div class="card glow-border reveal">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center"><i class="fas fa-database text-2xl text-violet-400"></i></div>
+            <div><h3 class="text-xl font-bold text-white">Database</h3><p class="text-dark-400 text-sm">Data management</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-badge text-green-300"><i class="fas fa-leaf mr-1.5"></i>MongoDB</span>
+            <span class="skill-badge text-blue-300"><i class="fas fa-database mr-1.5"></i>PostgreSQL</span>
+            <span class="skill-badge text-yellow-300"><i class="fas fa-database mr-1.5"></i>MySQL</span>
+            <span class="skill-badge text-red-300"><i class="fas fa-fire mr-1.5"></i>Firebase</span>
+            <span class="skill-badge text-orange-300"><i class="fas fa-bolt mr-1.5"></i>Redis</span>
+          </div>
+        </div>
+        <!-- DevOps -->
+        <div class="card glow-border reveal">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center"><i class="fas fa-cloud text-2xl text-orange-400"></i></div>
+            <div><h3 class="text-xl font-bold text-white">DevOps</h3><p class="text-dark-400 text-sm">Infrastructure</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-badge text-blue-300"><i class="fab fa-docker mr-1.5"></i>Docker</span>
+            <span class="skill-badge text-orange-300"><i class="fab fa-aws mr-1.5"></i>AWS</span>
+            <span class="skill-badge text-white"><i class="fab fa-github mr-1.5"></i>GitHub Actions</span>
+          </div>
+        </div>
+        <!-- Design -->
+        <div class="card glow-border reveal">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center"><i class="fas fa-pen-nib text-2xl text-pink-400"></i></div>
+            <div><h3 class="text-xl font-bold text-white">Design</h3><p class="text-dark-400 text-sm">UI/UX</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-badge text-purple-300"><i class="fab fa-figma mr-1.5"></i>Figma</span>
+            <span class="skill-badge text-blue-300"><i class="fas fa-bezier-curve mr-1.5"></i>Adobe XD</span>
+            <span class="skill-badge text-pink-300"><i class="fas fa-magic mr-1.5"></i>Photoshop</span>
+          </div>
+        </div>
+        <!-- Tools -->
+        <div class="card glow-border reveal">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center"><i class="fas fa-tools text-2xl text-cyan-400"></i></div>
+            <div><h3 class="text-xl font-bold text-white">Tools</h3><p class="text-dark-400 text-sm">Workflow</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-badge text-orange-300"><i class="fab fa-git-alt mr-1.5"></i>Git</span>
+            <span class="skill-badge text-blue-300"><i class="fas fa-code mr-1.5"></i>VS Code</span>
+            <span class="skill-badge text-green-300"><i class="fab fa-npm mr-1.5"></i>npm</span>
+            <span class="skill-badge text-yellow-300"><i class="fas fa-terminal mr-1.5"></i>Terminal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- GALLERY SECTION                              -->
+  <!-- ============================================ -->
+  <section id="gallery" class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 hero-radial opacity-30"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20 reveal">
+        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// Captured moments</p>
+        <h2 class="section-heading text-white">Photo <span class="text-gradient">Gallery</span></h2>
+        <p class="section-subheading mx-auto mt-4">A glimpse into my world beyond the screen</p>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Photo 1 -->
+        <div class="group relative reveal">
+          <div class="relative overflow-hidden rounded-3xl glass p-2">
+            <img src="/images/488660735_2371591046531353_6045187639079457194_n.jpg" alt="Elvin Jhon Photo 1" class="gallery-img w-full h-80 object-cover rounded-2xl" loading="lazy">
+            <div class="absolute inset-2 bg-gradient-to-t from-dark-950/90 via-dark-950/40 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-6">
+              <div class="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <p class="text-white font-bold text-lg">Elvin Jhon</p>
+                <p class="text-dark-300 text-sm mt-1">Living the dream ✨</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 px-2">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-heart text-rose-400 text-sm"></i>
+              <span class="text-dark-400 text-sm">Featured</span>
+            </div>
+          </div>
+        </div>
+        <!-- Photo 2 -->
+        <div class="group relative reveal lg:mt-12">
+          <div class="relative overflow-hidden rounded-3xl glass p-2">
+            <img src="/images/500229051_2415160588841065_7344430105648193327_n.jpg" alt="Elvin Jhon Photo 2" class="gallery-img w-full h-80 object-cover rounded-2xl" loading="lazy">
+            <div class="absolute inset-2 bg-gradient-to-t from-dark-950/90 via-dark-950/40 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-6">
+              <div class="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <p class="text-white font-bold text-lg">Lifestyle</p>
+                <p class="text-dark-300 text-sm mt-1">Creating memories 🌟</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 px-2">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-camera text-primary-400 text-sm"></i>
+              <span class="text-dark-400 text-sm">Lifestyle</span>
+            </div>
+          </div>
+        </div>
+        <!-- Photo 3 -->
+        <div class="group relative reveal">
+          <div class="relative overflow-hidden rounded-3xl glass p-2">
+            <img src="/images/502643080_2421251694898621_8749668622478624309_n.jpg" alt="Elvin Jhon Photo 3" class="gallery-img w-full h-80 object-cover rounded-2xl" loading="lazy">
+            <div class="absolute inset-2 bg-gradient-to-t from-dark-950/90 via-dark-950/40 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-6">
+              <div class="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <p class="text-white font-bold text-lg">Adventure</p>
+                <p class="text-dark-300 text-sm mt-1">Exploring new horizons 🌍</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 px-2">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-star text-amber-400 text-sm"></i>
+              <span class="text-dark-400 text-sm">Adventure</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- PROJECTS SECTION                             -->
+  <!-- ============================================ -->
+  <section id="projects" class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 hero-bg-grid"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20 reveal">
+        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// What I've built</p>
+        <h2 class="section-heading text-white">Featured <span class="text-gradient">Projects</span></h2>
+        <p class="section-subheading mx-auto mt-4">A showcase of my best work</p>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Project 1 -->
+        <div class="card glow-border group reveal">
+          <div class="w-full h-48 bg-gradient-to-br from-primary-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center mb-6">
+            <i class="fas fa-shopping-cart text-6xl text-primary-400/50 group-hover:scale-110 transition-transform duration-500"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">E-Commerce Platform</h3>
+          <p class="text-dark-400 text-sm leading-relaxed mb-6">Full-featured online store with cart, payments, and admin dashboard.</p>
+          <div class="flex gap-2">
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">React</span>
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">Node.js</span>
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">MongoDB</span>
+          </div>
+        </div>
+        <!-- Project 2 -->
+        <div class="card glow-border group reveal">
+          <div class="w-full h-48 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mb-6">
+            <i class="fas fa-comments text-6xl text-violet-400/50 group-hover:scale-110 transition-transform duration-500"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-violet-400 transition-colors">Real-time Chat App</h3>
+          <p class="text-dark-400 text-sm leading-relaxed mb-6">Messaging app with real-time communication and file sharing.</p>
+          <div class="flex gap-2">
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">Socket.io</span>
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">Express</span>
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">Redis</span>
+          </div>
+        </div>
+        <!-- Project 3 -->
+        <div class="card glow-border group reveal">
+          <div class="w-full h-48 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-xl flex items-center justify-center mb-6">
+            <i class="fas fa-chart-line text-6xl text-amber-400/50 group-hover:scale-110 transition-transform duration-500"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Analytics Dashboard</h3>
+          <p class="text-dark-400 text-sm leading-relaxed mb-6">Interactive data visualization with charts and filters.</p>
+          <div class="flex gap-2">
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">Vue.js</span>
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">D3.js</span>
+            <span class="text-xs text-dark-500 px-2 py-1 glass rounded-md">PostgreSQL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- CONTACT SECTION                              -->
+  <!-- ============================================ -->
+  <section id="contact" class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 hero-radial"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20 reveal">
+        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// Let's talk</p>
+        <h2 class="section-heading text-white">Get in <span class="text-gradient">Touch</span></h2>
+        <p class="section-subheading mx-auto mt-4">Have a project in mind? Let's work together!</p>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-16">
+        <!-- Contact Info -->
+        <div class="reveal">
+          <h3 class="text-2xl font-bold text-white mb-6">Let's build something <span class="text-gradient">amazing</span> together</h3>
+          <p class="text-dark-400 leading-relaxed mb-10">I'm always interested in new projects and collaborations. Whether you have a question or just want to say hi, don't hesitate to reach out!</p>
+
+          <div class="space-y-4">
+            <div class="card flex items-center gap-4 !p-5">
+              <div class="w-12 h-12 rounded-xl bg-primary-500/10 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-envelope text-primary-400"></i>
+              </div>
+              <div>
+                <p class="text-dark-400 text-sm">Email</p>
+                <a href="mailto:elvinjhon17@gmail.com" class="text-white font-medium hover:text-primary-400 transition-colors">elvinjhon17@gmail.com</a>
+              </div>
+            </div>
+
+            <div class="card flex items-center gap-4 !p-5">
+              <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-phone text-green-400"></i>
+              </div>
+              <div>
+                <p class="text-dark-400 text-sm">Phone</p>
+                <a href="tel:09555763599" class="text-white font-medium hover:text-green-400 transition-colors">09555763599</a>
+              </div>
+            </div>
+
+            <div class="card flex items-center gap-4 !p-5">
+              <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-map-marker-alt text-violet-400"></i>
+              </div>
+              <div>
+                <p class="text-dark-400 text-sm">Location</p>
+                <p class="text-white font-medium">Dela Paz, Liloy, Zamboanga del Norte</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="mt-8">
+            <p class="text-dark-400 text-sm mb-4 font-medium uppercase tracking-wide">Find me on</p>
+            <div class="flex gap-3">
+              <a href="https://www.facebook.com/elvinsanity98" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-blue-500 transition-colors group">
+                <i class="fab fa-facebook text-xl group-hover:scale-110 transition-transform"></i>
+              </a>
+              <a href="https://www.instagram.com/elvinsanity98/" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-pink-500 transition-colors group">
+                <i class="fab fa-instagram text-xl group-hover:scale-110 transition-transform"></i>
+              </a>
+              <a href="https://www.tiktok.com/@eejay4u" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-white transition-colors group">
+                <i class="fab fa-tiktok text-xl group-hover:scale-110 transition-transform"></i>
+              </a>
+              <a href="mailto:elvinjhon17@gmail.com" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-red-400 transition-colors group">
+                <i class="fas fa-envelope text-xl group-hover:scale-110 transition-transform"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="reveal">
+          <form id="contact-form" class="glass rounded-3xl p-8 md:p-10">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-dark-300 mb-2"><i class="fas fa-user mr-2 text-primary-400"></i>Full Name</label>
+                <input type="text" name="name" placeholder="Your full name" required class="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-dark-600 focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-dark-300 mb-2"><i class="fas fa-envelope mr-2 text-primary-400"></i>Email Address</label>
+                <input type="email" name="email" placeholder="your@email.com" required class="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-dark-600 focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-dark-300 mb-2"><i class="fas fa-comment-dots mr-2 text-primary-400"></i>Message</label>
+                <textarea name="message" rows="5" placeholder="Tell me about your project or just say hello..." required class="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-dark-600 resize-none focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300"></textarea>
+              </div>
+              <button type="submit" class="btn-primary w-full text-center text-lg"><i class="fas fa-paper-plane mr-2"></i>Send Message</button>
+              <div id="form-status" class="hidden text-center py-3 rounded-xl text-sm font-medium"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- FOOTER                                       -->
+  <!-- ============================================ -->
+  <footer class="border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <!-- Brand -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-primary-500/25">
+            <span class="text-white font-bold text-lg">EJ</span>
+          </div>
+          <span class="text-white font-bold text-xl">Elvin<span class="text-primary-400">Jhon</span></span>
+        </div>
+
+        <!-- Copyright -->
+        <p class="text-dark-500 text-sm">
+          &copy; <span id="year"></span> Elvin Jhon. Made with <i class="fas fa-heart text-rose-500 mx-1"></i> from Zamboanga del Norte
+        </p>
+
+        <!-- Social -->
+        <div class="flex gap-4">
+          <a href="https://www.facebook.com/elvinsanity98" target="_blank" rel="noopener noreferrer" class="text-dark-500 hover:text-blue-500 transition-colors"><i class="fab fa-facebook text-lg"></i></a>
+          <a href="https://www.instagram.com/elvinsanity98/" target="_blank" rel="noopener noreferrer" class="text-dark-500 hover:text-pink-500 transition-colors"><i class="fab fa-instagram text-lg"></i></a>
+          <a href="https://www.tiktok.com/@eejay4u" target="_blank" rel="noopener noreferrer" class="text-dark-500 hover:text-white transition-colors"><i class="fab fa-tiktok text-lg"></i></a>
+          <a href="mailto:elvinjhon17@gmail.com" class="text-dark-500 hover:text-red-400 transition-colors"><i class="fas fa-envelope text-lg"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BACK TO TOP -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 rounded-xl glass flex items-center justify-center text-primary-400 shadow-lg opacity-0 translate-y-4 pointer-events-none hover:bg-white/10 active:scale-90 transition-all duration-300 z-50">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
