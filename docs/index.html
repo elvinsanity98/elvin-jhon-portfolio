@@ -1,856 +1,1483 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" data-theme="dark" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elvin Jhon — Creative Developer</title>
-  <meta name="description" content="Elvin Jhon - Creative Developer from Zamboanga del Norte, Philippines">
+  <title>Elvin Jhon Gimena — Information Technologist</title>
+  <meta name="description" content="Elvin Jhon Gimena — Information Technologist & Full-Stack Developer from Zamboanga del Norte, Philippines. Building reliable systems for banks, SMEs, and the modern web.">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./images/favicon-180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./images/favicon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./images/favicon-512.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="./css/output.css">
+
   <style>
-    .hero-bg-grid{background-image:linear-gradient(rgba(14,165,233,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,.03) 1px,transparent 1px);background-size:60px 60px}
-    .hero-radial{background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(14,165,233,.15),transparent)}
-    .blob{filter:blur(80px);opacity:.4}
-    .photo-ring{background:conic-gradient(from 0deg,#0ea5e9,#06b6d4,#8b5cf6,#ec4899,#f97316,#0ea5e9);padding:4px;border-radius:9999px}
-    .photo-ring-inner{background:#020617;border-radius:9999px;padding:4px}
-    .gallery-img{transition:all .7s cubic-bezier(.23,1,.32,1)}
-    .gallery-img:hover{transform:scale(1.05) rotate(-1deg);box-shadow:0 25px 60px rgba(14,165,233,.2)}
+    /* ================================================================
+       THEME TOKENS
+       ================================================================ */
+    :root { --transition-theme: 380ms cubic-bezier(0.4, 0, 0.2, 1); }
+
+    html[data-theme="light"] {
+      --bg:           #ffffff;
+      --bg-page:      #f8f8f7;
+      --card:         #ffffff;
+      --card-soft:    #fafafa;
+      --border:       #e7e5e4;
+      --border-strong:#d6d3d1;
+      --text:         #18181b;
+      --text-soft:    #57534e;
+      --text-muted:   #78716c;
+      --text-faint:   #a8a29e;
+      --accent:       #2563eb;
+      --accent-soft:  rgba(37, 99, 235, 0.08);
+      --accent-text:  #1d4ed8;
+      --primary-btn-bg:    #18181b;
+      --primary-btn-text:  #ffffff;
+      --avatar-tint:  none;
+      --avatar-glow:  rgba(37, 99, 235, 0.22);
+      --shadow-card:  0 1px 2px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04);
+      --shadow-hover: 0 6px 20px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.06);
+      --hero-card-fill: #ffffff;
+    }
+    html[data-theme="dark"] {
+      --bg:           #000000;
+      --bg-page:      #000000;
+      --card:         #0e0e10;
+      --card-soft:    #161618;
+      --border:       #27272a;
+      --border-strong:#3f3f46;
+      --text:         #fafafa;
+      --text-soft:    #a1a1aa;
+      --text-muted:   #71717a;
+      --text-faint:   #52525b;
+      --accent:       #3b82f6;
+      --accent-soft:  rgba(59, 130, 246, 0.10);
+      --accent-text:  #93c5fd;
+      --primary-btn-bg:    #ffffff;
+      --primary-btn-text:  #000000;
+      --avatar-tint:  brightness(0.95) contrast(1.05);
+      --avatar-glow:  rgba(59, 130, 246, 0.30);
+      --shadow-card:  0 1px 2px rgba(0,0,0,0.3);
+      --shadow-hover: 0 8px 24px rgba(0,0,0,0.5);
+      --hero-card-fill: #0e0e10;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-page);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      transition:
+        background-color var(--transition-theme),
+        color var(--transition-theme);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    .page { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .stack { display: flex; flex-direction: column; gap: 16px; }
+
+    /* ================================================================
+       NAVBAR (minimal — just theme toggle floating top right)
+       ================================================================ */
+    /* Theme toggle now lives inside the hero (top-right corner) */
+    .hero-toggle-wrap {
+      position: absolute;
+      top: 14px; right: 14px;
+      z-index: 5;
+    }
+    .theme-toggle {
+      background: var(--card);
+      border: 1px solid var(--border);
+      width: 44px; height: 24px;
+      border-radius: 0;
+      display: inline-flex; align-items: center; justify-content: space-between;
+      cursor: pointer;
+      padding: 0 6px;
+      transition: all var(--transition-theme);
+      position: relative;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+    .theme-toggle .icon-light, .theme-toggle .icon-dark {
+      font-size: 11px;
+      color: var(--text-muted);
+      z-index: 2;
+      transition: color var(--transition-theme);
+    }
+    .theme-toggle::before {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      border-radius: 0;
+      background: var(--text);
+      transition: transform var(--transition-theme), background var(--transition-theme);
+    }
+    html[data-theme="light"] .theme-toggle::before { transform: translateX(0); }
+    html[data-theme="dark"]  .theme-toggle::before { transform: translateX(20px); }
+    /* Icon over the slider should contrast against it; icon NOT over slider stays muted */
+    html[data-theme="light"] .theme-toggle .icon-light { color: white; }      /* sun icon visible on black slider (left) */
+    html[data-theme="dark"]  .theme-toggle .icon-dark  { color: black; }      /* moon icon visible on white slider (right) */
+
+    /* ================================================================
+       CARD primitive
+       ================================================================ */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      padding: 22px;
+      transition: background-color var(--transition-theme), border-color var(--transition-theme);
+    }
+    .card-tight { padding: 18px; }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text);
+    }
+    .card-title .view-all {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-soft);
+      display: inline-flex; align-items: center; gap: 4px;
+      transition: color 200ms;
+    }
+    .card-title .view-all:hover { color: var(--accent); }
+
+    /* ================================================================
+       HERO — horizontal: square photo left, info right
+       ================================================================ */
+    .hero {
+      display: grid;
+      grid-template-columns: 168px 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      margin-bottom: 16px;
+      transition: background-color var(--transition-theme), border-color var(--transition-theme);
+      position: relative;
+    }
+    @media (max-width: 720px) {
+      .hero { grid-template-columns: 1fr; gap: 16px; }
+      .avatar-wrap { margin: 0 auto; }
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 168px; height: 168px;
+    }
+    .avatar-canvas {
+      width: 168px; height: 168px;
+      border-radius: 0;
+      display: block;
+      filter: var(--avatar-tint);
+      transition: filter var(--transition-theme);
+      background: var(--card-soft);
+    }
+    /* Fallback static image while frames load (or if JS fails) */
+    .avatar-fallback {
+      position: absolute; inset: 0;
+      width: 168px; height: 168px;
+      border-radius: 0;
+      object-fit: cover;
+      filter: var(--avatar-tint);
+      transition: filter var(--transition-theme), opacity 250ms;
+      pointer-events: none;
+    }
+    .avatar-wrap.frames-ready .avatar-fallback { opacity: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      .avatar-canvas { transition: none; }
+    }
+
+    .hero-info { min-width: 0; }
+    .hero-name {
+      font-size: 26px; font-weight: 800; letter-spacing: -0.02em;
+      margin: 0 0 4px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .verified-badge {
+      color: var(--accent);
+      font-size: 16px;
+    }
+    .hero-loc {
+      color: var(--text-soft); font-size: 13px;
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-bottom: 6px;
+    }
+    .hero-loc i { font-size: 11px; color: var(--text-muted); }
+    .hero-roles {
+      color: var(--text-soft); font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .hero-roles .sep { color: var(--text-faint); margin: 0 6px; }
+
+    .hero-actions {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 14px;
+      border-radius: 0;
+      font-size: 13px; font-weight: 500;
+      transition: all 200ms;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .btn.primary {
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      border-color: var(--primary-btn-bg);
+    }
+    .btn.primary:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn .chev { font-size: 9px; margin-left: 2px; opacity: 0.7; }
+
+    /* ================================================================
+       ACHIEVEMENT CHIP + DROPDOWN
+       Click-only. Chip body links to #certs; arrow button toggles menu.
+       ================================================================ */
+    .achievement-wrap {
+      position: relative;
+      max-width: 360px;
+    }
+    @media (max-width: 720px) {
+      .achievement-wrap { max-width: none; width: 100%; }
+    }
+
+    .achievement-chip {
+      display: inline-flex; align-items: stretch;
+      border-radius: 0;
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      font-size: 12.5px; font-weight: 600;
+      transition: all 200ms;
+      overflow: hidden;
+    }
+    .achievement-chip:hover { transform: translateY(-1px); }
+
+    /* Chip body — clickable link to #certs section */
+    .ach-chip-body {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      color: inherit;
+      text-decoration: none;
+      flex: 1;
+      min-width: 0;
+    }
+    .ach-chip-body i { color: var(--accent); }
+    .ach-chip-body span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Arrow button — opens dropdown */
+    .ach-chip-arrow {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0 12px;
+      background: transparent;
+      border: 0;
+      border-left: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 11px;
+      font-family: inherit;
+      transition: background 200ms;
+    }
+    .ach-chip-arrow:hover {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+    }
+    .ach-chip-arrow i { transition: transform 250ms; }
+    .achievement-wrap.open .ach-chip-arrow i { transform: rotate(180deg); }
+    .achievement-wrap.open .ach-chip-arrow {
+      background: color-mix(in srgb, var(--accent) 16%, transparent);
+    }
+
+    .achievement-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      width: 360px;
+      max-width: calc(100vw - 32px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+      padding: 6px;
+      max-height: 420px;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 220ms, transform 220ms, visibility 220ms;
+      z-index: 40;
+    }
+    .achievement-wrap.open .achievement-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    @media (max-width: 720px) {
+      .achievement-menu { width: 100%; right: 0; left: 0; }
+    }
+
+    .ach-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 0;
+      transition: background-color 150ms;
+      color: var(--text);
+    }
+    .ach-item:hover { background: var(--card-soft); }
+    .ach-item .ach-ico {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 0;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+    .ach-info { flex: 1; min-width: 0; }
+    .ach-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      margin: 0 0 2px;
+    }
+    .ach-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+    .ach-meta .org { color: var(--text-soft); }
+    .ach-item .ach-arrow {
+      align-self: center;
+      font-size: 10px;
+      color: var(--text-faint);
+      transition: color 150ms, transform 150ms;
+    }
+    .ach-item:hover .ach-arrow {
+      color: var(--accent);
+      transform: translateX(2px);
+    }
+    .ach-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 8px;
+    }
+    .ach-footer {
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ================================================================
+       MAIN GRID: 2 columns
+       ================================================================ */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.65fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 880px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ================================================================
+       ABOUT
+       ================================================================ */
+    .about-text {
+      font-size: 14px;
+      color: var(--text-soft);
+      line-height: 1.75;
+    }
+    .about-text strong { color: var(--text); font-weight: 600; }
+    .about-text + .about-text { margin-top: 12px; }
+
+    /* ================================================================
+       FEATURE CARD (replaces Bryl's "DEVS ONE HUNDRED" black card)
+       This stays personal: BSP Cybersecurity certification feature.
+       ================================================================ */
+    .feature-card {
+      background: linear-gradient(135deg, #18181b 0%, #27272a 100%);
+      color: #fafafa;
+      border-radius: 0;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      min-height: 220px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      border: 1px solid #27272a;
+      transition: transform 300ms;
+    }
+    .feature-card:hover { transform: translateY(-2px); }
+    .feature-card .fc-mark {
+      width: 38px; height: 38px;
+      border-radius: 0;
+      background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .feature-card .fc-title {
+      font-size: 15px; font-weight: 700; letter-spacing: 0.04em;
+      margin-top: 36px;
+    }
+    .feature-card .fc-sub {
+      font-size: 11px; color: rgba(250,250,250,0.5);
+      letter-spacing: 0.18em; text-transform: uppercase; margin-top: 4px;
+    }
+    .feature-card .fc-meta {
+      display: flex; justify-content: space-between; align-items: end; margin-top: 24px;
+    }
+    .feature-card .fc-meta .label {
+      font-size: 10px; color: rgba(250,250,250,0.45);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .feature-card .fc-meta .value {
+      font-size: 14px; font-weight: 700; letter-spacing: 0.05em;
+    }
+    .feature-card .fc-qr {
+      width: 50px; height: 50px;
+      background:
+        repeating-conic-gradient(rgba(255,255,255,0.7) 0% 25%, transparent 0% 50%) 50% / 8px 8px;
+      border-radius: 0;
+      opacity: 0.6;
+    }
+    .feature-card .fc-corner {
+      font-size: 9px; color: rgba(250,250,250,0.4);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    /* PH 100-style banner */
+    .feature-banner {
+      background: linear-gradient(90deg, #5b21b6 0%, #7c3aed 100%);
+      color: white;
+      border-radius: 0;
+      padding: 14px 18px;
+      font-size: 13px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .feature-banner .fb-title { font-weight: 800; letter-spacing: 0.05em; }
+    .feature-banner .fb-sub { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+    .feature-banner .fb-icon { font-size: 22px; opacity: 0.9; }
+
+    /* ================================================================
+       TECH STACK
+       ================================================================ */
+    .stack-group { margin-bottom: 16px; }
+    .stack-group:last-child { margin-bottom: 0; }
+    .stack-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-muted);
+      margin: 0 0 8px;
+    }
+    .stack-chips { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+    .stack-chips .stack-chip { margin-right: 14px; margin-bottom: 6px; } /* fallback for older renderers */
+    @supports (gap: 1px) {
+      .stack-chips .stack-chip { margin-right: 0; margin-bottom: 0; }
+    }
+    .stack-chip {
+      font-size: 13px;
+      color: var(--text);
+      transition: color 200ms;
+      cursor: default;
+    }
+    .stack-chip:hover { color: var(--accent); }
+
+    /* ================================================================
+       PROJECTS — 2-col grid inside the project card
+       ================================================================ */
+    .proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+    @media (max-width: 540px) { .proj-grid { grid-template-columns: 1fr; } }
+    .proj {
+      display: block;
+      transition: opacity 200ms;
+    }
+    .proj:hover { opacity: 1; }
+    .proj-name {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      margin: 0 0 4px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .proj-name i { font-size: 10px; color: var(--text-muted); transition: color 200ms; }
+    .proj:hover .proj-name { color: var(--accent); }
+    .proj:hover .proj-name i { color: var(--accent); }
+    .proj-desc { font-size: 12.5px; color: var(--text-soft); margin: 0 0 8px; line-height: 1.55; }
+    .proj-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text);
+      background: var(--card-soft);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 0;
+      display: inline-block;
+      transition: all 200ms;
+    }
+    .proj:hover .proj-url { color: var(--accent); border-color: var(--accent); }
+
+    /* ================================================================
+       EXPERIENCE TIMELINE (sidebar) — connector line + clickable dots
+       ================================================================ */
+    .exp-list {
+      display: flex; flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+    .exp-item {
+      display: grid;
+      grid-template-columns: 14px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      position: relative;
+    }
+    /* Vertical connector line behind the dots */
+    .exp-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 22px;
+      bottom: -2px;
+      width: 2px;
+      background: var(--border);
+      transition: background-color var(--transition-theme);
+      z-index: 0;
+    }
+    /* Dot is now an interactive button */
+    .exp-mark {
+      width: 14px; height: 14px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 0;
+      margin-top: 4px;
+      transition: all 200ms;
+      flex-shrink: 0;
+      cursor: pointer;
+      background: var(--card);
+      padding: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .exp-mark:hover {
+      border-color: var(--accent);
+      transform: scale(1.15);
+    }
+    /* Filled state for current and clicked items — black in light, white in dark */
+    .exp-item.current .exp-mark,
+    .exp-item.active .exp-mark {
+      background: var(--text);
+      border-color: var(--text);
+    }
+    .exp-info {
+      min-width: 0;
+    }
+    .exp-title {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      line-height: 1.3; margin: 0;
+    }
+    .exp-org {
+      font-size: 12px; color: var(--text-soft);
+      line-height: 1.3; margin-top: 2px;
+    }
+    .exp-year {
+      font-size: 12px; color: var(--text-muted); font-weight: 500;
+      align-self: start;
+      margin-top: 5px;
+    }
+    .exp-hello {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .exp-hello .wave {
+      display: inline-block;
+      animation: wave 2.5s ease-in-out infinite;
+      transform-origin: 70% 70%;
+    }
+    @keyframes wave {
+      0%, 60%, 100% { transform: rotate(0deg); }
+      10% { transform: rotate(14deg); }
+      20% { transform: rotate(-8deg); }
+      30% { transform: rotate(14deg); }
+      40% { transform: rotate(-4deg); }
+      50% { transform: rotate(10deg); }
+    }
+
+    /* ================================================================
+       CERTIFICATIONS (in 2-col row with Recommendations)
+       ================================================================ */
+    .row-cert-rec {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 720px) {
+      .row-cert-rec { grid-template-columns: 1fr; }
+    }
+    .cert-list { display: flex; flex-direction: column; gap: 0; }
+    .cert {
+      padding: 12px 4px;
+      border-bottom: 1px solid var(--border);
+      transition: padding-left 200ms;
+      display: block;
+    }
+    .cert:last-child { border-bottom: 0; }
+    .cert:hover { padding-left: 6px; }
+    .cert-title {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      margin: 0 0 2px;
+    }
+    .cert-org { font-size: 12px; color: var(--text-soft); }
+
+    /* ================================================================
+       RECOMMENDATIONS (placeholder dots like Bryl)
+       ================================================================ */
+    .rec-area {
+      min-height: 200px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      gap: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 24px;
+    }
+    .rec-dots {
+      display: flex; gap: 8px;
+    }
+    .rec-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--border-strong);
+    }
+    .rec-empty-msg {
+      font-size: 12px;
+      max-width: 240px;
+      line-height: 1.6;
+    }
+    .rec-empty-msg a { color: var(--accent); }
+
+    /* ================================================================
+       INFO ROW (4-column footer-style block)
+       ================================================================ */
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 1.3fr;
+      gap: 16px;
+    }
+    @media (max-width: 880px) {
+      .info-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .info-row { grid-template-columns: 1fr; }
+    }
+    .info-col {
+      padding: 0;
+    }
+    .info-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-soft);
+      margin: 0 0 12px;
+    }
+    .info-list { display: flex; flex-direction: column; gap: 8px; }
+    .info-item {
+      font-size: 12.5px;
+      color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+      transition: color 200ms;
+    }
+    .info-item:hover { color: var(--accent); }
+    .info-item i { font-size: 13px; color: var(--text-muted); width: 14px; transition: color 200ms; }
+    .info-item:hover i { color: var(--accent); }
+    .info-item .ext { margin-left: auto; font-size: 10px; color: var(--text-faint); }
+    .info-item-stacked .label-line {
+      font-size: 12px; color: var(--text-soft);
+    }
+    .info-item-stacked .value-line {
+      font-size: 13px; font-weight: 500; color: var(--text); margin-top: 1px;
+    }
+    .info-item-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .info-item-row:last-child { border-bottom: 0; }
+    .info-item-row > i:first-child { font-size: 12px; color: var(--text-muted); width: 14px; }
+    .info-item-row .info-text { flex: 1; min-width: 0; }
+    .info-item-row .chev { font-size: 10px; color: var(--text-faint); }
+
+    /* ================================================================
+       GALLERY — horizontal carousel
+       ================================================================ */
+    .gallery-card { padding: 22px; }
+    .gallery-wrap {
+      position: relative;
+    }
+    .gallery-track {
+      display: flex; gap: 10px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .gallery-track::-webkit-scrollbar { display: none; }
+    .gallery-tile {
+      flex: 0 0 auto;
+      width: 200px;
+      aspect-ratio: 4/3;
+      border-radius: 0;
+      overflow: hidden;
+      background: var(--card-soft);
+      border: 1px solid var(--border);
+      scroll-snap-align: start;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      font-size: 22px;
+      transition: border-color 200ms;
+    }
+    .gallery-tile:hover { border-color: var(--accent); }
+    .gallery-tile img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--text);
+      box-shadow: var(--shadow-card);
+      transition: all 200ms;
+      z-index: 2;
+    }
+    .gallery-arrow:hover { color: var(--accent); border-color: var(--accent); }
+    .gallery-arrow.prev { left: -10px; }
+    .gallery-arrow.next { right: -10px; }
+    .gallery-empty-note {
+      font-size: 12px; color: var(--text-muted);
+      text-align: center; margin-top: 14px;
+    }
+
+    /* ================================================================
+       FOOTER copy
+       ================================================================ */
+    .footer-copy {
+      font-size: 12px; color: var(--text-muted);
+      text-align: center; padding: 32px 0 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 16px;
+    }
   </style>
+  <!-- Inline pre-paint script: applies saved theme before first render to avoid flash -->
+  <script>
+    (function() {
+      try {
+        const KEY = 'ejg-theme';
+        const saved = localStorage.getItem(KEY);
+        const theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+        // Stash for later so the avatar fallback img can pick the right frame
+        document.documentElement.dataset.initialTheme = theme;
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 
-  <!-- LOADER -->
-  <div id="loader" class="fixed inset-0 z-[100] bg-dark-950 flex items-center justify-center transition-opacity duration-500">
-    <div class="text-center">
-      <div class="w-12 h-12 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin mx-auto mb-4"></div>
-      <p class="text-dark-400 font-mono text-sm tracking-widest uppercase">Loading</p>
-    </div>
-  </div>
+  <div class="page">
 
-  <!-- NAVBAR -->
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-    <div class="max-w-7xl mx-auto px-6 py-4">
-      <div class="glass rounded-2xl px-6 py-3 flex items-center justify-between">
-        <a href="#home" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-primary-500/25">
-            <span class="text-white font-bold text-lg">EJ</span>
-          </div>
-          <span class="text-white font-bold text-xl hidden sm:block">Elvin<span class="text-primary-400">Jhon</span></span>
-        </a>
-        <div class="hidden md:flex items-center gap-6">
-          <a href="#home" class="nav-link text-sm font-medium tracking-wide uppercase">Home</a>
-          <a href="#about" class="nav-link text-sm font-medium tracking-wide uppercase">About</a>
-          <a href="#journey" class="nav-link text-sm font-medium tracking-wide uppercase">Journey</a>
-          <a href="#skills" class="nav-link text-sm font-medium tracking-wide uppercase">Skills</a>
-          <a href="#projects" class="nav-link text-sm font-medium tracking-wide uppercase">Projects</a>
-          <a href="#certificates" class="nav-link text-sm font-medium tracking-wide uppercase">Certs</a>
-          <a href="#contact" class="btn-primary text-sm !py-2.5 !px-6"><i class="fas fa-paper-plane mr-2"></i>Contact</a>
-        </div>
-        <button id="menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl glass glass-hover">
-          <div class="flex flex-col gap-1.5" id="hamburger">
-            <span class="w-5 h-0.5 bg-white rounded transition-all duration-300 origin-center"></span>
-            <span class="w-5 h-0.5 bg-white rounded transition-all duration-300"></span>
-            <span class="w-3 h-0.5 bg-white rounded transition-all duration-300 origin-center"></span>
-          </div>
+    <!-- ======================================================== -->
+    <!-- HERO                                                     -->
+    <!-- ======================================================== -->
+    <section class="hero">
+      <!-- Theme toggle pinned to hero top-right corner -->
+      <div class="hero-toggle-wrap">
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" type="button">
+          <i class="fas fa-sun icon-light"></i>
+          <i class="fas fa-moon icon-dark"></i>
         </button>
       </div>
-    </div>
-    <div id="mobile-menu" class="md:hidden max-w-7xl mx-auto px-6 overflow-hidden transition-all duration-500 max-h-0 opacity-0">
-      <div class="glass rounded-2xl p-6 mt-2 flex flex-col gap-4">
-        <a href="#home" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Home</a>
-        <a href="#about" class="nav-link py-2 text-sm font-medium uppercase mobile-link">About</a>
-        <a href="#journey" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Journey</a>
-        <a href="#skills" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Skills</a>
-        <a href="#projects" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Projects</a>
-        <a href="#certificates" class="nav-link py-2 text-sm font-medium uppercase mobile-link">Certificates</a>
-        <a href="#contact" class="btn-primary text-sm text-center mt-2"><i class="fas fa-paper-plane mr-2"></i>Contact</a>
-      </div>
-    </div>
-  </nav>
 
-  <!-- ============================================ -->
-  <!-- HERO SECTION                                 -->
-  <!-- ============================================ -->
-  <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 hero-bg-grid"></div>
-    <div class="absolute inset-0 hero-radial"></div>
-    <div class="blob absolute top-20 -left-32 w-96 h-96 bg-primary-500/30 rounded-full animate-float"></div>
-    <div class="blob absolute bottom-20 -right-32 w-96 h-96 bg-violet-500/20 rounded-full animate-float" style="animation-delay:-3s"></div>
-    <div class="floating-particle w-2 h-2 top-[20%] left-[10%]" style="--duration:7s;--delay:0s"></div>
-    <div class="floating-particle w-3 h-3 top-[60%] left-[80%]" style="--duration:5s;--delay:-2s"></div>
-    <div class="floating-particle w-1.5 h-1.5 top-[80%] left-[20%]" style="--duration:8s;--delay:-4s"></div>
-
-    <div class="relative z-10 max-w-7xl mx-auto px-6 py-32">
-      <div class="flex flex-col lg:flex-row items-center gap-16">
-        <!-- Text -->
-        <div class="flex-1 text-center lg:text-left">
-          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-fade-in-down">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-            </span>
-            <span class="text-sm text-dark-300 font-medium">Available for opportunities</span>
-          </div>
-
-          <p class="text-primary-400 font-mono text-lg mb-4 animate-fade-in-up opacity-0" style="animation-delay:0.2s">&lt;Hello World /&gt;</p>
-
-          <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-tight mb-6 animate-fade-in-up opacity-0" style="animation-delay:0.4s">
-            I'm <span class="text-gradient">Elvin</span><br><span class="text-white">Jhon</span>
-          </h1>
-
-          <p class="text-dark-400 text-lg md:text-xl max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed animate-fade-in-up opacity-0" style="animation-delay:0.6s">
-            An <span class="text-white font-semibold">Information Technologist</span> from Zamboanga del Norte, Philippines. Crafting digital solutions through clean code, thoughtful design, and a love for solving real problems.
-          </p>
-
-          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up opacity-0" style="animation-delay:0.8s">
-            <a href="#projects" class="btn-primary text-center"><i class="fas fa-rocket mr-2"></i>View My Work</a>
-            <a href="#contact" class="btn-outline text-center"><i class="fas fa-envelope mr-2"></i>Get in Touch</a>
-          </div>
-
-          <!-- Social Links -->
-          <div class="flex gap-4 mt-10 justify-center lg:justify-start animate-fade-in-up opacity-0" style="animation-delay:1s">
-            <a href="https://www.facebook.com/elvinsanity98" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-blue-500 transition-colors">
-              <i class="fab fa-facebook text-lg"></i>
-            </a>
-            <a href="https://www.instagram.com/elvinsanity98/" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-pink-500 transition-colors">
-              <i class="fab fa-instagram text-lg"></i>
-            </a>
-            <a href="https://www.tiktok.com/@eejay4u" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-white transition-colors">
-              <i class="fab fa-tiktok text-lg"></i>
-            </a>
-            <a href="mailto:elvinjhon17@gmail.com" class="w-11 h-11 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-red-400 transition-colors">
-              <i class="fas fa-envelope text-lg"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Profile Photo -->
-        <div class="flex-shrink-0 animate-fade-in opacity-0" style="animation-delay:0.6s">
-          <div class="relative">
-            <div class="absolute -inset-4 rounded-full border-2 border-dashed border-primary-500/20 animate-spin-slow"></div>
-            <div class="absolute -inset-8 rounded-full border border-dashed border-violet-500/10 animate-spin-slow" style="animation-direction:reverse;animation-duration:12s"></div>
-            <div class="photo-ring animate-morph">
-              <div class="photo-ring-inner">
-                <img src="./images/488660735_2371591046531353_6045187639079457194_n.jpg" alt="Elvin Jhon" class="w-64 h-64 md:w-80 md:h-80 rounded-full object-cover">
-              </div>
-            </div>
-            <div class="absolute -top-4 -right-4 glass rounded-2xl px-4 py-2 animate-float shadow-xl">
-              <span class="text-2xl">🚀</span><span class="text-sm font-semibold text-white ml-2">IT Specialist</span>
-            </div>
-            <div class="absolute -bottom-4 -left-4 glass rounded-2xl px-4 py-2 animate-float shadow-xl" style="animation-delay:-2s">
-              <span class="text-2xl">🎨</span><span class="text-sm font-semibold text-white ml-2">Designer</span>
-            </div>
-          </div>
-        </div>
+      <div class="avatar-wrap" id="avatar-wrap">
+        <!-- Fallback img is set by inline script below to match theme; avoids flash of wrong frame -->
+        <img alt="Elvin Jhon Gimena" class="avatar-fallback" id="avatar-fallback">
+        <canvas class="avatar-canvas" id="avatar-canvas" width="400" height="400" aria-label="Elvin Jhon Gimena"></canvas>
+        <script>
+          (function() {
+            const t = document.documentElement.dataset.initialTheme || 'dark';
+            const idx = t === 'dark' ? 91 : 0;
+            const num = String(idx).padStart(2, '0');
+            document.getElementById('avatar-fallback').src = './images/avatar-frames/frame-' + num + '.webp';
+          })();
+        </script>
       </div>
 
-      <!-- Scroll indicator -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce-slow">
-        <span class="text-dark-500 text-xs font-mono uppercase tracking-widest">Scroll</span>
-        <div class="w-6 h-10 rounded-full border-2 border-dark-600 flex justify-center pt-2">
-          <div class="w-1.5 h-3 bg-primary-400 rounded-full animate-bounce"></div>
+      <div class="hero-info">
+        <h1 class="hero-name">
+          Elvin Jhon Gimena
+          <i class="fas fa-circle-check verified-badge" title="Verified"></i>
+        </h1>
+        <div class="hero-loc">
+          <i class="fas fa-location-dot"></i>
+          Liloy, Zamboanga del Norte, Philippines
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!-- ABOUT SECTION                                -->
-  <!-- ============================================ -->
-  <section id="about" class="relative py-32 overflow-hidden">
-    <div class="absolute inset-0 hero-radial opacity-50"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-      <div class="text-center mb-20 reveal">
-        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// Who am I</p>
-        <h2 class="section-heading text-white">About <span class="text-gradient">Me</span></h2>
-        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
-      </div>
-
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
-        <!-- Photo -->
-        <div class="reveal">
-          <div class="relative">
-            <div class="rounded-3xl overflow-hidden glass p-2">
-              <img src="./images/500229051_2415160588841065_7344430105648193327_n.jpg" alt="Elvin Jhon" class="w-full h-[500px] object-cover rounded-2xl" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-transparent to-transparent rounded-2xl"></div>
-            </div>
-            <div class="absolute -bottom-6 -right-6 glass rounded-2xl p-6 shadow-2xl animate-float">
-              <span class="text-4xl font-black text-gradient">3+</span>
-              <p class="text-dark-400 text-sm mt-1">Years<br>Experience</p>
-            </div>
-          </div>
+        <div class="hero-roles">
+          IT Specialist, Full-Stack Developer, and Information Technologist
         </div>
 
-        <!-- Text -->
-        <div class="reveal">
-          <h3 class="text-3xl font-bold text-white mb-6">
-            Hey, I'm <span class="text-gradient">Elvin Jhon!</span>
-          </h3>
-          <p class="text-dark-300 leading-relaxed mb-4">
-            I'm an <strong class="text-white">Information Technologist</strong> based in <strong class="text-white">Dela Paz, Liloy, Zamboanga del Norte</strong>, with a Bachelor's degree in Information Technology from Ave Maria College. I love building beautiful, functional, and user-centered digital experiences that make an impact.
-          </p>
-          <p class="text-dark-300 leading-relaxed mb-4">
-            With hands-on experience as an IT Specialist at Rural Bank of Liloy and as a Graphic Designer at Duque Printhauz, I bring a unique blend of technical depth and creative design. I specialize in web development, system administration, networking, and visual design.
-          </p>
-          <p class="text-dark-300 leading-relaxed mb-8">
-            I'm always learning — whether it's cybersecurity, AI, or new frameworks — and I'm currently looking for opportunities where I can grow, contribute, and help clients move forward efficiently.
-          </p>
-
-          <!-- Info Cards -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="glass rounded-xl p-4">
-              <i class="fas fa-user text-primary-400 mb-2"></i>
-              <p class="text-dark-400 text-xs uppercase tracking-wide">Name</p>
-              <p class="text-white font-semibold">Elvin Jhon</p>
-            </div>
-            <div class="glass rounded-xl p-4">
-              <i class="fas fa-map-marker-alt text-primary-400 mb-2"></i>
-              <p class="text-dark-400 text-xs uppercase tracking-wide">Location</p>
-              <p class="text-white font-semibold text-sm">Liloy, Zamboanga del Norte</p>
-            </div>
-            <div class="glass rounded-xl p-4">
-              <i class="fas fa-envelope text-primary-400 mb-2"></i>
-              <p class="text-dark-400 text-xs uppercase tracking-wide">Email</p>
-              <p class="text-white font-semibold text-sm">elvinjhon17@gmail.com</p>
-            </div>
-            <div class="glass rounded-xl p-4">
-              <i class="fas fa-phone text-primary-400 mb-2"></i>
-              <p class="text-dark-400 text-xs uppercase tracking-wide">Phone</p>
-              <p class="text-white font-semibold">09555763599</p>
-            </div>
-          </div>
-
-          <div class="flex gap-4 mt-8">
-            <a href="#contact" class="btn-primary"><i class="fas fa-download mr-2"></i>Download CV</a>
-            <a href="#projects" class="btn-outline"><i class="fas fa-arrow-right mr-2"></i>My Projects</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-24">
-        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="20">0</div><p class="text-dark-400 text-sm">Projects</p></div>
-        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="15">0</div><p class="text-dark-400 text-sm">Happy Clients</p></div>
-        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="3">0</div><p class="text-dark-400 text-sm">Years Exp.</p></div>
-        <div class="card text-center reveal"><div class="text-4xl font-black text-gradient mb-2" data-count="500">0</div><p class="text-dark-400 text-sm">Cups of Coffee</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!-- SKILLS SECTION                               -->
-  <!-- ============================================ -->
-  <section id="skills" class="relative py-32 overflow-hidden">
-    <div class="absolute inset-0 hero-bg-grid"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-      <div class="text-center mb-20 reveal">
-        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// What I know</p>
-        <h2 class="section-heading text-white">My <span class="text-gradient">Skills</span></h2>
-        <p class="section-subheading mx-auto mt-4">Technologies I use to build amazing things</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
-      </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Frontend -->
-        <div class="card glow-border reveal">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center"><i class="fas fa-palette text-2xl text-blue-400"></i></div>
-            <div><h3 class="text-xl font-bold text-white">Frontend</h3><p class="text-dark-400 text-sm">Client-side</p></div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="skill-badge text-blue-300"><i class="fab fa-react mr-1.5"></i>React</span>
-            <span class="skill-badge text-cyan-300"><i class="fas fa-wind mr-1.5"></i>Tailwind</span>
-            <span class="skill-badge text-blue-300"><i class="fab fa-js mr-1.5"></i>TypeScript</span>
-            <span class="skill-badge text-green-300"><i class="fab fa-vuejs mr-1.5"></i>Vue.js</span>
-            <span class="skill-badge text-orange-300"><i class="fab fa-html5 mr-1.5"></i>HTML5</span>
-            <span class="skill-badge text-purple-300"><i class="fab fa-css3-alt mr-1.5"></i>CSS3</span>
-          </div>
-        </div>
-        <!-- Backend -->
-        <div class="card glow-border reveal">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center"><i class="fas fa-server text-2xl text-green-400"></i></div>
-            <div><h3 class="text-xl font-bold text-white">Backend</h3><p class="text-dark-400 text-sm">Server-side</p></div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="skill-badge text-green-300"><i class="fab fa-node-js mr-1.5"></i>Node.js</span>
-            <span class="skill-badge text-red-300"><i class="fas fa-fire mr-1.5"></i>Express</span>
-            <span class="skill-badge text-blue-300"><i class="fab fa-python mr-1.5"></i>Python</span>
-            <span class="skill-badge text-purple-300"><i class="fas fa-gem mr-1.5"></i>GraphQL</span>
-            <span class="skill-badge text-orange-300"><i class="fas fa-bolt mr-1.5"></i>REST APIs</span>
-          </div>
-        </div>
-        <!-- Database -->
-        <div class="card glow-border reveal">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center"><i class="fas fa-database text-2xl text-violet-400"></i></div>
-            <div><h3 class="text-xl font-bold text-white">Database</h3><p class="text-dark-400 text-sm">Data management</p></div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="skill-badge text-green-300"><i class="fas fa-leaf mr-1.5"></i>MongoDB</span>
-            <span class="skill-badge text-blue-300"><i class="fas fa-database mr-1.5"></i>PostgreSQL</span>
-            <span class="skill-badge text-yellow-300"><i class="fas fa-database mr-1.5"></i>MySQL</span>
-            <span class="skill-badge text-red-300"><i class="fas fa-fire mr-1.5"></i>Firebase</span>
-            <span class="skill-badge text-orange-300"><i class="fas fa-bolt mr-1.5"></i>Redis</span>
-          </div>
-        </div>
-        <!-- DevOps -->
-        <div class="card glow-border reveal">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center"><i class="fas fa-cloud text-2xl text-orange-400"></i></div>
-            <div><h3 class="text-xl font-bold text-white">DevOps</h3><p class="text-dark-400 text-sm">Infrastructure</p></div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="skill-badge text-blue-300"><i class="fab fa-docker mr-1.5"></i>Docker</span>
-            <span class="skill-badge text-orange-300"><i class="fab fa-aws mr-1.5"></i>AWS</span>
-            <span class="skill-badge text-white"><i class="fab fa-github mr-1.5"></i>GitHub Actions</span>
-          </div>
-        </div>
-        <!-- Design -->
-        <div class="card glow-border reveal">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center"><i class="fas fa-pen-nib text-2xl text-pink-400"></i></div>
-            <div><h3 class="text-xl font-bold text-white">Design</h3><p class="text-dark-400 text-sm">UI/UX</p></div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="skill-badge text-purple-300"><i class="fab fa-figma mr-1.5"></i>Figma</span>
-            <span class="skill-badge text-blue-300"><i class="fas fa-bezier-curve mr-1.5"></i>Adobe XD</span>
-            <span class="skill-badge text-pink-300"><i class="fas fa-magic mr-1.5"></i>Photoshop</span>
-          </div>
-        </div>
-        <!-- Tools -->
-        <div class="card glow-border reveal">
-          <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center"><i class="fas fa-tools text-2xl text-cyan-400"></i></div>
-            <div><h3 class="text-xl font-bold text-white">Tools</h3><p class="text-dark-400 text-sm">Workflow</p></div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="skill-badge text-orange-300"><i class="fab fa-git-alt mr-1.5"></i>Git</span>
-            <span class="skill-badge text-blue-300"><i class="fas fa-code mr-1.5"></i>VS Code</span>
-            <span class="skill-badge text-green-300"><i class="fab fa-npm mr-1.5"></i>npm</span>
-            <span class="skill-badge text-yellow-300"><i class="fas fa-terminal mr-1.5"></i>Terminal</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!-- JOURNEY SECTION (Education + Experience)     -->
-  <!-- ============================================ -->
-  <section id="journey" class="relative py-32 overflow-hidden">
-    <div class="absolute inset-0 hero-radial opacity-30"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-      <div class="text-center mb-20 reveal">
-        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// The path so far</p>
-        <h2 class="section-heading text-white">My <span class="text-gradient">Journey</span></h2>
-        <p class="section-subheading mx-auto mt-4">From the very first <span class="font-mono text-primary-400">"Hello World"</span> to where I am today</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
-      </div>
-
-      <div class="grid lg:grid-cols-2 gap-12">
-        <!-- Education Timeline -->
-        <div class="reveal">
-          <div class="flex items-center gap-3 mb-10">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500/20 to-cyan-500/20 flex items-center justify-center">
-              <i class="fas fa-graduation-cap text-2xl text-primary-400"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white">Education</h3>
-          </div>
-
-          <div class="relative pl-8 border-l-2 border-dashed border-primary-500/30 space-y-10">
-            <!-- Hello World - Origin -->
-            <div class="relative">
-              <div class="absolute -left-[42px] top-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-primary-500/40 ring-4 ring-dark-950">
-                <i class="fas fa-code text-white"></i>
-              </div>
-              <div class="card !p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-primary-400 font-mono text-xs uppercase tracking-wider">// the beginning</span>
-                  <span class="text-dark-500 text-xs">∞</span>
-                </div>
-                <h4 class="text-lg font-bold text-white mb-1 font-mono">&lt;Hello World /&gt;</h4>
-                <p class="text-dark-400 text-sm">Where every developer's story begins. Curiosity, a blinking cursor, and a dream.</p>
-              </div>
-            </div>
-
-            <!-- Elementary -->
-            <div class="relative">
-              <div class="absolute -left-[42px] top-0 w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shadow-lg shadow-amber-500/40 ring-4 ring-dark-950">
-                <i class="fas fa-school text-white text-sm"></i>
-              </div>
-              <div class="card !p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-amber-400 font-mono text-xs uppercase tracking-wider">2010</span>
-                  <span class="text-dark-500 text-xs">Elementary</span>
-                </div>
-                <h4 class="text-lg font-bold text-white mb-1">Timan Elementary School</h4>
-                <p class="text-dark-400 text-sm">Primary education foundation.</p>
-              </div>
-            </div>
-
-            <!-- High School -->
-            <div class="relative">
-              <div class="absolute -left-[42px] top-0 w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center shadow-lg shadow-violet-500/40 ring-4 ring-dark-950">
-                <i class="fas fa-book text-white text-sm"></i>
-              </div>
-              <div class="card !p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-violet-400 font-mono text-xs uppercase tracking-wider">2014</span>
-                  <span class="text-dark-500 text-xs">Secondary</span>
-                </div>
-                <h4 class="text-lg font-bold text-white mb-1">Liloy National High School</h4>
-                <p class="text-dark-400 text-sm">Secondary education.</p>
-              </div>
-            </div>
-
-            <!-- College -->
-            <div class="relative">
-              <div class="absolute -left-[42px] top-0 w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-green-500/40 ring-4 ring-dark-950">
-                <i class="fas fa-user-graduate text-white text-sm"></i>
-              </div>
-              <div class="card !p-5">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-green-400 font-mono text-xs uppercase tracking-wider">2018</span>
-                  <span class="text-dark-500 text-xs">Tertiary</span>
-                </div>
-                <h4 class="text-lg font-bold text-white mb-1">Bachelor of Science in Information Technology</h4>
-                <p class="text-dark-300 text-sm font-medium mb-1">Ave Maria College</p>
-                <p class="text-dark-400 text-sm">Built the foundation for everything I do today — programming, networking, databases, and creative problem-solving.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Work Experience + Courses -->
-        <div class="reveal">
-          <div class="flex items-center gap-3 mb-10">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500/20 to-pink-500/20 flex items-center justify-center">
-              <i class="fas fa-briefcase text-2xl text-violet-400"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white">Work Experience</h3>
-          </div>
-
-          <div class="space-y-6 mb-12">
-            <!-- IT Specialist -->
-            <div class="card glow-border">
-              <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                  <i class="fas fa-laptop-code text-blue-400"></i>
-                </div>
-                <div class="flex-1">
-                  <h4 class="text-lg font-bold text-white mb-1">IT Specialist</h4>
-                  <p class="text-primary-400 text-sm font-medium mb-2">Rural Bank of Liloy (Z.N.), Inc.</p>
-                  <p class="text-dark-400 text-sm leading-relaxed">Managing IT infrastructure, system administration, regulatory reporting (BSP, RBAP), and supporting the bank's digital operations and cybersecurity posture.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Graphic Designer -->
-            <div class="card glow-border">
-              <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center flex-shrink-0">
-                  <i class="fas fa-palette text-pink-400"></i>
-                </div>
-                <div class="flex-1">
-                  <h4 class="text-lg font-bold text-white mb-1">Graphic Designer</h4>
-                  <p class="text-pink-400 text-sm font-medium mb-2">Duque Printhauz</p>
-                  <p class="text-dark-400 text-sm leading-relaxed">Designing print and digital materials for clients — turning creative concepts into polished visual outputs.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- TESDA Courses -->
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-              <i class="fas fa-award text-2xl text-amber-400"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white">TESDA Courses</h3>
-          </div>
-          <div class="space-y-3">
-            <div class="glass rounded-xl p-4 flex items-center gap-3">
-              <i class="fas fa-check-circle text-amber-400"></i>
-              <div class="flex-1">
-                <p class="text-white font-semibold text-sm">Computer System Servicing NC II</p>
-                <p class="text-dark-500 text-xs">TESDA</p>
-              </div>
-            </div>
-            <div class="glass rounded-xl p-4 flex items-center gap-3">
-              <i class="fas fa-check-circle text-amber-400"></i>
-              <div class="flex-1">
-                <p class="text-white font-semibold text-sm">Visual Graphic Design NC III</p>
-                <p class="text-dark-500 text-xs">TESDA</p>
-              </div>
-            </div>
-            <div class="glass rounded-xl p-4 flex items-center gap-3">
-              <i class="fas fa-check-circle text-amber-400"></i>
-              <div class="flex-1">
-                <p class="text-white font-semibold text-sm">2D Animation NC III</p>
-                <p class="text-dark-500 text-xs">TESDA</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!-- PROJECTS SECTION                             -->
-  <!-- ============================================ -->
-  <section id="projects" class="relative py-32 overflow-hidden">
-    <div class="absolute inset-0 hero-bg-grid"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-      <div class="text-center mb-20 reveal">
-        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// What I've built</p>
-        <h2 class="section-heading text-white">Featured <span class="text-gradient">Projects</span></h2>
-        <p class="section-subheading mx-auto mt-4">A showcase of my best work</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- Project 1: QR Inventory Demo -->
-        <div class="card glow-border group reveal !p-0 overflow-hidden">
-          <a href="http://qr-inventory-demo.x10.mx/" target="_blank" rel="noopener noreferrer" class="block relative overflow-hidden">
-            <img src="./images/qr-inventory-demo.png" alt="QR Inventory System Dashboard" class="w-full h-64 object-cover object-top group-hover:scale-105 transition-transform duration-700" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/40 to-transparent"></div>
-            <div class="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-primary-500/90 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1.5">
-              <i class="fas fa-eye"></i> Live Demo
-            </div>
+        <div class="hero-actions">
+          <a href="mailto:elvinjhon17@gmail.com" class="btn primary">
+            <i class="fas fa-envelope"></i>Send Email
+            <i class="fas fa-chevron-right chev"></i>
           </a>
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors">QR Inventory System</h3>
-            <p class="text-dark-400 text-sm leading-relaxed mb-6">A modern dark-themed asset management dashboard with QR code scanning, real-time scan tracking, and interactive analytics for managing inventory across multiple statuses.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">PHP</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">JavaScript</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">Chart.js</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">QR Scanner</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">MySQL</span>
-            </div>
-            <a href="http://qr-inventory-demo.x10.mx/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-primary-400 hover:text-primary-300 text-sm font-semibold transition-colors">
-              View Live Demo <i class="fas fa-arrow-right text-xs"></i>
-            </a>
-          </div>
-        </div>
-        <!-- Project 2: RBLI Supply System -->
-        <div class="card glow-border group reveal !p-0 overflow-hidden">
-          <a href="https://rbli-supply-demo.onrender.com/dashboard" target="_blank" rel="noopener noreferrer" class="block relative overflow-hidden">
-            <img src="./images/rbli-supply-demo.png" alt="RBLI Supply Inventory System Dashboard" class="w-full h-64 object-cover object-top group-hover:scale-105 transition-transform duration-700" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/40 to-transparent"></div>
-            <div class="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-violet-500/90 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1.5">
-              <i class="fas fa-eye"></i> Live Demo
-            </div>
+          <a href="https://github.com/elvinsanity98" target="_blank" rel="noopener" class="btn">
+            <i class="fab fa-github"></i>GitHub
           </a>
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-violet-400 transition-colors">RBLI R&amp;SIS — Supply Inventory</h3>
-            <p class="text-dark-400 text-sm leading-relaxed mb-6">A clean, light-themed requisition and supply inventory system featuring barcode management, requisition workflows, audit logs, and monthly trend analytics for streamlined operations.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">Node.js</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">Express</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">Tailwind CSS</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">Chart.js</span>
-              <span class="text-xs text-dark-300 px-2 py-1 glass rounded-md">Barcode</span>
+
+          <div class="achievement-wrap" id="ach-wrap">
+            <div class="achievement-chip">
+              <a href="#certs" class="ach-chip-body" id="ach-chip-body">
+                <i class="fas fa-trophy"></i>
+                <span>Certifications &amp; Trainings</span>
+              </a>
+              <button type="button" class="ach-chip-arrow" id="ach-chip-arrow"
+                      aria-haspopup="true" aria-expanded="false" aria-label="Show certifications dropdown">
+                <i class="fas fa-chevron-down"></i>
+              </button>
             </div>
-            <a href="https://rbli-supply-demo.onrender.com/dashboard" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 text-sm font-semibold transition-colors">
-              View Live Demo <i class="fas fa-arrow-right text-xs"></i>
+
+            <div class="achievement-menu" id="ach-menu" role="menu">
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/1DLukjYvYqvDHguJo3HUJQVffCFezdu7N/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-network-wired"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">Cisco Certified Network Technician</div>
+                  <div class="ach-meta"><span class="org">Cisco</span> &middot; May 2023 &mdash; Present</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/1xOgsxgqUHTyVRNKBzW_L_UFkppQqYY8B/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-cogs"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">ITIL Foundation in IT Service Management</div>
+                  <div class="ach-meta"><span class="org">EXIN &amp; Axelos</span> &middot; Feb 2017 &mdash; Present</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/17_buPaQ4AOaBq2u1Qq5nOtAs7BAh0k_b/view?usp=sharing">
+                <span class="ach-ico"><i class="fab fa-microsoft"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">Microsoft 365 Fundamentals</div>
+                  <div class="ach-meta"><span class="org">Microsoft</span> &middot; Jan 2022 &mdash; Present</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/18fzKY1cP1s7QPtjmWPMTrSyLgZOtlpWT/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-shield-halved"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">BSP Cybersecurity &amp; IT Risk Roadshow 2024</div>
+                  <div class="ach-meta"><span class="org">Bangko Sentral ng Pilipinas</span> &middot; May 2024</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/1A0ae28hqVNPPlFymetMrCywrRvbrgYlQ/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-file-code"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">RBAP API-XML Report Strengthening</div>
+                  <div class="ach-meta"><span class="org">Rural Bankers Association of the Philippines</span> &middot; Jul 2023</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/1_Vmde6IHk3_pjBrR0o-o5K41GFZwFB38/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-house-laptop"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">Remote Worker Professional Certificate</div>
+                  <div class="ach-meta"><span class="org">CertiProf</span> &middot; Jan 2023 &mdash; Present</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/1lc2m_n2OrRI-v7jl1ZOkOLT-P3JuqfGg/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-pen-nib"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">TESDA Visual Graphic Design</div>
+                  <div class="ach-meta"><span class="org">TESDA</span> &middot; Oct 2023 &mdash; Oct 2028</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/1cciufY6Q0eAYWZMFqQ8kftpiEfqB7ZZ6/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-film"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">TESDA 2D Animation NC III</div>
+                  <div class="ach-meta"><span class="org">TESDA</span> &middot; Aug 2021 &mdash; Aug 2026</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <a class="ach-item" role="menuitem" target="_blank" rel="noopener"
+                 href="https://drive.google.com/file/d/1IB-GRqdE4c9zHJGpzh4NPEKh1mbOw2yt/view?usp=sharing">
+                <span class="ach-ico"><i class="fas fa-microchip"></i></span>
+                <span class="ach-info">
+                  <div class="ach-title">CompTIA A+</div>
+                  <div class="ach-meta"><span class="org">CompTIA</span> &middot; Expired Feb 2023</div>
+                </span>
+                <i class="fas fa-arrow-up-right-from-square ach-arrow"></i>
+              </a>
+
+              <div class="ach-divider"></div>
+              <div class="ach-footer">
+                9 certifications &middot; <a href="#certs" style="color:var(--accent)">View in section</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- MAIN 2-COLUMN GRID                                       -->
+    <!-- ======================================================== -->
+    <div class="main-grid">
+
+      <!-- ============== LEFT COLUMN ============== -->
+      <div class="stack">
+
+        <!-- About -->
+        <section class="card">
+          <h2 class="card-title">About</h2>
+          <p class="about-text">
+            I'm a full-stack developer and Information Technologist based in Zamboanga del Norte, Philippines. I currently serve as <strong>IT Specialist at Rural Bank of Liloy</strong>, where I run the bank's IT infrastructure end-to-end. My responsibilities cover everything from servers and security to regulatory reporting under <strong>Bangko Sentral ng Pilipinas</strong> and <strong>RBAP</strong> guidelines.
+          </p>
+          <p class="about-text">
+            Outside the bank, I build and ship full-stack web projects, including production websites, internal tools, and inventory systems, using <strong>PHP, Node.js, JavaScript, Tailwind CSS, and MySQL</strong>. I also bring a strong design background through TESDA-certified Visual Graphic Design and 2D Animation work.
+          </p>
+          <p class="about-text">
+            Recently I've been deepening my work with <strong>AI-assisted development</strong>, integrating tools like Claude and ChatGPT into my workflow to ship faster without losing the discipline that working in a regulated environment teaches you.
+          </p>
+        </section>
+
+        <!-- Tech Stack -->
+        <section class="card">
+          <h2 class="card-title">
+            Tech Stack
+            <a href="#" class="view-all">View All <i class="fas fa-chevron-right" style="font-size:9px"></i></a>
+          </h2>
+
+          <div class="stack-group">
+            <div class="stack-label">Frontend</div>
+            <div class="stack-chips">
+              <span class="stack-chip">JavaScript</span>
+              <span class="stack-chip">HTML</span>
+              <span class="stack-chip">CSS</span>
+              <span class="stack-chip">Tailwind CSS</span>
+              <span class="stack-chip">Chart.js</span>
+            </div>
+          </div>
+
+          <div class="stack-group">
+            <div class="stack-label">Backend</div>
+            <div class="stack-chips">
+              <span class="stack-chip">PHP</span>
+              <span class="stack-chip">Node.js</span>
+              <span class="stack-chip">Express</span>
+              <span class="stack-chip">MySQL</span>
+            </div>
+          </div>
+
+          <div class="stack-group">
+            <div class="stack-label">Tools &amp; Workflow</div>
+            <div class="stack-chips">
+              <span class="stack-chip">Git</span>
+              <span class="stack-chip">GitHub</span>
+              <span class="stack-chip">cPanel</span>
+              <span class="stack-chip">Linux</span>
+              <span class="stack-chip">VS Code</span>
+              <span class="stack-chip">Claude / ChatGPT</span>
+            </div>
+          </div>
+
+          <div class="stack-group">
+            <div class="stack-label">Design</div>
+            <div class="stack-chips">
+              <span class="stack-chip">Adobe Creative Suite</span>
+              <span class="stack-chip">Figma</span>
+              <span class="stack-chip">2D Animation</span>
+              <span class="stack-chip">Visual Graphic Design</span>
+            </div>
+          </div>
+
+          <div class="stack-group">
+            <div class="stack-label">Domain &amp; Compliance</div>
+            <div class="stack-chips">
+              <span class="stack-chip">BSP Reporting</span>
+              <span class="stack-chip">RBAP API-XML</span>
+              <span class="stack-chip">IT Risk &amp; Cybersecurity</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Projects -->
+        <section class="card">
+          <h2 class="card-title">
+            Recent Projects
+            <a href="https://github.com/elvinsanity98" target="_blank" rel="noopener" class="view-all">View All <i class="fas fa-chevron-right" style="font-size:9px"></i></a>
+          </h2>
+
+          <div class="proj-grid">
+            <a class="proj" href="https://rbliloy.x10.mx/" target="_blank" rel="noopener">
+              <div class="proj-name">Rural Bank of Liloy <i class="fas fa-arrow-up-right-from-square"></i></div>
+              <p class="proj-desc">Official production website for an operating rural bank, with services, loan flow, and CMS announcements.</p>
+              <span class="proj-url">rbliloy.x10.mx</span>
+            </a>
+
+            <a class="proj" href="http://qr-inventory-demo.x10.mx/" target="_blank" rel="noopener">
+              <div class="proj-name">QR Inventory <i class="fas fa-arrow-up-right-from-square"></i></div>
+              <p class="proj-desc">Asset management dashboard with QR scanning, scan tracking, and multi-status analytics.</p>
+              <span class="proj-url">qr-inventory-demo.x10.mx</span>
+            </a>
+
+            <a class="proj" href="https://rbli-supply-demo.onrender.com/dashboard" target="_blank" rel="noopener">
+              <div class="proj-name">RBLI R&amp;SIS <i class="fas fa-arrow-up-right-from-square"></i></div>
+              <p class="proj-desc">Supply requisition platform with barcodes, audit logs, and trend analytics for small-bank operations.</p>
+              <span class="proj-url">rbli-supply-demo.onrender.com</span>
+            </a>
+
+            <a class="proj" href="https://elvinsanity98.github.io/elvin-jhon-portfolio/" target="_blank" rel="noopener">
+              <div class="proj-name">This Portfolio <i class="fas fa-arrow-up-right-from-square"></i></div>
+              <p class="proj-desc">Vanilla HTML/CSS/JS portfolio with synced theme transition and animated avatar.</p>
+              <span class="proj-url">elvinsanity98.github.io/elvin-jhon-portfolio</span>
+            </a>
+          </div>
+        </section>
+
+      </div>
+      <!-- ============== END LEFT COLUMN ============== -->
+
+      <!-- ============== RIGHT COLUMN (sidebar) ============== -->
+      <div class="stack">
+
+        <!-- Experience timeline -->
+        <section class="card">
+          <h2 class="card-title">Experience &amp; Education</h2>
+          <div class="exp-list">
+
+            <div class="exp-item current">
+              <button type="button" class="exp-mark" aria-label="Highlight"></button>
+              <div class="exp-info">
+                <div class="exp-title">IT Specialist</div>
+                <div class="exp-org">Rural Bank of Liloy (Z.N.), Inc.</div>
+              </div>
+              <div class="exp-year">2019 — Now</div>
+            </div>
+
+            <div class="exp-item">
+              <button type="button" class="exp-mark" aria-label="Highlight"></button>
+              <div class="exp-info">
+                <div class="exp-title">Graphic Designer</div>
+                <div class="exp-org">Duque Printhauz</div>
+              </div>
+              <div class="exp-year">Prior</div>
+            </div>
+
+            <div class="exp-item">
+              <button type="button" class="exp-mark" aria-label="Highlight"></button>
+              <div class="exp-info">
+                <div class="exp-title">Visual Graphic Design NC III</div>
+                <div class="exp-org">TESDA</div>
+              </div>
+              <div class="exp-year">2023</div>
+            </div>
+
+            <div class="exp-item">
+              <button type="button" class="exp-mark" aria-label="Highlight"></button>
+              <div class="exp-info">
+                <div class="exp-title">2D Animation NC III</div>
+                <div class="exp-org">TESDA</div>
+              </div>
+              <div class="exp-year">2021</div>
+            </div>
+
+            <div class="exp-item">
+              <button type="button" class="exp-mark" aria-label="Highlight"></button>
+              <div class="exp-info">
+                <div class="exp-title">BS Information Technology</div>
+                <div class="exp-org">Ave Maria College</div>
+              </div>
+              <div class="exp-year">2018</div>
+            </div>
+
+            <div class="exp-item">
+              <button type="button" class="exp-mark" aria-label="Highlight"></button>
+              <div class="exp-info">
+                <div class="exp-title">Computer System Servicing NC II</div>
+                <div class="exp-org">TESDA</div>
+              </div>
+              <div class="exp-year"></div>
+            </div>
+
+            <div class="exp-item">
+              <button type="button" class="exp-mark" aria-label="Highlight"></button>
+              <div class="exp-info">
+                <div class="exp-hello">
+                  <strong>Hello World!</strong> <span class="wave">👋🏻</span>
+                </div>
+                <div class="exp-org">Wrote my first line of code</div>
+              </div>
+              <div class="exp-year"></div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+      <!-- ============== END RIGHT COLUMN ============== -->
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- CERTIFICATIONS                                           -->
+    <!-- ======================================================== -->
+    <section class="card" id="certs" style="margin-top:16px">
+      <h2 class="card-title">
+        Recent Certifications
+        <a href="#" class="view-all">View All <i class="fas fa-chevron-right" style="font-size:9px"></i></a>
+      </h2>
+      <div class="cert-list">
+        <a class="cert" href="https://drive.google.com/file/d/1DLukjYvYqvDHguJo3HUJQVffCFezdu7N/view?usp=sharing" target="_blank" rel="noopener">
+          <div class="cert-title">Cisco Certified Network Technician</div>
+          <div class="cert-org">Cisco</div>
+        </a>
+        <a class="cert" href="https://drive.google.com/file/d/1xOgsxgqUHTyVRNKBzW_L_UFkppQqYY8B/view?usp=sharing" target="_blank" rel="noopener">
+          <div class="cert-title">ITIL Foundation in IT Service Management</div>
+          <div class="cert-org">EXIN &amp; Axelos</div>
+        </a>
+        <a class="cert" href="https://drive.google.com/file/d/17_buPaQ4AOaBq2u1Qq5nOtAs7BAh0k_b/view?usp=sharing" target="_blank" rel="noopener">
+          <div class="cert-title">Microsoft 365 Fundamentals</div>
+          <div class="cert-org">Microsoft</div>
+        </a>
+        <a class="cert" href="https://drive.google.com/file/d/18fzKY1cP1s7QPtjmWPMTrSyLgZOtlpWT/view?usp=sharing" target="_blank" rel="noopener">
+          <div class="cert-title">BSP Cybersecurity &amp; IT Risk Roadshow 2024</div>
+          <div class="cert-org">Bangko Sentral ng Pilipinas</div>
+        </a>
+        <a class="cert" href="https://drive.google.com/file/d/1A0ae28hqVNPPlFymetMrCywrRvbrgYlQ/view?usp=sharing" target="_blank" rel="noopener">
+          <div class="cert-title">RBAP API-XML Report Strengthening</div>
+          <div class="cert-org">RBAP</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- INFO ROW (3 columns: Social Links, Open To, Get in Touch)  -->
+    <!-- ======================================================== -->
+    <section class="card" style="margin-top:16px">
+      <div class="info-row">
+
+        <div class="info-col">
+          <p class="info-label">Social Links</p>
+          <div class="info-list">
+            <a class="info-item" href="https://github.com/elvinsanity98" target="_blank" rel="noopener">
+              <i class="fab fa-github"></i><span>GitHub</span>
+            </a>
+            <a class="info-item" href="https://www.facebook.com/elvinsanity98/" target="_blank" rel="noopener">
+              <i class="fab fa-facebook"></i><span>Facebook</span>
+            </a>
+            <a class="info-item" href="https://elvinsanity98.github.io/elvin-jhon-portfolio/" target="_blank" rel="noopener">
+              <i class="fas fa-globe"></i><span>Portfolio</span>
             </a>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ============================================ -->
-  <!-- CERTIFICATES SECTION                         -->
-  <!-- ============================================ -->
-  <section id="certificates" class="relative py-32 overflow-hidden">
-    <div class="absolute inset-0 hero-radial opacity-40"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-      <div class="text-center mb-20 reveal">
-        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// Always learning</p>
-        <h2 class="section-heading text-white">Certificates &amp; <span class="text-gradient">Trainings</span></h2>
-        <p class="section-subheading mx-auto mt-4">Continuous learning across IT, networking, design, and cybersecurity</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Cisco -->
-        <a href="https://drive.google.com/file/d/1DLukjYvYqvDHguJo3HUJQVffCFezdu7N/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-              <i class="fas fa-network-wired text-2xl text-blue-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Cisco Certificate Network Technician</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">Cisco</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>May 2023 — Current</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- CompTIA -->
-        <a href="https://drive.google.com/file/d/1IB-GRqdE4c9zHJGpzh4NPEKh1mbOw2yt/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500/20 to-orange-500/20 flex items-center justify-center">
-              <i class="fas fa-microchip text-2xl text-red-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-dark-500/20 text-dark-400 font-medium">Expired</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-red-400 transition-colors">CompTIA A+ Certificate</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">CompTIA</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>Expired Feb 2023</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- ITIL -->
-        <a href="https://drive.google.com/file/d/1xOgsxgqUHTyVRNKBzW_L_UFkppQqYY8B/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-500/20 flex items-center justify-center">
-              <i class="fas fa-cogs text-2xl text-purple-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">ITIL Foundation Certificate in IT Service Management</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">EXIN &amp; Axelos Global Best Practice</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>Feb 2017 — Current</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- Microsoft 365 -->
-        <a href="https://drive.google.com/file/d/17_buPaQ4AOaBq2u1Qq5nOtAs7BAh0k_b/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center">
-              <i class="fab fa-microsoft text-2xl text-blue-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Microsoft 365 Fundamentals Certificate</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">Microsoft</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>Jan 2022 — Current</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- Remote Worker Professional -->
-        <a href="https://drive.google.com/file/d/1_Vmde6IHk3_pjBrR0o-o5K41GFZwFB38/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 flex items-center justify-center">
-              <i class="fas fa-house-laptop text-2xl text-cyan-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">Remote Worker Professional Certificate (RWPC)</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">CertiProf Professional Knowledge</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>Jan 2023 — Current</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- TESDA Visual Graphic Design -->
-        <a href="https://drive.google.com/file/d/1lc2m_n2OrRI-v7jl1ZOkOLT-P3JuqfGg/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center">
-              <i class="fas fa-pen-nib text-2xl text-pink-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-pink-400 transition-colors">TESDA Visual Graphic Design</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">TESDA</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>Oct 2023 — Oct 2028</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- TESDA 2D Animation -->
-        <a href="https://drive.google.com/file/d/1cciufY6Q0eAYWZMFqQ8kftpiEfqB7ZZ6/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-              <i class="fas fa-film text-2xl text-amber-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-amber-400 transition-colors">TESDA 2D Animation National Certificate</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">TESDA</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>Aug 2021 — Aug 2026</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- RBAP API-XML -->
-        <a href="https://drive.google.com/file/d/1A0ae28hqVNPPlFymetMrCywrRvbrgYlQ/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/20 flex items-center justify-center">
-              <i class="fas fa-file-code text-2xl text-emerald-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">RBAP API-XML Report Strengthening Seminar</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">Rural Bankers Association of the Philippines</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>Jul 2023 — Current</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-
-        <!-- BSP Cybersecurity -->
-        <a href="https://drive.google.com/file/d/18fzKY1cP1s7QPtjmWPMTrSyLgZOtlpWT/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="card glow-border group reveal block">
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500/20 to-pink-500/20 flex items-center justify-center">
-              <i class="fas fa-shield-halved text-2xl text-red-400"></i>
-            </div>
-            <span class="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 font-medium">Active</span>
-          </div>
-          <h3 class="text-base font-bold text-white mb-1 group-hover:text-red-400 transition-colors">BSP Cybersecurity &amp; IT Risk Fundamentals Roadshow 2024</h3>
-          <p class="text-primary-400 text-xs font-medium mb-3">Bangko Sentral ng Pilipinas</p>
-          <p class="text-dark-500 text-xs mb-4"><i class="far fa-calendar mr-1"></i>May 2024 — Current</p>
-          <div class="text-xs text-dark-400 group-hover:text-primary-400 transition-colors flex items-center gap-1.5">
-            View certificate <i class="fas fa-external-link-alt text-[10px]"></i>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
-  <section id="contact" class="relative py-32 overflow-hidden">
-    <div class="absolute inset-0 hero-radial"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-      <div class="text-center mb-20 reveal">
-        <p class="text-primary-400 font-mono text-sm tracking-widest uppercase mb-4">// Let's talk</p>
-        <h2 class="section-heading text-white">Get in <span class="text-gradient">Touch</span></h2>
-        <p class="section-subheading mx-auto mt-4">Have a project in mind? Let's work together!</p>
-        <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-cyan-400 mx-auto mt-6 rounded-full"></div>
-      </div>
-
-      <div class="grid lg:grid-cols-2 gap-16">
-        <!-- Contact Info -->
-        <div class="reveal">
-          <h3 class="text-2xl font-bold text-white mb-6">Let's build something <span class="text-gradient">amazing</span> together</h3>
-          <p class="text-dark-400 leading-relaxed mb-10">I'm always interested in new projects and collaborations. Whether you have a question or just want to say hi, don't hesitate to reach out!</p>
-
-          <div class="space-y-4">
-            <div class="card flex items-center gap-4 !p-5">
-              <div class="w-12 h-12 rounded-xl bg-primary-500/10 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-envelope text-primary-400"></i>
-              </div>
-              <div>
-                <p class="text-dark-400 text-sm">Email</p>
-                <a href="mailto:elvinjhon17@gmail.com" class="text-white font-medium hover:text-primary-400 transition-colors">elvinjhon17@gmail.com</a>
-              </div>
-            </div>
-
-            <div class="card flex items-center gap-4 !p-5">
-              <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-phone text-green-400"></i>
-              </div>
-              <div>
-                <p class="text-dark-400 text-sm">Phone</p>
-                <a href="tel:09555763599" class="text-white font-medium hover:text-green-400 transition-colors">09555763599</a>
-              </div>
-            </div>
-
-            <div class="card flex items-center gap-4 !p-5">
-              <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-map-marker-alt text-violet-400"></i>
-              </div>
-              <div>
-                <p class="text-dark-400 text-sm">Location</p>
-                <p class="text-white font-medium">Dela Paz, Liloy, Zamboanga del Norte</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Social Links -->
-          <div class="mt-8">
-            <p class="text-dark-400 text-sm mb-4 font-medium uppercase tracking-wide">Find me on</p>
-            <div class="flex gap-3">
-              <a href="https://www.facebook.com/elvinsanity98" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-blue-500 transition-colors group">
-                <i class="fab fa-facebook text-xl group-hover:scale-110 transition-transform"></i>
-              </a>
-              <a href="https://www.instagram.com/elvinsanity98/" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-pink-500 transition-colors group">
-                <i class="fab fa-instagram text-xl group-hover:scale-110 transition-transform"></i>
-              </a>
-              <a href="https://www.tiktok.com/@eejay4u" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-white transition-colors group">
-                <i class="fab fa-tiktok text-xl group-hover:scale-110 transition-transform"></i>
-              </a>
-              <a href="mailto:elvinjhon17@gmail.com" class="w-12 h-12 rounded-xl glass glass-hover flex items-center justify-center text-dark-400 hover:text-red-400 transition-colors group">
-                <i class="fas fa-envelope text-xl group-hover:scale-110 transition-transform"></i>
-              </a>
+        <div class="info-col">
+          <p class="info-label">Open To</p>
+          <div class="info-list">
+            <div class="info-item-stacked">
+              <div class="value-line">Full-time / Part-time / Remote</div>
+              <div class="label-line">Web development, IT operations, full-stack roles. Comfortable with US, AU, EU time zones.</div>
             </div>
           </div>
         </div>
 
-        <!-- Contact Form -->
-        <div class="reveal">
-          <form id="contact-form" class="glass rounded-3xl p-8 md:p-10">
-            <div class="space-y-6">
-              <div>
-                <label class="block text-sm font-medium text-dark-300 mb-2"><i class="fas fa-user mr-2 text-primary-400"></i>Full Name</label>
-                <input type="text" name="name" placeholder="Your full name" required class="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-dark-600 focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300">
+        <div class="info-col">
+          <p class="info-label">Get in Touch</p>
+          <div class="info-list" style="gap:0">
+            <a class="info-item-row" href="mailto:elvinjhon17@gmail.com">
+              <i class="fas fa-envelope"></i>
+              <div class="info-text">
+                <div class="label-line">Email</div>
+                <div class="value-line">elvinjhon17@gmail.com</div>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-dark-300 mb-2"><i class="fas fa-envelope mr-2 text-primary-400"></i>Email Address</label>
-                <input type="email" name="email" placeholder="your@email.com" required class="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-dark-600 focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300">
+              <i class="fas fa-chevron-right chev"></i>
+            </a>
+            <a class="info-item-row" href="tel:+639606695514">
+              <i class="fas fa-phone"></i>
+              <div class="info-text">
+                <div class="label-line">Phone / Viber</div>
+                <div class="value-line">0960 669 5514</div>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-dark-300 mb-2"><i class="fas fa-comment-dots mr-2 text-primary-400"></i>Message</label>
-                <textarea name="message" rows="5" placeholder="Tell me about your project or just say hello..." required class="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-dark-600 resize-none focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300"></textarea>
+              <i class="fas fa-chevron-right chev"></i>
+            </a>
+            <a class="info-item-row" href="https://github.com/elvinsanity98" target="_blank" rel="noopener">
+              <i class="fab fa-github"></i>
+              <div class="info-text">
+                <div class="label-line">Code</div>
+                <div class="value-line">github.com/elvinsanity98</div>
               </div>
-              <button type="submit" class="btn-primary w-full text-center text-lg"><i class="fas fa-paper-plane mr-2"></i>Send Message</button>
-              <div id="form-status" class="hidden text-center py-3 rounded-xl text-sm font-medium"></div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!-- FOOTER                                       -->
-  <!-- ============================================ -->
-  <footer class="border-t border-white/5">
-    <div class="max-w-7xl mx-auto px-6 py-12">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-        <!-- Brand -->
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-primary-500/25">
-            <span class="text-white font-bold text-lg">EJ</span>
+              <i class="fas fa-chevron-right chev"></i>
+            </a>
           </div>
-          <span class="text-white font-bold text-xl">Elvin<span class="text-primary-400">Jhon</span></span>
         </div>
 
-        <!-- Copyright -->
-        <p class="text-dark-500 text-sm">
-          &copy; <span id="year"></span> Elvin Jhon. Made with <i class="fas fa-heart text-rose-500 mx-1"></i> from Zamboanga del Norte
-        </p>
-
-        <!-- Social -->
-        <div class="flex gap-4">
-          <a href="https://www.facebook.com/elvinsanity98" target="_blank" rel="noopener noreferrer" class="text-dark-500 hover:text-blue-500 transition-colors"><i class="fab fa-facebook text-lg"></i></a>
-          <a href="https://www.instagram.com/elvinsanity98/" target="_blank" rel="noopener noreferrer" class="text-dark-500 hover:text-pink-500 transition-colors"><i class="fab fa-instagram text-lg"></i></a>
-          <a href="https://www.tiktok.com/@eejay4u" target="_blank" rel="noopener noreferrer" class="text-dark-500 hover:text-white transition-colors"><i class="fab fa-tiktok text-lg"></i></a>
-          <a href="mailto:elvinjhon17@gmail.com" class="text-dark-500 hover:text-red-400 transition-colors"><i class="fas fa-envelope text-lg"></i></a>
-        </div>
       </div>
-    </div>
-  </footer>
+    </section>
 
-  <!-- BACK TO TOP -->
-  <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 rounded-xl glass flex items-center justify-center text-primary-400 shadow-lg opacity-0 translate-y-4 pointer-events-none hover:bg-white/10 active:scale-90 transition-all duration-300 z-50">
-    <i class="fas fa-arrow-up"></i>
-  </button>
+    <p class="footer-copy">© 2026 Elvin Jhon Gimena. Built with love in Liloy, Zamboanga del Norte.</p>
 
-  <script src="./js/main.js"></script>
+  </div>
+
+  <script>
+    // === Theme toggle (persisted, OS-pref aware) ===
+    // Dispatches a 'themechange' CustomEvent {detail: {theme, previous}} so other
+    // scripts (like the avatar animator) can react.
+    (function() {
+      const html = document.documentElement;
+      const toggle = document.getElementById('theme-toggle');
+      const KEY = 'ejg-theme';
+
+      function setTheme(next, persist=true) {
+        const prev = html.getAttribute('data-theme');
+        if (prev === next) return;
+        html.setAttribute('data-theme', next);
+        if (persist) localStorage.setItem(KEY, next);
+        window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next, previous: prev } }));
+      }
+
+      const saved = localStorage.getItem(KEY);
+      if (saved) {
+        setTheme(saved, false);
+      } else {
+        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        setTheme(prefersLight ? 'light' : 'dark', false);
+      }
+      toggle.addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+      });
+    })();
+
+    // === Avatar frame animation ===
+    // Plays through 40 WebP frames forward (light->dark) or reverse (dark->light)
+    // when the theme changes. Frames are preloaded in the background after page load
+    // so the first toggle is instant.
+    (function() {
+      const FRAME_COUNT = 92;
+      const FRAME_DURATION = 42;  // ms per frame -> ~24fps, ~3.9 second total transition
+      const FRAME_PATH = './images/avatar-frames/frame-';
+
+      const wrap = document.getElementById('avatar-wrap');
+      const canvas = document.getElementById('avatar-canvas');
+      const fallback = document.getElementById('avatar-fallback');
+      if (!wrap || !canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const frames = new Array(FRAME_COUNT);
+      let loadedCount = 0;
+      let ready = false;
+      let currentIdx = 0;        // which frame is currently displayed
+      let animTimer = null;       // active animation timer
+
+      // Determine initial frame index based on theme:
+      //   light theme -> frame 0 (no glasses, no transition started)
+      //   dark theme  -> last frame (glasses fully on)
+      function targetIndexForTheme(theme) {
+        return theme === 'dark' ? FRAME_COUNT - 1 : 0;
+      }
+
+      function drawFrame(idx) {
+        const img = frames[idx];
+        if (!img || !img.complete) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        currentIdx = idx;
+      }
+
+      function preloadAll() {
+        for (let i = 0; i < FRAME_COUNT; i++) {
+          const img = new Image();
+          img.decoding = 'async';
+          img.onload = () => {
+            loadedCount++;
+            if (loadedCount === FRAME_COUNT) {
+              ready = true;
+              // Snap to the correct rest frame based on current theme
+              const theme = document.documentElement.getAttribute('data-theme');
+              drawFrame(targetIndexForTheme(theme));
+              wrap.classList.add('frames-ready');
+            }
+          };
+          img.onerror = () => {
+            // Frame failed to load - count it so we don't stall, but log silently
+            loadedCount++;
+            if (loadedCount === FRAME_COUNT && !ready) {
+              ready = true;
+              wrap.classList.add('frames-ready');
+            }
+          };
+          img.src = `${FRAME_PATH}${String(i).padStart(2, '0')}.webp`;
+          frames[i] = img;
+        }
+      }
+
+      function animateTo(targetIdx) {
+        if (!ready) return;
+        if (animTimer) {
+          clearInterval(animTimer);
+          animTimer = null;
+        }
+        const direction = targetIdx > currentIdx ? 1 : -1;
+        if (direction === 0 || currentIdx === targetIdx) {
+          drawFrame(targetIdx);
+          return;
+        }
+        animTimer = setInterval(() => {
+          const next = currentIdx + direction;
+          drawFrame(next);
+          if (next === targetIdx) {
+            clearInterval(animTimer);
+            animTimer = null;
+          }
+        }, FRAME_DURATION);
+      }
+
+      // React to theme changes
+      window.addEventListener('themechange', (e) => {
+        animateTo(targetIndexForTheme(e.detail.theme));
+      });
+
+      // Honor reduced-motion: skip animation, just snap to target frame
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        // Override animateTo to instant snap
+        window.addEventListener('themechange', (e) => {
+          if (ready) drawFrame(targetIndexForTheme(e.detail.theme));
+        });
+      }
+
+      // Kick off preloading after the page is ready (don't block initial paint)
+      if (document.readyState === 'complete') {
+        preloadAll();
+      } else {
+        window.addEventListener('load', preloadAll, { once: true });
+      }
+    })();
+
+    // === Achievement dropdown ===
+    // Click only — and only the arrow button opens it.
+    // Chip body navigates to #certs as a normal link.
+    (function() {
+      const wrap = document.getElementById('ach-wrap');
+      const arrow = document.getElementById('ach-chip-arrow');
+      const menu = document.getElementById('ach-menu');
+      if (!wrap || !arrow || !menu) return;
+
+      const open  = () => { wrap.classList.add('open');    arrow.setAttribute('aria-expanded', 'true');  };
+      const close = () => { wrap.classList.remove('open'); arrow.setAttribute('aria-expanded', 'false'); };
+      const toggle = () => wrap.classList.contains('open') ? close() : open();
+
+      arrow.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        toggle();
+      });
+
+      // Click outside to close
+      document.addEventListener('click', (e) => {
+        if (!wrap.contains(e.target)) close();
+      });
+
+      // Esc to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+      });
+
+      // Close after picking an item (so menu doesn't linger after navigation)
+      menu.querySelectorAll('.ach-item').forEach(a => {
+        a.addEventListener('click', () => setTimeout(close, 100));
+      });
+    })();
+
+    // === Experience timeline dots ===
+    // Click a dot to move the highlight there (single-select).
+    // Clicking the already-highlighted item un-highlights it and reverts to "current" default.
+    (function() {
+      const items = Array.from(document.querySelectorAll('.exp-item'));
+      items.forEach(item => {
+        const dot = item.querySelector('.exp-mark');
+        if (!dot) return;
+        dot.addEventListener('click', () => {
+          const wasActive = item.classList.contains('active');
+          // Clear all active states first
+          items.forEach(i => i.classList.remove('active'));
+          // If this one wasn't active before, activate it (toggles off if already active)
+          if (!wasActive) item.classList.add('active');
+        });
+      });
+    })();
+  </script>
+
 </body>
 </html>
