@@ -1454,6 +1454,141 @@
           </div>
         </section>
 
+        <!-- Recommendations (looping carousel) -->
+        <section class="card rc" id="recs"
+                 aria-roledescription="carousel" aria-label="Recommendations">
+          <h2 class="card-title">Recommendations</h2>
+          <div class="rc-viewport" id="rc-slides" aria-live="off">
+
+            <div class="rc-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 3">
+              <i class="fas fa-quote-left rc-quote-icon" aria-hidden="true"></i>
+              <blockquote class="rc-quote">Elvin is proactive in his field and remarkably resourceful and patient in his work. Even when everyone is calling on him at once, he still manages calmly and without getting flustered. His knowledge of information technology is genuinely wide &mdash; he can do graphic design, networking, hardware, and even cybersecurity. He has also built software and apps that solved real problems in our bank and made our work lighter. There was even a year when he was the only IT person in the department, and he still kept everything running.</blockquote>
+              <div class="rc-cite">
+                <span class="rc-avatar" aria-hidden="true">MB</span>
+                <div class="rc-meta">
+                  <div class="rc-name">Marynoll A. Brasileno</div>
+                  <div class="rc-role">President &amp; CEO</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="2 of 3" hidden aria-hidden="true">
+              <i class="fas fa-quote-left rc-quote-icon" aria-hidden="true"></i>
+              <blockquote class="rc-quote">When we audited the IT Department headed by Mr. Elvin Jhon Gimena, we found no exceptions, as the team met every IT compliance requirement and documented the IT audit properly. We were also impressed with the inventory system he developed for the bank, which keeps the recording of equipment well organized.</blockquote>
+              <div class="rc-cite">
+                <span class="rc-avatar" aria-hidden="true">MC</span>
+                <div class="rc-meta">
+                  <div class="rc-name">Mary Jane T. Chiong</div>
+                  <div class="rc-role">IT Auditor</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="3 of 3" hidden aria-hidden="true">
+              <i class="fas fa-quote-left rc-quote-icon" aria-hidden="true"></i>
+              <blockquote class="rc-quote">I didn&rsquo;t even know this guy also works at a bank &mdash; I still can&rsquo;t believe he finished our system when his only free time was at night, and there was no AI back then. He built our system properly, and whenever there were minor bugs, he could still fix them quickly with just one call. Our website is an e-commerce site, by the way, with a lot of visitors every day. This guy is great with AI too &mdash; he even added AI into our system, hehe.</blockquote>
+              <div class="rc-cite">
+                <span class="rc-avatar" aria-hidden="true">TR</span>
+                <div class="rc-meta">
+                  <div class="rc-name">Tryke Guanzon Reyes</div>
+                  <div class="rc-role">E-commerce Client</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="rc-controls">
+            <button type="button" class="rc-btn" id="rc-prev" aria-label="Previous recommendation">
+              <i class="fas fa-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="rc-btn" id="rc-toggle" aria-label="Pause automatic rotation">
+              <i class="fas fa-pause" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="rc-btn" id="rc-next" aria-label="Next recommendation">
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </button>
+            <div class="rc-dots" id="rc-dots" role="group" aria-label="Choose a recommendation"></div>
+          </div>
+        </section>
+        <script>
+          (function() {
+            var root = document.getElementById('recs');
+            if (!root) return;
+            var slides = Array.prototype.slice.call(root.querySelectorAll('.rc-slide'));
+            var live = document.getElementById('rc-slides');
+            var dotsWrap = document.getElementById('rc-dots');
+            var prev = document.getElementById('rc-prev');
+            var next = document.getElementById('rc-next');
+            var toggle = document.getElementById('rc-toggle');
+            if (slides.length < 2) return;
+
+            var idx = 0, timer = null, DELAY = 8000;
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var userPaused = reduce;
+            var hover = false, focusIn = false;
+
+            var dots = slides.map(function(_, i) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'rc-dot' + (i === 0 ? ' is-active' : '');
+              b.setAttribute('aria-label', 'Show recommendation ' + (i + 1) + ' of ' + slides.length);
+              b.addEventListener('click', function() { manual(i); });
+              dotsWrap.appendChild(b);
+              return b;
+            });
+
+            function render() {
+              slides.forEach(function(s, i) {
+                var on = i === idx;
+                s.classList.toggle('is-active', on);
+                if (on) { s.removeAttribute('hidden'); s.removeAttribute('aria-hidden'); }
+                else { s.setAttribute('hidden', ''); s.setAttribute('aria-hidden', 'true'); }
+                dots[i].classList.toggle('is-active', on);
+                dots[i].setAttribute('aria-current', on ? 'true' : 'false');
+              });
+            }
+            function show(n) { idx = (n + slides.length) % slides.length; render(); }
+            function step() { show(idx + 1); }
+            function running() { return !userPaused && !hover && !focusIn && !document.hidden && !reduce; }
+            function sync() {
+              if (running()) {
+                if (!timer) timer = setInterval(step, DELAY);
+                live.setAttribute('aria-live', 'off');
+              } else {
+                if (timer) { clearInterval(timer); timer = null; }
+                live.setAttribute('aria-live', 'polite');
+              }
+            }
+            function setToggle() {
+              var playing = !userPaused;
+              toggle.innerHTML = '<i class="fas fa-' + (playing ? 'pause' : 'play') + '" aria-hidden="true"></i>';
+              toggle.setAttribute('aria-label', playing ? 'Pause automatic rotation' : 'Start automatic rotation');
+            }
+            function manual(n) { show(n); userPaused = true; setToggle(); sync(); }
+
+            prev.addEventListener('click', function() { manual(idx - 1); });
+            next.addEventListener('click', function() { manual(idx + 1); });
+            toggle.addEventListener('click', function() {
+              userPaused = !userPaused; setToggle(); sync();
+            });
+            root.addEventListener('mouseenter', function() { hover = true; sync(); });
+            root.addEventListener('mouseleave', function() { hover = false; sync(); });
+            root.addEventListener('focusin', function() { focusIn = true; sync(); });
+            root.addEventListener('focusout', function() {
+              if (!root.contains(document.activeElement)) { focusIn = false; sync(); }
+            });
+            root.addEventListener('keydown', function(e) {
+              if (e.key === 'ArrowLeft') { manual(idx - 1); }
+              else if (e.key === 'ArrowRight') { manual(idx + 1); }
+            });
+            document.addEventListener('visibilitychange', sync);
+
+            render();
+            setToggle();
+            sync();
+          })();
+        </script>
+
       </div>
       <!-- ============== END RIGHT COLUMN ============== -->
 
@@ -1510,143 +1645,6 @@
         </a>
       </div>
     </section>
-
-    <!-- ======================================================== -->
-    <!-- RECOMMENDATIONS (looping carousel)                        -->
-    <!-- ======================================================== -->
-    <section class="card rc" id="recs" style="margin-top:16px"
-             aria-roledescription="carousel" aria-label="Recommendations">
-      <h2 class="card-title">Recommendations</h2>
-      <div class="rc-viewport" id="rc-slides" aria-live="off">
-
-        <div class="rc-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 3">
-          <i class="fas fa-quote-left rc-quote-icon" aria-hidden="true"></i>
-          <blockquote class="rc-quote">Elvin is proactive in his field and remarkably resourceful and patient in his work. Even when everyone is calling on him at once, he still manages calmly and without getting flustered. His knowledge of information technology is genuinely wide &mdash; he can do graphic design, networking, hardware, and even cybersecurity. He has also built software and apps that solved real problems in our bank and made our work lighter. There was even a year when he was the only IT person in the department, and he still kept everything running.</blockquote>
-          <div class="rc-cite">
-            <span class="rc-avatar" aria-hidden="true">MB</span>
-            <div class="rc-meta">
-              <div class="rc-name">Marynoll A. Brasileno</div>
-              <div class="rc-role">President &amp; CEO</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="2 of 3" hidden aria-hidden="true">
-          <i class="fas fa-quote-left rc-quote-icon" aria-hidden="true"></i>
-          <blockquote class="rc-quote">When we audited the IT Department headed by Mr. Elvin Jhon Gimena, we found no exceptions, as the team met every IT compliance requirement and documented the IT audit properly. We were also impressed with the inventory system he developed for the bank, which keeps the recording of equipment well organized.</blockquote>
-          <div class="rc-cite">
-            <span class="rc-avatar" aria-hidden="true">MC</span>
-            <div class="rc-meta">
-              <div class="rc-name">Mary Jane T. Chiong</div>
-              <div class="rc-role">IT Auditor</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="3 of 3" hidden aria-hidden="true">
-          <i class="fas fa-quote-left rc-quote-icon" aria-hidden="true"></i>
-          <blockquote class="rc-quote">I didn&rsquo;t even know this guy also works at a bank &mdash; I still can&rsquo;t believe he finished our system when his only free time was at night, and there was no AI back then. He built our system properly, and whenever there were minor bugs, he could still fix them quickly with just one call. Our website is an e-commerce site, by the way, with a lot of visitors every day. This guy is great with AI too &mdash; he even added AI into our system, hehe.</blockquote>
-          <div class="rc-cite">
-            <span class="rc-avatar" aria-hidden="true">TR</span>
-            <div class="rc-meta">
-              <div class="rc-name">Tryke Guanzon Reyes</div>
-              <div class="rc-role">E-commerce Client</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="rc-controls">
-        <button type="button" class="rc-btn" id="rc-prev" aria-label="Previous recommendation">
-          <i class="fas fa-chevron-left" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="rc-btn" id="rc-toggle" aria-label="Pause automatic rotation">
-          <i class="fas fa-pause" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="rc-btn" id="rc-next" aria-label="Next recommendation">
-          <i class="fas fa-chevron-right" aria-hidden="true"></i>
-        </button>
-        <div class="rc-dots" id="rc-dots" role="group" aria-label="Choose a recommendation"></div>
-      </div>
-    </section>
-    <script>
-      (function() {
-        var root = document.getElementById('recs');
-        if (!root) return;
-        var slides = Array.prototype.slice.call(root.querySelectorAll('.rc-slide'));
-        var live = document.getElementById('rc-slides');
-        var dotsWrap = document.getElementById('rc-dots');
-        var prev = document.getElementById('rc-prev');
-        var next = document.getElementById('rc-next');
-        var toggle = document.getElementById('rc-toggle');
-        if (slides.length < 2) return;
-
-        var idx = 0, timer = null, DELAY = 8000;
-        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var userPaused = reduce;
-        var hover = false, focusIn = false;
-
-        var dots = slides.map(function(_, i) {
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.className = 'rc-dot' + (i === 0 ? ' is-active' : '');
-          b.setAttribute('aria-label', 'Show recommendation ' + (i + 1) + ' of ' + slides.length);
-          b.addEventListener('click', function() { manual(i); });
-          dotsWrap.appendChild(b);
-          return b;
-        });
-
-        function render() {
-          slides.forEach(function(s, i) {
-            var on = i === idx;
-            s.classList.toggle('is-active', on);
-            if (on) { s.removeAttribute('hidden'); s.removeAttribute('aria-hidden'); }
-            else { s.setAttribute('hidden', ''); s.setAttribute('aria-hidden', 'true'); }
-            dots[i].classList.toggle('is-active', on);
-            dots[i].setAttribute('aria-current', on ? 'true' : 'false');
-          });
-        }
-        function show(n) { idx = (n + slides.length) % slides.length; render(); }
-        function step() { show(idx + 1); }
-        function running() { return !userPaused && !hover && !focusIn && !document.hidden && !reduce; }
-        function sync() {
-          if (running()) {
-            if (!timer) timer = setInterval(step, DELAY);
-            live.setAttribute('aria-live', 'off');
-          } else {
-            if (timer) { clearInterval(timer); timer = null; }
-            live.setAttribute('aria-live', 'polite');
-          }
-        }
-        function setToggle() {
-          var playing = !userPaused;
-          toggle.innerHTML = '<i class="fas fa-' + (playing ? 'pause' : 'play') + '" aria-hidden="true"></i>';
-          toggle.setAttribute('aria-label', playing ? 'Pause automatic rotation' : 'Start automatic rotation');
-        }
-        function manual(n) { show(n); userPaused = true; setToggle(); sync(); }
-
-        prev.addEventListener('click', function() { manual(idx - 1); });
-        next.addEventListener('click', function() { manual(idx + 1); });
-        toggle.addEventListener('click', function() {
-          userPaused = !userPaused; setToggle(); sync();
-        });
-        root.addEventListener('mouseenter', function() { hover = true; sync(); });
-        root.addEventListener('mouseleave', function() { hover = false; sync(); });
-        root.addEventListener('focusin', function() { focusIn = true; sync(); });
-        root.addEventListener('focusout', function() {
-          if (!root.contains(document.activeElement)) { focusIn = false; sync(); }
-        });
-        root.addEventListener('keydown', function(e) {
-          if (e.key === 'ArrowLeft') { manual(idx - 1); }
-          else if (e.key === 'ArrowRight') { manual(idx + 1); }
-        });
-        document.addEventListener('visibilitychange', sync);
-
-        render();
-        setToggle();
-        sync();
-      })();
-    </script>
 
     <!-- ======================================================== -->
     <!-- INFO ROW (3 columns: Social Links, Open To, Get in Touch)  -->
