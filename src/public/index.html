@@ -1664,6 +1664,80 @@
       }
     })();
 
+    // === Animated favicon: frame-by-frame loop reusing the avatar frames ===
+    // Draws each sampled frame to a 64px canvas, caches PNG data URLs, then
+    // ping-pongs a dedicated <link rel="icon"> so the browser tab icon loops.
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var ref = document.querySelector('link[rel="icon"][sizes="32x32"]')
+             || document.querySelector('link[rel="icon"]');
+      if (!ref || !ref.getAttribute('href')) return;
+      var base = ref.getAttribute('href').replace(/favicon[^/]*$/, 'avatar-frames/frame-');
+      if (base.indexOf('avatar-frames/frame-') === -1) return;
+
+      var SIZE = 64, TOTAL = 92, STEP = 2, INTERVAL = 60;
+      var canvas = document.createElement('canvas');
+      canvas.width = canvas.height = SIZE;
+      var ctx = canvas.getContext && canvas.getContext('2d');
+      if (!ctx) return;
+
+      var order = [];
+      for (var i = 0; i < TOTAL; i += STEP) order.push(i);
+      var urls = new Array(order.length);
+      var done = 0, started = false;
+
+      var link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/png';
+
+      function start() {
+        if (started) return;
+        started = true;
+        var frames = urls.filter(function(u) { return !!u; });
+        if (!frames.length) return;
+        document.querySelectorAll('link[rel="icon"]').forEach(function(l) {
+          if (l.parentNode) l.parentNode.removeChild(l);
+        });
+        document.head.appendChild(link);
+        var pos = 0, dir = 1, timer = null;
+        function tick() {
+          link.href = frames[pos];
+          pos += dir;
+          if (pos >= frames.length - 1) { pos = frames.length - 1; dir = -1; }
+          else if (pos <= 0) { pos = 0; dir = 1; }
+        }
+        function play()  { if (!timer) { tick(); timer = setInterval(tick, INTERVAL); } }
+        function pause() { if (timer) { clearInterval(timer); timer = null; } }
+        play();
+        document.addEventListener('visibilitychange', function() {
+          if (document.hidden) pause(); else play();
+        });
+      }
+
+      function preload() {
+        order.forEach(function(frameNo, k) {
+          var img = new Image();
+          img.decoding = 'async';
+          img.onload = function() {
+            try {
+              ctx.clearRect(0, 0, SIZE, SIZE);
+              ctx.drawImage(img, 0, 0, SIZE, SIZE);
+              urls[k] = canvas.toDataURL('image/png');
+            } catch (e) { urls[k] = null; }
+            if (++done === order.length) start();
+          };
+          img.onerror = function() {
+            urls[k] = null;
+            if (++done === order.length) start();
+          };
+          img.src = base + String(frameNo).padStart(2, '0') + '.webp';
+        });
+      }
+
+      if (document.readyState === 'complete') preload();
+      else window.addEventListener('load', preload, { once: true });
+    })();
+
     // === Achievement dropdown ===
     // Click only — and only the arrow button opens it.
     // Chip body navigates to #certs as a normal link.
