@@ -812,19 +812,14 @@
     /* ================================================================
        ACCESS CARD — BONG-DA-DEV, 3D hover tilt (always dark object)
        ================================================================ */
-    .acard-section {
-      display: flex;
-      justify-content: center;
-      padding: 28px 0 10px;
-    }
     .acard-scene {
       perspective: 1100px;
-      width: min(340px, 86vw);
+      width: 100%;
     }
     .acard {
       position: relative;
       width: 100%;
-      aspect-ratio: 1 / 1.34;
+      aspect-ratio: 1 / 1.1;
       border-radius: 18px;
       padding: 26px 26px 24px;
       display: flex;
@@ -1145,65 +1140,6 @@
     </section>
 
     <!-- ======================================================== -->
-    <!-- ACCESS CARD (BONG-DA-DEV) — 3D hover tilt                -->
-    <!-- ======================================================== -->
-    <section class="acard-section" aria-label="BONG-DA-DEV access card">
-      <div class="acard-scene" id="acard-scene">
-        <div class="acard" id="acard">
-          <div class="acard-glare" aria-hidden="true"></div>
-          <div class="acard-prompt" aria-hidden="true">&gt;_</div>
-          <div class="acard-brand">
-            <div class="acard-title">BONG-DA-DEV</div>
-            <div class="acard-sub">ACCESS CARD</div>
-          </div>
-          <div class="acard-member">
-            <div class="acard-label">FOUNDING MEMBER</div>
-            <div class="acard-name">ELVIN</div>
-          </div>
-          <div class="acard-foot">
-            <span class="acard-role">DEVELOPER</span>
-            <a class="acard-qr" href="https://elvinsanity98.github.io/elvin-jhon-portfolio/"
-               aria-label="Open portfolio website (QR code)">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 39 39" shape-rendering="crispEdges"><path stroke="#e9e9ec" d="M1 1.5h7m1 0h1m2 0h1m1 0h2m1 0h1m3 0h1m1 0h1m1 0h2m2 0h1m1 0h7M1 2.5h1m5 0h1m2 0h1m1 0h6m1 0h1m2 0h1m3 0h3m2 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m2 0h1m5 0h1m4 0h3m1 0h1m3 0h1m1 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m5 0h3m1 0h5m1 0h1m1 0h2m4 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h1m3 0h1m3 0h1m2 0h3m1 0h1m1 0h1m4 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h1m3 0h1m1 0h2m1 0h6m2 0h4m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M12 8.5h1m2 0h2m5 0h3m2 0h1m1 0h1M2 9.5h7m1 0h1m4 0h3m2 0h1m2 0h2m7 0h2m3 0h1M1 10.5h1m3 0h1m2 0h3m4 0h2m2 0h1m1 0h1m2 0h1m1 0h1m5 0h1m1 0h1M1 11.5h2m4 0h1m2 0h2m2 0h1m1 0h1m6 0h1m1 0h5m1 0h7M1 12.5h3m2 0h1m1 0h1m6 0h1m3 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h3m2 0h2M4 13.5h4m2 0h3m2 0h2m2 0h1m4 0h4m2 0h2m1 0h1m1 0h1M1 14.5h1m2 0h3m2 0h1m2 0h1m1 0h1m1 0h2m3 0h1m2 0h1m4 0h2m1 0h1m1 0h2M2 15.5h3m1 0h2m1 0h1m3 0h1m5 0h1m3 0h1m1 0h5m2 0h1m1 0h1m1 0h2M1 16.5h2m3 0h1m1 0h1m2 0h3m4 0h1m5 0h1m2 0h2m1 0h3m3 0h2M1 17.5h3m3 0h1m2 0h4m3 0h2m1 0h4m1 0h3m3 0h3m1 0h1m1 0h1M1 18.5h2m3 0h1m4 0h3m2 0h2m1 0h1m1 0h1m4 0h1m3 0h1m1 0h1m2 0h1M2 19.5h3m1 0h5m1 0h1m2 0h1m2 0h4m1 0h3m1 0h2m1 0h1m3 0h4M5 20.5h2m1 0h1m1 0h2m1 0h1m2 0h1m1 0h2m2 0h1m1 0h1m2 0h2m2 0h2m3 0h2M1 21.5h1m1 0h5m1 0h3m1 0h1m1 0h1m3 0h1m1 0h1m1 0h5m2 0h8M3 22.5h4m1 0h1m1 0h3m3 0h3m2 0h4m1 0h1m3 0h1m1 0h1m2 0h2M4 23.5h2m1 0h3m2 0h1m2 0h2m8 0h4m1 0h1m4 0h3M2 24.5h1m2 0h1m2 0h1m4 0h2m2 0h4m1 0h1m2 0h2m4 0h2m1 0h1m1 0h1M2 25.5h2m3 0h1m1 0h2m7 0h1m5 0h2m1 0h1m2 0h2m1 0h4M1 26.5h2m1 0h2m2 0h1m3 0h1m1 0h2m4 0h2m2 0h1m4 0h1m2 0h1M1 27.5h1m2 0h9m1 0h1m1 0h2m3 0h3m1 0h1m1 0h3m1 0h1m1 0h2m1 0h2M1 28.5h1m4 0h1m1 0h3m1 0h1m1 0h1m1 0h4m2 0h2m3 0h2m1 0h1m1 0h1M1 29.5h1m1 0h2m1 0h2m3 0h5m2 0h1m4 0h1m2 0h2m1 0h8M9 30.5h1m1 0h1m1 0h2m1 0h1m3 0h1m1 0h3m1 0h1m1 0h2m3 0h1M1 31.5h7m1 0h1m1 0h1m2 0h2m3 0h2m1 0h1m2 0h1m3 0h1m1 0h1m1 0h2m1 0h2M1 32.5h1m5 0h1m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m1 0h3m3 0h1m1 0h1m3 0h1m2 0h1M1 33.5h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h1m1 0h8m1 0h1m1 0h1M1 34.5h1m1 0h3m1 0h1m1 0h1m3 0h6m2 0h3m1 0h5m1 0h1m1 0h4M1 35.5h1m1 0h3m1 0h1m1 0h1m2 0h1m2 0h2m1 0h1m1 0h1m1 0h1m3 0h1m3 0h1m1 0h1m4 0h1M1 36.5h1m5 0h1m1 0h1m1 0h1m1 0h4m1 0h5m2 0h1m3 0h1m2 0h2m3 0h1M1 37.5h7m2 0h3m1 0h1m1 0h1m3 0h1m2 0h1m1 0h4m1 0h4m1 0h3"/></svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <script>
-      (function() {
-        var scene = document.getElementById('acard-scene');
-        var card  = document.getElementById('acard');
-        if (!scene || !card) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        var MAX = 9, rafId = null, tx = 0, ty = 0;
-        function apply() {
-          rafId = null;
-          card.style.setProperty('--rx', tx.toFixed(2) + 'deg');
-          card.style.setProperty('--ry', ty.toFixed(2) + 'deg');
-        }
-        function onMove(e) {
-          var r = card.getBoundingClientRect();
-          var px = (e.clientX - r.left) / r.width;
-          var py = (e.clientY - r.top) / r.height;
-          tx = (px - 0.5) * (MAX * 2);
-          ty = (0.5 - py) * (MAX * 2);
-          card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
-          card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
-          if (!rafId) rafId = requestAnimationFrame(apply);
-        }
-        scene.addEventListener('pointerenter', function() { card.classList.add('is-tilting'); });
-        scene.addEventListener('pointermove', onMove);
-        scene.addEventListener('pointerleave', function() {
-          card.classList.remove('is-tilting');
-          if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-          card.style.setProperty('--rx', '0deg');
-          card.style.setProperty('--ry', '0deg');
-        });
-      })();
-    </script>
-
-    <!-- ======================================================== -->
     <!-- MAIN 2-COLUMN GRID                                       -->
     <!-- ======================================================== -->
     <div class="main-grid">
@@ -1336,6 +1272,60 @@
 
       <!-- ============== RIGHT COLUMN (sidebar) ============== -->
       <div class="stack">
+        <!-- Access card (BONG-DA-DEV) - 3D hover tilt -->
+        <div class="acard-scene" id="acard-scene">
+          <div class="acard" id="acard">
+            <div class="acard-glare" aria-hidden="true"></div>
+            <div class="acard-prompt" aria-hidden="true">&gt;_</div>
+            <div class="acard-brand">
+              <div class="acard-title">BONG-DA-DEV</div>
+              <div class="acard-sub">ACCESS CARD</div>
+            </div>
+            <div class="acard-member">
+              <div class="acard-label">FOUNDING MEMBER</div>
+              <div class="acard-name">ELVIN</div>
+            </div>
+            <div class="acard-foot">
+              <span class="acard-role">DEVELOPER</span>
+              <a class="acard-qr" href="https://elvinsanity98.github.io/elvin-jhon-portfolio/"
+                 aria-label="Open portfolio website (QR code)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 39 39" shape-rendering="crispEdges"><path stroke="#e9e9ec" d="M1 1.5h7m1 0h1m2 0h1m1 0h2m1 0h1m3 0h1m1 0h1m1 0h2m2 0h1m1 0h7M1 2.5h1m5 0h1m2 0h1m1 0h6m1 0h1m2 0h1m3 0h3m2 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m2 0h1m5 0h1m4 0h3m1 0h1m3 0h1m1 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m5 0h3m1 0h5m1 0h1m1 0h2m4 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h1m3 0h1m3 0h1m2 0h3m1 0h1m1 0h1m4 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h1m3 0h1m1 0h2m1 0h6m2 0h4m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M12 8.5h1m2 0h2m5 0h3m2 0h1m1 0h1M2 9.5h7m1 0h1m4 0h3m2 0h1m2 0h2m7 0h2m3 0h1M1 10.5h1m3 0h1m2 0h3m4 0h2m2 0h1m1 0h1m2 0h1m1 0h1m5 0h1m1 0h1M1 11.5h2m4 0h1m2 0h2m2 0h1m1 0h1m6 0h1m1 0h5m1 0h7M1 12.5h3m2 0h1m1 0h1m6 0h1m3 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h3m2 0h2M4 13.5h4m2 0h3m2 0h2m2 0h1m4 0h4m2 0h2m1 0h1m1 0h1M1 14.5h1m2 0h3m2 0h1m2 0h1m1 0h1m1 0h2m3 0h1m2 0h1m4 0h2m1 0h1m1 0h2M2 15.5h3m1 0h2m1 0h1m3 0h1m5 0h1m3 0h1m1 0h5m2 0h1m1 0h1m1 0h2M1 16.5h2m3 0h1m1 0h1m2 0h3m4 0h1m5 0h1m2 0h2m1 0h3m3 0h2M1 17.5h3m3 0h1m2 0h4m3 0h2m1 0h4m1 0h3m3 0h3m1 0h1m1 0h1M1 18.5h2m3 0h1m4 0h3m2 0h2m1 0h1m1 0h1m4 0h1m3 0h1m1 0h1m2 0h1M2 19.5h3m1 0h5m1 0h1m2 0h1m2 0h4m1 0h3m1 0h2m1 0h1m3 0h4M5 20.5h2m1 0h1m1 0h2m1 0h1m2 0h1m1 0h2m2 0h1m1 0h1m2 0h2m2 0h2m3 0h2M1 21.5h1m1 0h5m1 0h3m1 0h1m1 0h1m3 0h1m1 0h1m1 0h5m2 0h8M3 22.5h4m1 0h1m1 0h3m3 0h3m2 0h4m1 0h1m3 0h1m1 0h1m2 0h2M4 23.5h2m1 0h3m2 0h1m2 0h2m8 0h4m1 0h1m4 0h3M2 24.5h1m2 0h1m2 0h1m4 0h2m2 0h4m1 0h1m2 0h2m4 0h2m1 0h1m1 0h1M2 25.5h2m3 0h1m1 0h2m7 0h1m5 0h2m1 0h1m2 0h2m1 0h4M1 26.5h2m1 0h2m2 0h1m3 0h1m1 0h2m4 0h2m2 0h1m4 0h1m2 0h1M1 27.5h1m2 0h9m1 0h1m1 0h2m3 0h3m1 0h1m1 0h3m1 0h1m1 0h2m1 0h2M1 28.5h1m4 0h1m1 0h3m1 0h1m1 0h1m1 0h4m2 0h2m3 0h2m1 0h1m1 0h1M1 29.5h1m1 0h2m1 0h2m3 0h5m2 0h1m4 0h1m2 0h2m1 0h8M9 30.5h1m1 0h1m1 0h2m1 0h1m3 0h1m1 0h3m1 0h1m1 0h2m3 0h1M1 31.5h7m1 0h1m1 0h1m2 0h2m3 0h2m1 0h1m2 0h1m3 0h1m1 0h1m1 0h2m1 0h2M1 32.5h1m5 0h1m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m1 0h3m3 0h1m1 0h1m3 0h1m2 0h1M1 33.5h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h1m1 0h8m1 0h1m1 0h1M1 34.5h1m1 0h3m1 0h1m1 0h1m3 0h6m2 0h3m1 0h5m1 0h1m1 0h4M1 35.5h1m1 0h3m1 0h1m1 0h1m2 0h1m2 0h2m1 0h1m1 0h1m1 0h1m3 0h1m3 0h1m1 0h1m4 0h1M1 36.5h1m5 0h1m1 0h1m1 0h1m1 0h4m1 0h5m2 0h1m3 0h1m2 0h2m3 0h1M1 37.5h7m2 0h3m1 0h1m1 0h1m3 0h1m2 0h1m1 0h4m1 0h4m1 0h3"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function() {
+            var scene = document.getElementById('acard-scene');
+            var card  = document.getElementById('acard');
+            if (!scene || !card) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var MAX = 9, rafId = null, tx = 0, ty = 0;
+            function apply() {
+              rafId = null;
+              card.style.setProperty('--rx', tx.toFixed(2) + 'deg');
+              card.style.setProperty('--ry', ty.toFixed(2) + 'deg');
+            }
+            function onMove(e) {
+              var r = card.getBoundingClientRect();
+              var px = (e.clientX - r.left) / r.width;
+              var py = (e.clientY - r.top) / r.height;
+              tx = (px - 0.5) * (MAX * 2);
+              ty = (0.5 - py) * (MAX * 2);
+              card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+              card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+              if (!rafId) rafId = requestAnimationFrame(apply);
+            }
+            scene.addEventListener('pointerenter', function() { card.classList.add('is-tilting'); });
+            scene.addEventListener('pointermove', onMove);
+            scene.addEventListener('pointerleave', function() {
+              card.classList.remove('is-tilting');
+              if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+              card.style.setProperty('--rx', '0deg');
+              card.style.setProperty('--ry', '0deg');
+            });
+          })();
+        </script>
 
         <!-- Experience timeline -->
         <section class="card">
