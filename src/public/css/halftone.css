@@ -1,0 +1,656 @@
+/* ==========================================================================
+   HALFTONE LAYOUT: the portfolio's second theme
+   --------------------------------------------------------------------------
+   Active only when <html data-layout="halftone"> (set before first paint from
+   site-config.js). It reuses the classic layout's markup: this file reskins
+   it and reveals the .ht-only extras (sidebar, halftone portrait, highlights
+   strip, GitHub section). Nothing here applies to data-layout="classic".
+   ========================================================================== */
+
+/* Extras never show in the classic layout */
+html:not([data-layout="halftone"]) .ht-only { display: none !important; }
+
+/* ==========================================================================
+   TOKENS: monochrome; the accent is the ink colour
+   ========================================================================== */
+html[data-layout="halftone"] {
+  --ht-mono:  'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --ht-pixel: 'Geist Pixel', 'Geist Mono', 'JetBrains Mono', monospace;
+  --ht-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --ht-side-w: 224px;
+  scroll-padding-top: 24px;
+}
+html[data-layout="halftone"][data-theme="light"] {
+  --bg:            #ffffff;
+  --bg-page:       #ffffff;
+  --card:          #ffffff;
+  --card-soft:     #f5f5f5;
+  --border:        #e9e9e9;
+  --border-strong: #d4d4d4;
+  --text:          #0a0a0a;
+  --text-soft:     #525252;
+  --text-muted:    #737373;
+  --text-faint:    #a3a3a3;
+  --accent:        #0a0a0a;
+  --accent-soft:   #f5f5f5;
+  --accent-text:   #0a0a0a;
+  --ht-raise:      #fafafa;
+  --ht-dot:        rgba(10, 10, 10, 0.11);
+  color-scheme: light;
+}
+html[data-layout="halftone"][data-theme="dark"] {
+  --bg:            #0c0c0f;
+  --bg-page:       #0c0c0f;
+  --card:          #0c0c0f;
+  --card-soft:     #1e1e22;
+  --border:        #2a2a30;
+  --border-strong: #3a3a42;
+  --text:          #f4f4f5;
+  --text-soft:     #b8b8c0;
+  --text-muted:    #a0a0a8;
+  --text-faint:    #8a8a92;
+  --accent:        #f4f4f5;
+  --accent-soft:   #1e1e22;
+  --accent-text:   #f4f4f5;
+  --ht-raise:      #131316;
+  --ht-dot:        rgba(244, 244, 245, 0.10);
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   PAGE FRAME: fixed sidebar + one narrow column
+   ========================================================================== */
+html[data-layout="halftone"],
+html[data-layout="halftone"] body {
+  font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+html[data-layout="halftone"] body { position: relative; overflow-x: hidden; }
+html[data-layout="halftone"] ::selection { background: var(--text); color: var(--bg); }
+
+/* Faint dot field fading out behind the hero */
+html[data-layout="halftone"] body::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 560px;
+  pointer-events: none; z-index: 0;
+  background-image: radial-gradient(var(--ht-dot) 1px, transparent 1.6px);
+  background-size: 14px 14px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+}
+
+html[data-layout="halftone"] .page {
+  position: relative; z-index: 1;
+  max-width: 672px;
+  margin: 0 auto;
+  padding: 0 24px 56px;
+  display: flex; flex-direction: column;
+}
+@media (min-width: 1024px) {
+  html[data-layout="halftone"] body { padding-left: var(--ht-side-w); }
+}
+
+/* The classic two-column wrappers dissolve so every section is one flex item,
+   then `order` puts them in the halftone reading order. */
+html[data-layout="halftone"] .main-grid,
+html[data-layout="halftone"] .main-grid > .stack { display: contents; }
+
+html[data-layout="halftone"] .hero        { order: 1; }
+html[data-layout="halftone"] .ht-stats    { order: 2; }
+html[data-layout="halftone"] #about       { order: 3; }
+html[data-layout="halftone"] .acard-scene { order: 4; }
+html[data-layout="halftone"] #projects    { order: 5; }
+html[data-layout="halftone"] #experience  { order: 6; }
+html[data-layout="halftone"] #tech        { order: 7; }
+html[data-layout="halftone"] #certs       { order: 8; }
+html[data-layout="halftone"] #recs        { order: 9; }
+html[data-layout="halftone"] #github      { order: 10; }
+html[data-layout="halftone"] #contact     { order: 11; }
+html[data-layout="halftone"] .footer-copy { order: 12; }
+
+/* ==========================================================================
+   SIDEBAR (desktop) + TOP BAR (mobile)
+   ========================================================================== */
+html[data-layout="halftone"] .ht-side {
+  position: fixed; top: 0; bottom: 0; left: 0; z-index: 50;
+  width: var(--ht-side-w);
+  padding: 32px 28px;
+  display: none; flex-direction: column;
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+@media (min-width: 1024px) {
+  html[data-layout="halftone"] .ht-side { display: flex; }
+}
+
+html[data-layout="halftone"] .ht-brand {
+  font-family: var(--ht-pixel);
+  font-size: 15px; line-height: 1;
+  color: var(--text);
+  flex-shrink: 0;
+  transition: opacity 200ms;
+}
+html[data-layout="halftone"] .ht-brand:hover { opacity: 0.6; }
+
+html[data-layout="halftone"] .ht-nav {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 11px;
+  margin-top: 30px;
+}
+html[data-layout="halftone"] .ht-nav + .ht-nav {
+  margin-top: 22px; padding-top: 22px;
+  border-top: 1px solid var(--border);
+  align-self: stretch;
+}
+html[data-layout="halftone"] .ht-nav a {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--ht-mono);
+  font-size: 13px; line-height: 1.5;
+  color: var(--text-muted);
+  transition: color 200ms;
+}
+html[data-layout="halftone"] .ht-nav a i { width: 14px; font-size: 12px; text-align: center; }
+html[data-layout="halftone"] .ht-nav a:hover,
+html[data-layout="halftone"] .ht-nav a.is-active { color: var(--text); }
+/* Marker for the section currently on screen */
+html[data-layout="halftone"] .ht-nav-sections a::before {
+  content: '';
+  position: absolute; left: -13px; top: 50%;
+  width: 5px; height: 5px; margin-top: -2.5px;
+  background: var(--text);
+  opacity: 0; transform: scale(0.4);
+  transition: opacity 200ms, transform 200ms;
+}
+html[data-layout="halftone"] .ht-nav-sections a.is-active::before { opacity: 1; transform: none; }
+
+html[data-layout="halftone"] .ht-side-foot { margin-top: auto; padding-top: 28px; }
+html[data-layout="halftone"] .ht-keys {
+  display: flex; flex-direction: column; gap: 8px;
+  font-size: 11.5px; color: var(--text-muted);
+}
+html[data-layout="halftone"] .ht-keys kbd {
+  margin-left: 6px; padding: 1px 6px;
+  font-family: var(--ht-mono); font-size: 10px;
+  color: var(--text-soft);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+html[data-layout="halftone"] .ht-mode {
+  display: inline-flex; gap: 2px;
+  margin-top: 20px; padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+html[data-layout="halftone"] .ht-mode button,
+html[data-layout="halftone"] .ht-top-mode {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 24px; padding: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: none; border: 0; border-radius: 999px;
+  cursor: pointer;
+  transition: color 200ms, background-color 200ms;
+}
+html[data-layout="halftone"] .ht-mode button:hover,
+html[data-layout="halftone"] .ht-top-mode:hover { color: var(--text); }
+html[data-layout="halftone"] .ht-mode button[aria-pressed="true"] {
+  color: var(--text);
+  background: var(--accent-soft);
+}
+html[data-layout="halftone"] .ht-mode button:focus-visible,
+html[data-layout="halftone"] .ht-top-mode:focus-visible,
+html[data-layout="halftone"] .ht-more:focus-visible {
+  outline: 2px solid var(--text); outline-offset: 2px;
+}
+html[data-layout="halftone"] .ht-reach {
+  margin: 20px 0 8px; padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12px; line-height: 1.5;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .ht-mail {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ht-mono); font-size: 12px;
+  color: var(--text);
+  transition: opacity 200ms;
+}
+html[data-layout="halftone"] .ht-mail:hover { opacity: 0.6; }
+
+html[data-layout="halftone"] .ht-top {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+html[data-layout="halftone"] .ht-top-mode {
+  width: 32px; height: 28px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+@media (min-width: 1024px) {
+  html[data-layout="halftone"] .ht-top { display: none; }
+}
+
+/* ==========================================================================
+   HERO: halftone portrait left, pixel-type name + bio right
+   ========================================================================== */
+html[data-layout="halftone"] .hero {
+  grid-template-columns: 288px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  margin: 0;
+  padding: 112px 0 64px;
+  background: none;
+  border: 0;
+}
+/* Classic-only hero pieces */
+html[data-layout="halftone"] .hero-toggle-wrap,
+html[data-layout="halftone"] .avatar-wrap,
+html[data-layout="halftone"] .verified-badge,
+html[data-layout="halftone"] .hero-roles,
+html[data-layout="halftone"] .hero-actions { display: none; }
+
+/* 3x3 sprite; js/halftone.js sets --fx / --fy (0..2) to pick the view */
+html[data-layout="halftone"] .ht-portrait {
+  width: 100%; max-width: 288px;
+  aspect-ratio: 1;
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  background-position: calc(var(--fx, 1) * 50%) calc(var(--fy, 1) * 50%);
+  touch-action: pan-y;
+  cursor: crosshair;
+  -webkit-user-select: none; user-select: none;
+}
+html[data-layout="halftone"][data-theme="light"] .ht-portrait {
+  background-image: url("../images/portrait-halftone-light.webp");
+}
+html[data-layout="halftone"][data-theme="dark"] .ht-portrait {
+  background-image: url("../images/portrait-halftone-dark.webp");
+}
+
+html[data-layout="halftone"] .hero-name {
+  display: block;
+  margin: 2px 0 0;
+  font-family: var(--ht-pixel);
+  font-size: 41.6px; font-weight: 400;
+  line-height: 1.04; letter-spacing: 0;
+}
+html[data-layout="halftone"] .hero-loc {
+  margin: 16px 0 0;
+  font-family: var(--ht-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .ht-bio { margin-top: 22px; }
+html[data-layout="halftone"] .ht-bio p {
+  margin: 0;
+  font-size: 15px; line-height: 1.625;
+  color: var(--text-soft);
+}
+html[data-layout="halftone"] .ht-bio p + p { margin-top: 16px; }
+html[data-layout="halftone"] .ht-socials {
+  display: flex; flex-wrap: wrap; gap: 6px 18px;
+  margin-top: 26px;
+  font-family: var(--ht-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .ht-socials a { transition: color 200ms; }
+html[data-layout="halftone"] .ht-socials a:hover { color: var(--text); }
+
+@media (max-width: 1023px) {
+  html[data-layout="halftone"] .hero { padding-top: 56px; }
+}
+@media (max-width: 719px) {
+  html[data-layout="halftone"] .hero { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-bottom: 48px; }
+  html[data-layout="halftone"] .hero-name { font-size: 34px; }
+}
+
+/* ==========================================================================
+   HIGHLIGHTS STRIP
+   ========================================================================== */
+html[data-layout="halftone"] .ht-stats { border-top: 1px solid var(--border); }
+html[data-layout="halftone"] .ht-badges,
+html[data-layout="halftone"] .ht-figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+html[data-layout="halftone"] .ht-badges { padding: 20px 0; }
+html[data-layout="halftone"] .ht-figures { border-top: 1px solid var(--border); }
+html[data-layout="halftone"] .ht-badge,
+html[data-layout="halftone"] .ht-figure {
+  min-width: 0;
+  padding: 0 18px;
+  border-left: 1px solid var(--border);
+}
+html[data-layout="halftone"] .ht-badge:first-child,
+html[data-layout="halftone"] .ht-figure:first-child { padding-left: 0; border-left: 0; }
+html[data-layout="halftone"] .ht-badge:last-child,
+html[data-layout="halftone"] .ht-figure:last-child { padding-right: 0; }
+
+html[data-layout="halftone"] .ht-badge { display: flex; align-items: center; gap: 12px; }
+html[data-layout="halftone"] .ht-badge i { flex-shrink: 0; width: 20px; font-size: 16px; text-align: center; color: var(--text); }
+html[data-layout="halftone"] .ht-badge > div { min-width: 0; }
+html[data-layout="halftone"] .ht-badge b,
+html[data-layout="halftone"] .ht-badge span,
+html[data-layout="halftone"] .ht-figure span {
+  display: block;
+  font-family: var(--ht-mono);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+html[data-layout="halftone"] .ht-badge b { font-size: 12px; font-weight: 500; color: var(--text); }
+html[data-layout="halftone"] .ht-badge span,
+html[data-layout="halftone"] .ht-figure span {
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .ht-figure { padding-top: 24px; padding-bottom: 24px; }
+html[data-layout="halftone"] .ht-figure b {
+  display: block;
+  font-family: var(--ht-pixel);
+  font-size: 24px; font-weight: 400; line-height: 1.1;
+  color: var(--text);
+}
+html[data-layout="halftone"] .ht-figure span { margin-top: 10px; }
+
+@media (max-width: 559px) {
+  html[data-layout="halftone"] .ht-badges { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  html[data-layout="halftone"] .ht-badge { padding: 0; border-left: 0; }
+  html[data-layout="halftone"] .ht-figure { padding-left: 12px; padding-right: 8px; }
+  html[data-layout="halftone"] .ht-figure b { font-size: 20px; }
+  /* Three narrow columns: let "CERTIFICATIONS" wrap instead of truncating */
+  html[data-layout="halftone"] .ht-figure span { white-space: normal; letter-spacing: 0.06em; overflow-wrap: anywhere; }
+}
+
+/* ==========================================================================
+   SECTIONS: classic .card becomes a borderless, numbered block
+   ========================================================================== */
+html[data-layout="halftone"] .card {
+  margin-top: 88px !important;   /* two sections carry an inline margin-top */
+  padding: 0;
+  background: none;
+  border: 0;
+  scroll-margin-top: 64px;
+}
+html[data-layout="halftone"] .card-title {
+  justify-content: flex-start; align-items: baseline;
+  margin: 0 0 24px;
+  font-family: var(--ht-pixel);
+  font-size: 14px; font-weight: 400; letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .card-title::before { margin-right: 0.6ch; white-space: pre; }
+html[data-layout="halftone"] #about      .card-title::before { content: '01 \2014'; }
+html[data-layout="halftone"] #projects   .card-title::before { content: '02 \2014'; }
+html[data-layout="halftone"] #experience .card-title::before { content: '03 \2014'; }
+html[data-layout="halftone"] #tech       .card-title::before { content: '04 \2014'; }
+html[data-layout="halftone"] #certs      .card-title::before { content: '05 \2014'; }
+html[data-layout="halftone"] #recs       .card-title::before { content: '06 \2014'; }
+html[data-layout="halftone"] #github     .card-title::before { content: '07 \2014'; }
+html[data-layout="halftone"] #contact    .card-title::before { content: '08 \2014'; }
+
+html[data-layout="halftone"] .card-title .view-all {
+  margin-left: auto;
+  font-family: var(--ht-mono);
+  font-size: 11px; font-weight: 400; letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .card-title .view-all:hover { color: var(--text); }
+html[data-layout="halftone"] .card-title .view-all i { display: none; }
+html[data-layout="halftone"] .card-title .view-all::after { content: '\2192'; margin-left: 6px; }
+html[data-layout="halftone"] #github .card-title .view-all::after { content: '\2197'; }
+/* Placeholder "View All" links that go nowhere */
+html[data-layout="halftone"] .card-title .view-all[href="#"] { display: none; }
+
+/* --- 01 about ---------------------------------------------------------- */
+html[data-layout="halftone"] .about-text { font-size: 15px; line-height: 1.7; }
+html[data-layout="halftone"] .about-text strong { font-weight: 500; }
+html[data-layout="halftone"] .about-text + .about-text { margin-top: 16px; }
+
+/* Access card: a centred showpiece between "about" and "projects" */
+html[data-layout="halftone"] .acard-scene {
+  width: 100%; max-width: 300px;
+  margin: 72px auto 0;
+}
+
+/* --- 02 projects ------------------------------------------------------- */
+html[data-layout="halftone"] .proj-grid { gap: 12px; }
+html[data-layout="halftone"] .proj,
+html[data-layout="halftone"] .cert,
+html[data-layout="halftone"] .rc-slide {
+  background: var(--ht-raise);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: border-color 200ms, transform 200ms;
+}
+html[data-layout="halftone"] .proj:hover,
+html[data-layout="halftone"] .cert:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+html[data-layout="halftone"] .proj { display: flex; flex-direction: column; padding: 18px; }
+html[data-layout="halftone"] .proj-name { font-size: 15px; font-weight: 500; }
+html[data-layout="halftone"] .proj-name i { font-size: 9px; }
+html[data-layout="halftone"] .proj-desc { margin: 4px 0 16px; font-size: 13.5px; line-height: 1.55; }
+html[data-layout="halftone"] .proj-url {
+  margin-top: auto; align-self: flex-start; max-width: 100%;
+  padding: 0;
+  font-family: var(--ht-mono); font-size: 11px;
+  color: var(--text-muted);
+  background: none; border: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* --- 03 experience: year | title | organisation rows ------------------- */
+html[data-layout="halftone"] .exp-list { border-bottom: 1px solid var(--border); }
+html[data-layout="halftone"] .exp-item {
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+html[data-layout="halftone"] .exp-item::before,
+html[data-layout="halftone"] .exp-mark { display: none; }
+html[data-layout="halftone"] .exp-info { display: contents; }
+html[data-layout="halftone"] .exp-year {
+  order: -1;
+  margin: 0;
+  font-family: var(--ht-mono);
+  font-size: 12px; font-weight: 400;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .exp-title { font-size: 15px; font-weight: 600; line-height: 1.4; }
+html[data-layout="halftone"] .exp-hello { font-family: var(--ht-mono); font-size: 13px; }
+html[data-layout="halftone"] .exp-org {
+  margin: 0;
+  font-size: 13.5px; line-height: 1.4;
+  text-align: right;
+}
+@media (max-width: 559px) {
+  html[data-layout="halftone"] .exp-item { grid-template-columns: 84px minmax(0, 1fr); }
+  html[data-layout="halftone"] .exp-org { grid-column: 2; text-align: left; }
+}
+
+/* --- 04 stack ---------------------------------------------------------- */
+html[data-layout="halftone"] .stack-group { margin-bottom: 22px; }
+html[data-layout="halftone"] .stack-label,
+html[data-layout="halftone"] .info-label {
+  margin: 0 0 12px;
+  font-family: var(--ht-mono);
+  font-size: 11px; font-weight: 400; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .stack-chips { gap: 8px; }
+html[data-layout="halftone"] .stack-chip {
+  padding: 4px 10px;
+  font-family: var(--ht-mono); font-size: 12px;
+  color: var(--text-soft);
+  background: var(--ht-raise);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: color 200ms, border-color 200ms;
+}
+html[data-layout="halftone"] .stack-chip:hover { color: var(--text); border-color: var(--border-strong); }
+
+/* --- 05 certifications: two-up cards ----------------------------------- */
+html[data-layout="halftone"] .cert-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+html[data-layout="halftone"] .cert,
+html[data-layout="halftone"] .cert:last-child,
+html[data-layout="halftone"] .cert:hover {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+html[data-layout="halftone"] .cert:hover { border-color: var(--border-strong); }
+html[data-layout="halftone"] .cert-title { font-size: 14px; font-weight: 500; line-height: 1.35; }
+html[data-layout="halftone"] .cert-org,
+html[data-layout="halftone"] .cert::after {
+  font-family: var(--ht-mono);
+  font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .cert-org { margin-top: 6px; }
+html[data-layout="halftone"] .cert::after {
+  content: 'verify \2197';
+  display: block; margin-top: 14px;
+  color: var(--text-faint);
+  transition: color 200ms;
+}
+html[data-layout="halftone"] .cert:hover::after { color: var(--text); }
+
+/* --- 06 recommendations: all shown at once, long quotes clamp ---------- */
+html[data-layout="halftone"] .rc-viewport {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+html[data-layout="halftone"] .rc-slide {
+  display: flex !important;      /* the classic carousel hides inactive slides */
+  flex-direction: column;
+  padding: 18px;
+  animation: none;
+}
+html[data-layout="halftone"] .rc-slide.ht-open { grid-column: 1 / -1; }
+html[data-layout="halftone"] .rc-quote-icon { margin-bottom: 8px; font-size: 14px; }
+html[data-layout="halftone"] .rc-quote {
+  margin: 0 0 16px;
+  font-family: var(--ht-serif);
+  font-size: 14.5px; line-height: 1.6;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5; line-clamp: 5;
+  overflow: hidden;
+}
+html[data-layout="halftone"] .rc-slide.ht-open .rc-quote {
+  display: block;
+  -webkit-line-clamp: unset; line-clamp: unset;
+  overflow: visible;
+}
+html[data-layout="halftone"] .ht-more {
+  align-self: flex-start;
+  margin: -6px 0 16px; padding: 0;
+  font-family: var(--ht-mono);
+  font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: none; border: 0;
+  cursor: pointer;
+  transition: color 200ms;
+}
+html[data-layout="halftone"] .ht-more:hover { color: var(--text); }
+/* Pinned to the card's bottom edge so the three cards line up */
+html[data-layout="halftone"] .rc-cite {
+  margin-top: auto; padding-top: 14px;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+}
+html[data-layout="halftone"] .rc-avatar {
+  width: 30px; height: 30px;
+  font-family: var(--ht-mono);
+  font-size: 10px; font-weight: 500;
+  background: var(--accent-soft);
+}
+html[data-layout="halftone"] .rc-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+html[data-layout="halftone"] .rc-role {
+  margin-top: 3px;
+  font-family: var(--ht-mono);
+  font-size: 9.5px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+html[data-layout="halftone"] .rc-name,
+html[data-layout="halftone"] .rc-role { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html[data-layout="halftone"] .rc-controls { display: none; }
+
+@media (max-width: 719px) {
+  html[data-layout="halftone"] .rc-viewport { grid-template-columns: minmax(0, 1fr); }
+  html[data-layout="halftone"] .cert-list { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --- 07 github: dot-matrix contribution graph + latest repos ----------- */
+html[data-layout="halftone"] .ht-gh-graph svg {
+  display: block; width: 100%; height: auto;
+  color: var(--text);
+}
+html[data-layout="halftone"] .ht-gh-total {
+  margin: 14px 0 28px;
+  font-family: var(--ht-mono);
+  font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .ht-gh-repos { border-bottom: 1px solid var(--border); }
+html[data-layout="halftone"] .ht-repo {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 0;
+  border-top: 1px solid var(--border);
+}
+html[data-layout="halftone"] .ht-repo-name {
+  min-width: 0;
+  font-size: 15px; font-weight: 500;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: opacity 200ms;
+}
+html[data-layout="halftone"] .ht-repo:hover .ht-repo-name { opacity: 0.6; }
+html[data-layout="halftone"] .ht-repo-meta {
+  flex-shrink: 0;
+  font-family: var(--ht-mono); font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* --- 08 contact -------------------------------------------------------- */
+html[data-layout="halftone"] .info-row { gap: 28px 24px; }
+html[data-layout="halftone"] .info-item,
+html[data-layout="halftone"] .info-item-stacked .value-line,
+html[data-layout="halftone"] .info-item-row .value-line { font-size: 14px; }
+html[data-layout="halftone"] .info-item-stacked .label-line { margin-top: 6px; font-size: 13px; line-height: 1.55; }
+html[data-layout="halftone"] .info-item-row .label-line {
+  font-family: var(--ht-mono);
+  font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .info-item-row .value-line { overflow-wrap: anywhere; }
+
+/* --- footer ------------------------------------------------------------ */
+html[data-layout="halftone"] .footer-copy {
+  margin-top: 88px; padding: 24px 0 0;
+  font-family: var(--ht-mono); font-size: 11px;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-layout="halftone"] .proj,
+  html[data-layout="halftone"] .cert { transition: none; transform: none; }
+}

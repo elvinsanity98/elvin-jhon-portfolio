@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" class="scroll-smooth">
+<html lang="en" data-theme="light" data-layout="classic" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Geist+Pixel&family=Source+Serif+4:wght@400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
@@ -962,7 +962,20 @@
       .acard-prompt, .acard-title, .acard-member, .acard-qr { transform: none; }
       .acard-glare { display: none; }
     }
+
+    /* Admin login link in the footer (see admin.html) */
+    .admin-link {
+      margin-left: 8px; font-size: 10px;
+      color: var(--text-faint); opacity: 0.55;
+      transition: opacity 200ms, color 200ms;
+    }
+    .admin-link:hover, .admin-link:focus-visible { opacity: 1; color: var(--accent); }
   </style>
+  <!-- Halftone layout (second theme). Every rule in it is scoped to html[data-layout="halftone"],
+       so the classic layout above is untouched. -->
+  <link rel="stylesheet" href="./css/halftone.css">
+  <!-- Which layout is live. Written by admin.html, read here before first paint. -->
+  <script src="./site-config.js"></script>
   <!-- Inline pre-paint script: applies saved theme before first render to avoid flash -->
   <script>
     (function() {
@@ -974,10 +987,64 @@
         // Stash for later so the avatar fallback img can pick the right frame
         document.documentElement.dataset.initialTheme = theme;
       } catch (e) {}
+      try {
+        // Layout: the published choice from site-config.js. ?preview=classic|halftone overrides it
+        // for this page view only (used by the admin page's preview links).
+        const LAYOUTS = ['classic', 'halftone'];
+        let layout = (window.SITE_CONFIG && window.SITE_CONFIG.layout) || 'classic';
+        const preview = new URLSearchParams(location.search).get('preview');
+        if (LAYOUTS.includes(preview)) layout = preview;
+        document.documentElement.setAttribute('data-layout', LAYOUTS.includes(layout) ? layout : 'classic');
+      } catch (e) {}
     })();
   </script>
 </head>
 <body>
+
+  <!-- ======================================================== -->
+  <!-- HALFTONE LAYOUT ONLY: sidebar + mobile top bar            -->
+  <!-- (.ht-only is hidden while data-layout="classic")          -->
+  <!-- ======================================================== -->
+  <nav class="ht-only ht-side" aria-label="Site">
+    <a href="#top" class="ht-brand">Elvin Jhon Gimena</a>
+
+    <div class="ht-nav">
+      <a href="https://github.com/elvinsanity98" target="_blank" rel="noopener"><i class="fab fa-github"></i>GitHub</a>
+      <a href="https://www.linkedin.com/in/elvin-jhon-gimena-4b2665144/" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i>LinkedIn</a>
+      <a href="https://www.facebook.com/elvinsanity98/" target="_blank" rel="noopener"><i class="fab fa-facebook"></i>Facebook</a>
+      <a href="https://www.instagram.com/elvinsanity98/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i>Instagram</a>
+    </div>
+
+    <div class="ht-nav ht-nav-sections" id="ht-sections">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#tech">Stack</a>
+      <a href="#certs">Certifications</a>
+      <a href="#recs">Recommendations</a>
+      <a href="#github">GitHub</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <div class="ht-side-foot">
+      <div class="ht-keys">
+        <div>Toggle theme <kbd>D</kbd></div>
+        <div>Back to top <kbd>T</kbd></div>
+      </div>
+      <div class="ht-mode" role="group" aria-label="Color mode">
+        <button type="button" data-ht-mode="system" aria-label="Match system" title="Match system"><i class="fas fa-display"></i></button>
+        <button type="button" data-ht-mode="light" aria-label="Light" title="Light"><i class="far fa-sun"></i></button>
+        <button type="button" data-ht-mode="dark" aria-label="Dark" title="Dark"><i class="far fa-moon"></i></button>
+      </div>
+      <p class="ht-reach">For work, collabs &amp; everything else, reach me at</p>
+      <a class="ht-mail" href="mailto:elvinjhon17@gmail.com"><i class="far fa-envelope"></i>elvinjhon17@gmail.com</a>
+    </div>
+  </nav>
+
+  <header class="ht-only ht-top">
+    <a href="#top" class="ht-brand">Elvin Jhon Gimena</a>
+    <button type="button" class="ht-top-mode" id="ht-top-mode" aria-label="Toggle dark mode"><i class="far fa-moon"></i></button>
+  </header>
 
   <div class="page">
 
@@ -992,6 +1059,10 @@
           <i class="fas fa-moon icon-dark"></i>
         </button>
       </div>
+
+      <!-- Halftone layout only: 9-view portrait sprite that turns toward the pointer (js/halftone.js) -->
+      <div class="ht-only ht-portrait" id="ht-portrait" role="img"
+           aria-label="Halftone portrait of Elvin Jhon Gimena. It turns to follow your pointer."></div>
 
       <div class="avatar-wrap" id="avatar-wrap">
         <!-- Fallback img is set by inline script below to match theme; avoids flash of wrong frame -->
@@ -1018,6 +1089,17 @@
         </div>
         <div class="hero-roles">
           IT Specialist, Full-Stack Developer, and Information Technologist
+        </div>
+
+        <!-- Halftone layout only: short bio + text links (the buttons below are classic-only) -->
+        <div class="ht-only ht-bio">
+          <p>I'm an IT Specialist and full-stack developer. I run a rural bank's IT infrastructure end-to-end, from servers and security to BSP regulatory reporting.</p>
+          <p>Outside the bank I build and ship web apps, internal tools, and inventory systems, lately with AI-assisted development.</p>
+        </div>
+        <div class="ht-only ht-socials">
+          <a href="https://github.com/elvinsanity98" target="_blank" rel="noopener">github <span aria-hidden="true">&#8599;</span></a>
+          <a href="https://www.linkedin.com/in/elvin-jhon-gimena-4b2665144/" target="_blank" rel="noopener">linkedin <span aria-hidden="true">&#8599;</span></a>
+          <a href="mailto:elvinjhon17@gmail.com">email <span aria-hidden="true">&#8599;</span></a>
         </div>
 
         <div class="hero-actions">
@@ -1193,6 +1275,29 @@
       </div>
     </section>
 
+    <!-- Halftone layout only: highlights strip under the hero -->
+    <section class="ht-only ht-stats" aria-label="Highlights">
+      <div class="ht-badges">
+        <div class="ht-badge">
+          <i class="fas fa-building-columns" aria-hidden="true"></i>
+          <div><b>Rural Bank of Liloy</b><span>IT Specialist</span></div>
+        </div>
+        <div class="ht-badge">
+          <i class="fas fa-award" aria-hidden="true"></i>
+          <div><b>Huawei</b><span>Developer Expert</span></div>
+        </div>
+        <div class="ht-badge">
+          <i class="fas fa-network-wired" aria-hidden="true"></i>
+          <div><b>Cisco</b><span>Certified Technician</span></div>
+        </div>
+      </div>
+      <div class="ht-figures">
+        <div class="ht-figure"><b>7+ yrs</b><span>In banking IT</span></div>
+        <div class="ht-figure"><b>14</b><span>Certifications</span></div>
+        <div class="ht-figure"><b id="ht-repo-count">33</b><span>Public repos</span></div>
+      </div>
+    </section>
+
     <!-- ======================================================== -->
     <!-- MAIN 2-COLUMN GRID                                       -->
     <!-- ======================================================== -->
@@ -1202,7 +1307,7 @@
       <div class="stack">
 
         <!-- About -->
-        <section class="card">
+        <section class="card" id="about">
           <h2 class="card-title">About</h2>
           <p class="about-text">
             I'm a full-stack developer and Information Technologist based in Zamboanga del Norte, Philippines. I currently serve as <strong>IT Specialist at Rural Bank of Liloy</strong>, where I run the bank's IT infrastructure end-to-end. My responsibilities cover everything from servers and security to regulatory reporting under <strong>Bangko Sentral ng Pilipinas</strong> and <strong>RBAP</strong> guidelines.
@@ -1216,7 +1321,7 @@
         </section>
 
         <!-- Tech Stack -->
-        <section class="card">
+        <section class="card" id="tech">
           <h2 class="card-title">
             Tech Stack
             <a href="#" class="view-all">View All <i class="fas fa-chevron-right" style="font-size:9px"></i></a>
@@ -1276,7 +1381,7 @@
         </section>
 
         <!-- Recent Projects -->
-        <section class="card">
+        <section class="card" id="projects">
           <h2 class="card-title">
             Recent Projects
             <a href="https://github.com/elvinsanity98" target="_blank" rel="noopener" class="view-all">View All <i class="fas fa-chevron-right" style="font-size:9px"></i></a>
@@ -1382,7 +1487,7 @@
         </script>
 
         <!-- Experience timeline -->
-        <section class="card">
+        <section class="card" id="experience">
           <h2 class="card-title">Experience &amp; Education</h2>
           <div class="exp-list">
 
@@ -1521,6 +1626,8 @@
             var next = document.getElementById('rc-next');
             var toggle = document.getElementById('rc-toggle');
             if (slides.length < 2) return;
+            // Halftone layout shows every recommendation at once, so the carousel stays off there
+            if (document.documentElement.getAttribute('data-layout') === 'halftone') return;
 
             var idx = 0, timer = null, DELAY = 8000;
             var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1647,9 +1754,31 @@
     </section>
 
     <!-- ======================================================== -->
+    <!-- GITHUB (halftone layout only; filled live by js/halftone.js) -->
+    <!-- ======================================================== -->
+    <section class="card ht-only" id="github">
+      <h2 class="card-title">
+        GitHub
+        <a href="https://github.com/elvinsanity98" target="_blank" rel="noopener" class="view-all">@elvinsanity98</a>
+      </h2>
+      <div class="ht-gh-graph" id="ht-gh-graph" hidden></div>
+      <p class="ht-gh-total" id="ht-gh-total" hidden></p>
+      <!-- Static fallback; replaced with the latest public repos when the GitHub API answers -->
+      <div class="ht-gh-repos" id="ht-gh-repos">
+        <a class="ht-repo" href="https://github.com/elvinsanity98/bsp-reports-validator" target="_blank" rel="noopener"><span class="ht-repo-name">bsp-reports-validator</span><span class="ht-repo-meta">HTML</span></a>
+        <a class="ht-repo" href="https://github.com/elvinsanity98/cicreportchecker" target="_blank" rel="noopener"><span class="ht-repo-name">cicreportchecker</span><span class="ht-repo-meta">HTML</span></a>
+        <a class="ht-repo" href="https://github.com/elvinsanity98/resumemaker" target="_blank" rel="noopener"><span class="ht-repo-name">resumemaker</span><span class="ht-repo-meta">JavaScript</span></a>
+        <a class="ht-repo" href="https://github.com/elvinsanity98/MovieIt" target="_blank" rel="noopener"><span class="ht-repo-name">MovieIt</span><span class="ht-repo-meta">HTML</span></a>
+        <a class="ht-repo" href="https://github.com/elvinsanity98/school-grading-system" target="_blank" rel="noopener"><span class="ht-repo-name">school-grading-system</span><span class="ht-repo-meta">TypeScript</span></a>
+        <a class="ht-repo" href="https://github.com/elvinsanity98/tug-of-math" target="_blank" rel="noopener"><span class="ht-repo-name">tug-of-math</span><span class="ht-repo-meta">JavaScript</span></a>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
     <!-- INFO ROW (3 columns: Social Links, Open To, Get in Touch)  -->
     <!-- ======================================================== -->
-    <section class="card" style="margin-top:16px">
+    <section class="card" id="contact" style="margin-top:16px">
+      <h2 class="card-title ht-only">Contact</h2>
       <div class="info-row">
 
         <div class="info-col">
@@ -1713,7 +1842,7 @@
       </div>
     </section>
 
-    <p class="footer-copy">© 2026 Elvin Jhon Gimena. Built with love in Liloy, Zamboanga del Norte.</p>
+    <p class="footer-copy">© 2026 Elvin Jhon Gimena. Built with love in Liloy, Zamboanga del Norte.<a href="./admin.html" class="admin-link" aria-label="Admin login" title="Admin"><i class="fas fa-lock"></i></a></p>
 
   </div>
 
@@ -1760,6 +1889,8 @@
       const canvas = document.getElementById('avatar-canvas');
       const fallback = document.getElementById('avatar-fallback');
       if (!wrap || !canvas) return;
+      // Halftone layout hides this avatar (it has its own portrait), so skip the 92-frame preload
+      if (document.documentElement.getAttribute('data-layout') === 'halftone') return;
 
       const ctx = canvas.getContext('2d');
       const frames = new Array(FRAME_COUNT);
@@ -1980,6 +2111,9 @@
       });
     })();
   </script>
+
+  <!-- Halftone layout behaviour (does nothing while data-layout="classic") -->
+  <script src="./js/halftone.js"></script>
 
 </body>
 </html>

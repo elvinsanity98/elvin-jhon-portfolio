@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Elvin Jhon Gimena</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <!-- Locked down on purpose: scripts only from this site, network only to this site and the
+       GitHub API, no third-party fonts or icons. The decrypted token cannot be sent anywhere else. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'">
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32.png">
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff; --raise: #fafafa; --line: #e9e9e9; --line-strong: #d4d4d4;
+      --ink: #0a0a0a; --soft: #525252; --muted: #737373;
+      --ok: #15803d; --bad: #b91c1c; --warn: #b45309;
+      --mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, Consolas, monospace;
+      --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0c0c0f; --raise: #131316; --line: #2a2a30; --line-strong: #3a3a42;
+        --ink: #f4f4f5; --soft: #b8b8c0; --muted: #a0a0a8;
+        --ok: #4ade80; --bad: #f87171; --warn: #fbbf24;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    [hidden] { display: none !important; }
+    a { color: inherit; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 32px 24px 72px; }
+
+    .top { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .top a { text-decoration: none; }
+    .top a:hover { color: var(--ink); }
+    .tag { padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; letter-spacing: 0.12em; text-transform: uppercase; font-size: 10px; }
+
+    h1 { margin: 56px 0 6px; font-family: var(--mono); font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; }
+    .lede { margin: 0 0 32px; color: var(--soft); }
+    h2 { margin: 0 0 16px; font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    .panel { padding: 22px; background: var(--raise); border: 1px solid var(--line); border-radius: 14px; }
+    .panel + .panel { margin-top: 16px; }
+    .note { margin: 0 0 16px; padding: 10px 14px; border: 1px dashed var(--line-strong); border-radius: 10px; font-size: 13px; color: var(--soft); }
+
+    label { display: block; margin: 16px 0 6px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    label:first-child { margin-top: 0; }
+    input[type="password"], input[type="text"] {
+      width: 100%; padding: 11px 12px;
+      font: 14px var(--mono); color: var(--ink);
+      background: var(--bg); border: 1px solid var(--line-strong); border-radius: 8px;
+    }
+    input:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+    input:disabled { opacity: 0.6; }
+    .hint { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 16px;
+      font: 500 13px var(--mono); color: var(--bg);
+      background: var(--ink); border: 1px solid var(--ink); border-radius: 8px;
+      cursor: pointer; text-decoration: none;
+      transition: opacity 150ms;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn.ghost { color: var(--ink); background: none; border-color: var(--line-strong); }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 20px; }
+    .link { padding: 0; font: 12.5px var(--sans); color: var(--muted); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+    .link:hover { color: var(--ink); }
+
+    .msg { min-height: 1.6em; margin: 14px 0 0; font-size: 13.5px; color: var(--soft); }
+    .msg[data-kind="error"] { color: var(--bad); }
+    .msg[data-kind="ok"] { color: var(--ok); }
+
+    /* Password strength meter */
+    .meter { height: 4px; margin-top: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
+    .meter::before { content: ''; display: block; height: 100%; width: var(--fill, 0%); background: var(--muted); transition: width 200ms, background-color 200ms; }
+    .meter[data-level="weak"]::before { background: var(--bad); }
+    .meter[data-level="ok"]::before { background: var(--warn); }
+    .meter[data-level="strong"]::before { background: var(--ok); }
+
+    ol.steps { margin: 0 0 4px; padding-left: 20px; color: var(--soft); font-size: 14px; }
+    ol.steps li { margin: 6px 0; }
+    ol.steps b, .lede b { color: var(--ink); font-weight: 600; }
+    code { font: 12.5px var(--mono); padding: 1px 5px; background: var(--bg); border: 1px solid var(--line); border-radius: 5px; }
+
+    /* Theme cards */
+    .themes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    @media (max-width: 520px) { .themes { grid-template-columns: minmax(0, 1fr); } }
+    .theme { display: flex; flex-direction: column; padding: 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; transition: border-color 200ms; }
+    .theme.is-live { border-color: var(--ink); }
+    .theme-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; }
+    .theme-name { font: 500 15px var(--mono); }
+    .live-pill { display: none; padding: 1px 8px; font: 10px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ok); border: 1px solid currentColor; border-radius: 999px; }
+    .theme.is-live .live-pill { display: inline-block; }
+    .theme p { margin: 6px 0 14px; font-size: 13px; color: var(--soft); }
+    .theme .actions { margin-top: auto; }
+    .theme .btn { padding: 8px 12px; font-size: 12px; }
+
+    /* Tiny wireframes of each layout */
+    .thumb { position: relative; aspect-ratio: 16 / 10; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--raise); }
+    .thumb i { position: absolute; background: var(--line-strong); border-radius: 2px; }
+    .thumb i.ink { background: var(--ink); }
+    .thumb i.box { background: none; border: 1px solid var(--line-strong); }
+
+    details { margin-top: 16px; }
+    summary { cursor: pointer; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    summary:hover { color: var(--ink); }
+    details[open] summary { margin-bottom: 18px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top">
+      <a href="./">&larr; back to portfolio</a>
+      <span class="tag">admin</span>
+    </div>
+
+    <h1>Theme control</h1>
+    <p class="lede">Choose which theme visitors see on the portfolio.</p>
+
+    <p class="note" id="local-note" hidden>Local preview. Anything saved here still goes to the real repository on GitHub.</p>
+
+    <!-- ============ loading ============ -->
+    <section id="view-loading" class="panel">
+      <p class="msg" id="loading-msg" role="status">Checking for an existing login&hellip;</p>
+    </section>
+
+    <!-- ============ login ============ -->
+    <section id="view-login" class="panel" hidden>
+      <h2>Sign in</h2>
+      <form id="login-form">
+        <!-- Lets a password manager file this under a name -->
+        <input type="text" name="username" autocomplete="username" value="elvin-jhon-portfolio admin" hidden>
+        <label for="login-pw">Password</label>
+        <input id="login-pw" type="password" autocomplete="current-password" required data-autofocus>
+        <div class="actions">
+          <button class="btn" type="submit">Unlock</button>
+        </div>
+        <p class="msg" id="login-msg" role="alert"></p>
+      </form>
+      <button type="button" class="link" id="to-setup">Forgot the password, or the token expired? Set up again</button>
+    </section>
+
+    <!-- ============ first-time setup / reset ============ -->
+    <section id="view-setup" class="panel" hidden>
+      <h2>Set up login</h2>
+      <ol class="steps">
+        <li>On GitHub open <b>Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Fine-grained tokens</b> and generate a new token.</li>
+        <li>Repository access: <b>Only select repositories</b> &rarr; <code>elvin-jhon-portfolio</code>.</li>
+        <li>Permissions &rarr; Repository &rarr; <b>Contents: Read and write</b>. Nothing else.</li>
+        <li>Paste the token below and choose a password. The token is encrypted with that password before it is saved; only the password can unlock it.</li>
+      </ol>
+      <form id="setup-form">
+        <input type="text" name="username" autocomplete="username" value="elvin-jhon-portfolio admin" hidden>
+        <label for="setup-token">GitHub fine-grained token</label>
+        <input id="setup-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_&hellip;" required data-autofocus>
+        <label for="setup-pw">New password</label>
+        <input id="setup-pw" type="password" autocomplete="new-password" required>
+        <div class="meter" id="setup-meter" aria-hidden="true"></div>
+        <p class="hint">At least 12 characters. The encrypted token lives in a public repo, so this password is the only lock: make it long and unique.</p>
+        <label for="setup-pw2">Repeat password</label>
+        <input id="setup-pw2" type="password" autocomplete="new-password" required>
+        <div class="actions">
+          <button class="btn" type="submit">Create login</button>
+          <button type="button" class="link" id="to-login" hidden>Back to sign in</button>
+        </div>
+        <p class="msg" id="setup-msg" role="alert"></p>
+      </form>
+    </section>
+
+    <!-- ============ dashboard ============ -->
+    <section id="view-dash" hidden>
+      <div class="panel">
+        <h2>Live theme</h2>
+        <div class="themes">
+          <div class="theme" data-layout-card="classic">
+            <div class="thumb" aria-hidden="true">
+              <i class="box" style="left:6%;top:8%;width:88%;height:26%"></i>
+              <i class="ink" style="left:9%;top:12%;width:11%;height:18%"></i>
+              <i style="left:24%;top:14%;width:30%;height:5%"></i>
+              <i style="left:24%;top:23%;width:20%;height:4%"></i>
+              <i class="box" style="left:6%;top:40%;width:54%;height:24%"></i>
+              <i class="box" style="left:6%;top:69%;width:54%;height:24%"></i>
+              <i class="box" style="left:64%;top:40%;width:30%;height:53%"></i>
+            </div>
+            <div class="theme-head"><span class="theme-name">Classic</span><span class="live-pill">Live</span></div>
+            <p>Card grid with the animated avatar. The original design.</p>
+            <div class="actions">
+              <button class="btn" type="button" data-make-live>Make live</button>
+              <a class="btn ghost" href="./?preview=classic" target="_blank" rel="noopener">Preview &#8599;</a>
+            </div>
+          </div>
+
+          <div class="theme" data-layout-card="halftone">
+            <div class="thumb" aria-hidden="true">
+              <i style="left:0;top:0;width:18%;height:100%;border-radius:0;opacity:.45"></i>
+              <i class="ink" style="left:4%;top:10%;width:9%;height:3%"></i>
+              <i style="left:4%;top:20%;width:8%;height:2.5%"></i>
+              <i style="left:4%;top:27%;width:10%;height:2.5%"></i>
+              <i style="left:4%;top:34%;width:7%;height:2.5%"></i>
+              <i class="ink" style="left:30%;top:14%;width:22%;height:35%"></i>
+              <i class="ink" style="left:57%;top:16%;width:26%;height:7%"></i>
+              <i style="left:57%;top:29%;width:32%;height:3%"></i>
+              <i style="left:57%;top:36%;width:28%;height:3%"></i>
+              <i style="left:30%;top:60%;width:59%;height:1.5%"></i>
+              <i style="left:30%;top:70%;width:59%;height:1.5%"></i>
+              <i style="left:30%;top:80%;width:59%;height:1.5%"></i>
+            </div>
+            <div class="theme-head"><span class="theme-name">Halftone</span><span class="live-pill">Live</span></div>
+            <p>Sidebar, pixel type, and the halftone portrait that follows the pointer.</p>
+            <div class="actions">
+              <button class="btn" type="button" data-make-live>Make live</button>
+              <a class="btn ghost" href="./?preview=halftone" target="_blank" rel="noopener">Preview &#8599;</a>
+            </div>
+          </div>
+        </div>
+        <p class="msg" id="dash-msg" role="status"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Session</h2>
+        <p class="hint" style="margin:0">Signed in on this tab only. It locks after 10 minutes without activity, or when you close or reload the page.</p>
+        <div class="actions">
+          <button class="btn ghost" type="button" id="lock-btn">Lock now</button>
+        </div>
+        <details>
+          <summary>Change password</summary>
+          <form id="change-form">
+            <input type="text" name="username" autocomplete="username" value="elvin-jhon-portfolio admin" hidden>
+            <label for="change-pw">New password</label>
+            <input id="change-pw" type="password" autocomplete="new-password" required>
+            <div class="meter" id="change-meter" aria-hidden="true"></div>
+            <label for="change-pw2">Repeat password</label>
+            <input id="change-pw2" type="password" autocomplete="new-password" required>
+            <div class="actions">
+              <button class="btn" type="submit">Save new password</button>
+            </div>
+            <p class="msg" id="change-msg" role="alert"></p>
+          </form>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <script src="./js/admin.js"></script>
+</body>
+</html>
