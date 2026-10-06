@@ -1,0 +1,10 @@
+{
+  "v": 1,
+  "kdf": "PBKDF2-SHA256",
+  "iterations": 600000,
+  "cipher": "AES-256-GCM",
+  "salt": "jycGUTUuLMtCcnVNXPpv9A==",
+  "iv": "99/OuC99VBqfVnfl",
+  "data": "F0kyVuSKJ2UoCfZWdSlvdJp1wAg3v/RB6XZWGCKCL4FKT5XZaTfZRi+TonGP0B/E2JAyx/t4OgqE7LDgMnqRtvsdxFQldm0W1TLXX3h95ysu0lImnmrEKZpto+rPciZMkkE+EXdAFU/v6zbBIg==",
+  "updated": "2026-10-06T15:42:28.877Z"
+}
