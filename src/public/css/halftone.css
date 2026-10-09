@@ -99,7 +99,6 @@ html[data-layout="halftone"] .main-grid > .stack { display: contents; }
 html[data-layout="halftone"] .hero        { order: 1; }
 html[data-layout="halftone"] .ht-stats    { order: 2; }
 html[data-layout="halftone"] #about       { order: 3; }
-html[data-layout="halftone"] .acard-scene { order: 4; }
 html[data-layout="halftone"] #projects    { order: 5; }
 html[data-layout="halftone"] #experience  { order: 6; }
 html[data-layout="halftone"] #tech        { order: 7; }
@@ -413,11 +412,8 @@ html[data-layout="halftone"] .about-text { font-size: 15px; line-height: 1.7; }
 html[data-layout="halftone"] .about-text strong { font-weight: 500; }
 html[data-layout="halftone"] .about-text + .about-text { margin-top: 16px; }
 
-/* Access card: a centred showpiece between "about" and "projects" */
-html[data-layout="halftone"] .acard-scene {
-  width: 100%; max-width: 300px;
-  margin: 72px auto 0;
-}
+/* The BONG-DA-DEV access card belongs to the classic layout only */
+html[data-layout="halftone"] .acard-scene { display: none; }
 
 /* --- 02 projects ------------------------------------------------------- */
 html[data-layout="halftone"] .proj-grid { gap: 12px; }
