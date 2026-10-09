@@ -123,6 +123,146 @@
     setFrame(CENTER);
   })();
 
+  // === Projects: fanned card deck ===
+  // Three cards show at once: the front one is the live link, one peeks out on each side.
+  // Clicking a peeking card (or the arrows, arrow keys, a swipe) deals it to the front.
+  // Icons and tags come from data-icon / data-tags on each .proj in the markup.
+  (function () {
+    var grid = document.querySelector('#projects .proj-grid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.proj'));
+    var n = cards.length;
+    if (n < 3) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cur = 0;
+
+    function el(tag, className, text) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text) node.textContent = text;
+      return node;
+    }
+
+    cards.forEach(function (card) {
+      var tags = (card.getAttribute('data-tags') || '').split('|').filter(Boolean);
+      if (tags.length) {
+        var row = el('div', 'ht-proj-tags');
+        tags.forEach(function (t) { row.appendChild(el('span', 'ht-proj-tag', t)); });
+        card.insertBefore(row, card.firstChild);
+      }
+      var name = card.querySelector('.proj-name');
+      if (name) {
+        var head = el('div', 'ht-proj-head');
+        var tile = el('span', 'ht-proj-icon');
+        tile.setAttribute('aria-hidden', 'true');
+        // Only a plain fa-* class name is accepted from the attribute
+        var icon = /^fa-[a-z0-9-]+$/.test(card.getAttribute('data-icon') || '') ? card.getAttribute('data-icon') : 'fa-cube';
+        tile.appendChild(el('i', 'fas ' + icon));
+        card.insertBefore(head, name);
+        head.appendChild(tile);
+        head.appendChild(name);
+      }
+    });
+
+    var bar = el('div', 'ht-deck-bar');
+    var prevBtn = el('button');
+    prevBtn.type = 'button';
+    prevBtn.setAttribute('aria-label', 'Previous project');
+    prevBtn.appendChild(el('i', 'fas fa-chevron-left'));
+    var count = el('span', 'ht-deck-count');
+    count.setAttribute('aria-live', 'polite');
+    var nextBtn = el('button');
+    nextBtn.type = 'button';
+    nextBtn.setAttribute('aria-label', 'Next project');
+    nextBtn.appendChild(el('i', 'fas fa-chevron-right'));
+    bar.appendChild(prevBtn);
+    bar.appendChild(count);
+    bar.appendChild(nextBtn);
+
+    function pad(v) { return v < 10 ? '0' + v : String(v); }
+    // Where card i sits relative to the front one: 0 front, 1 right, -1 left, 'off' hidden
+    function poseOf(i) {
+      var d = (i - cur + n) % n;
+      return d === 0 ? '0' : d === 1 ? '1' : d === n - 1 ? '-1' : 'off';
+    }
+    function layout() {
+      cards.forEach(function (card, i) { card.setAttribute('data-pos', poseOf(i)); });
+      count.textContent = pad(cur + 1) + ' / ' + pad(n);
+    }
+    function show(i) {
+      i = ((i % n) + n) % n;
+      if (i === cur) return;
+      // Deal from the side the card is on (or the nearer side when it was hidden)
+      var ahead = (i - cur + n) % n;
+      var fromRight = ahead <= n / 2;
+      var incoming = cards[i];
+      cur = i;
+      layout();
+      if (reduce) return;
+      incoming.classList.remove('ht-deal-r', 'ht-deal-l');
+      void incoming.offsetWidth;                      // restart the animation if it was mid-flight
+      incoming.classList.add(fromRight ? 'ht-deal-r' : 'ht-deal-l');
+    }
+
+    // All cards share the tallest one's height so the deck never jumps
+    function measure() {
+      grid.style.removeProperty('--ht-card-h');
+      var tallest = 0;
+      cards.forEach(function (card) { tallest = Math.max(tallest, card.offsetHeight); });
+      if (tallest) grid.style.setProperty('--ht-card-h', tallest + 'px');
+    }
+
+    var swiped = false;
+    cards.forEach(function (card, i) {
+      card.addEventListener('animationend', function () { card.classList.remove('ht-deal-r', 'ht-deal-l'); });
+      // Remember whether the card was in front when the press began: focusing it (below)
+      // brings it forward before 'click' fires, and that click must not follow the link.
+      card.addEventListener('pointerdown', function () { card._wasFront = i === cur; });
+      card.addEventListener('focus', function () { show(i); });
+      card.addEventListener('click', function (e) {
+        var wasFront = card._wasFront;
+        card._wasFront = undefined;
+        if (swiped || wasFront === false) { e.preventDefault(); show(i); }
+      });
+      card.setAttribute('draggable', 'false');
+    });
+    prevBtn.addEventListener('click', function () { show(cur - 1); });
+    nextBtn.addEventListener('click', function () { show(cur + 1); });
+    grid.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      show(cur + (e.key === 'ArrowRight' ? 1 : -1));
+      cards[cur].focus({ preventScroll: true });
+    });
+    // Horizontal swipe flips through the deck
+    var startX = null;
+    grid.addEventListener('pointerdown', function (e) { startX = e.clientX; swiped = false; });
+    grid.addEventListener('pointerup', function (e) {
+      if (startX === null) return;
+      var dx = e.clientX - startX;
+      startX = null;
+      if (Math.abs(dx) < 40) return;
+      swiped = true;                                  // the click that follows is not a tap
+      show(cur + (dx < 0 ? 1 : -1));
+      setTimeout(function () { swiped = false; }, 0);
+    });
+    grid.addEventListener('pointercancel', function () { startX = null; });
+
+    grid.classList.add('ht-deck');
+    grid.setAttribute('role', 'group');
+    grid.setAttribute('aria-roledescription', 'carousel');
+    grid.setAttribute('aria-label', 'Projects');
+    grid.insertAdjacentElement('afterend', bar);
+    layout();
+    measure();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    var resizeTimer = 0;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(measure, 150);
+    });
+  })();
+
   // === Recommendations: every quote is visible; long ones get a "Read more" ===
   (function () {
     var root = document.getElementById('recs');

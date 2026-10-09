@@ -444,6 +444,150 @@ html[data-layout="halftone"] .proj-url {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
+/* Projects deck: js/halftone.js adds .ht-deck and turns the grid into a fan of three
+   cards (front, one peeking each side). Clicking a peeking card deals it to the front.
+   Without JS none of this applies and the grid above is what shows. */
+html[data-layout="halftone"] .proj-grid.ht-deck {
+  --ht-fan-x: 132px;                       /* how far the side cards sit from centre */
+  display: block;
+  position: relative;
+  height: calc(var(--ht-card-h, 250px) + 76px);   /* room for the tilted side cards */
+  margin-top: 4px;
+  touch-action: pan-y;
+}
+html[data-layout="halftone"] .ht-deck .proj {
+  /* The four poses a card can be in */
+  --front: translateX(-50%);
+  --right: translateX(calc(-50% + var(--ht-fan-x))) translateY(22px) rotate(8deg) scale(0.95);
+  --left:  translateX(calc(-50% - var(--ht-fan-x))) translateY(26px) rotate(-10deg) scale(0.95);
+  --off:   translateX(-50%) translateY(30px) scale(0.88);
+  position: absolute; top: 12px; left: 50%;
+  width: min(340px, 84%);
+  min-height: var(--ht-card-h, 0);
+  padding: 18px 20px 20px;
+  background: var(--card);                 /* opaque: the cards overlap */
+  transition:
+    transform 520ms cubic-bezier(0.22, 0.8, 0.26, 1),
+    opacity 320ms ease, box-shadow 320ms ease, border-color 200ms;
+  will-change: transform;
+  -webkit-user-select: none; user-select: none;
+}
+html[data-layout="halftone"] .ht-deck .proj > * { transition: opacity 320ms ease; }
+html[data-layout="halftone"] .ht-deck .proj:not([data-pos="0"]) > * { opacity: 0.5; }
+
+html[data-layout="halftone"] .ht-deck .proj[data-pos="0"] {
+  transform: var(--front); z-index: 3;
+  border-color: var(--border-strong);
+  box-shadow: 0 26px 50px -24px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+html[data-layout="halftone"] .ht-deck .proj[data-pos="1"]  { transform: var(--right); z-index: 2; }
+html[data-layout="halftone"] .ht-deck .proj[data-pos="-1"] { transform: var(--left);  z-index: 1; }
+html[data-layout="halftone"] .ht-deck .proj[data-pos="off"] {
+  transform: var(--off); z-index: 0;
+  opacity: 0; pointer-events: none;
+}
+/* Hover: the front card lifts, a side card slides out a little to invite the click */
+html[data-layout="halftone"] .ht-deck .proj[data-pos="0"]:hover { transform: var(--front) translateY(-4px); }
+html[data-layout="halftone"] .ht-deck .proj[data-pos="1"]:hover {
+  transform: translateX(calc(-50% + var(--ht-fan-x) + 14px)) translateY(18px) rotate(9deg) scale(0.96);
+}
+html[data-layout="halftone"] .ht-deck .proj[data-pos="-1"]:hover {
+  transform: translateX(calc(-50% - var(--ht-fan-x) - 14px)) translateY(22px) rotate(-11deg) scale(0.96);
+}
+html[data-layout="halftone"] .ht-deck .proj:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+/* Dealing a card: it swings out past its side, comes over the top, then lands in front */
+html[data-layout="halftone"] .ht-deck .proj.ht-deal-r { animation: ht-deal-r 580ms cubic-bezier(0.4, 0, 0.2, 1) both; }
+html[data-layout="halftone"] .ht-deck .proj.ht-deal-l { animation: ht-deal-l 580ms cubic-bezier(0.4, 0, 0.2, 1) both; }
+@keyframes ht-deal-r {
+  0%   { transform: var(--right); z-index: 2; }
+  40%  { transform: translateX(calc(-50% + var(--ht-fan-x) + 92px)) translateY(-6px) rotate(13deg) scale(0.98); z-index: 2; }
+  41%  { z-index: 5; }
+  100% { transform: var(--front); z-index: 5; }
+}
+@keyframes ht-deal-l {
+  0%   { transform: var(--left); z-index: 1; }
+  40%  { transform: translateX(calc(-50% - var(--ht-fan-x) - 92px)) translateY(-6px) rotate(-13deg) scale(0.98); z-index: 1; }
+  41%  { z-index: 5; }
+  100% { transform: var(--front); z-index: 5; }
+}
+
+/* Card contents in the deck: tag pills, icon tile + pixel title, link pill */
+html[data-layout="halftone"] .ht-proj-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+html[data-layout="halftone"] .ht-proj-tag {
+  padding: 3px 9px;
+  font-family: var(--ht-mono);
+  font-size: 9.5px; line-height: 1.5; letter-spacing: 0.1em;
+  text-transform: uppercase; white-space: nowrap;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+html[data-layout="halftone"] .ht-proj-tag:first-child {
+  color: var(--bg);
+  background: var(--text);
+  border-color: var(--text);
+}
+html[data-layout="halftone"] .ht-proj-tag:first-child::before { content: '\2039\00a0'; }
+html[data-layout="halftone"] .ht-proj-tag:first-child::after  { content: '\00a0\203A'; }
+html[data-layout="halftone"] .ht-proj-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+html[data-layout="halftone"] .ht-proj-icon {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px;
+  font-size: 17px;
+  color: var(--bg);
+  background: var(--text);
+  border-radius: 10px;
+}
+html[data-layout="halftone"] .ht-deck .proj-name {
+  display: block; margin: 0;
+  font-family: var(--ht-pixel);
+  font-size: 17px; font-weight: 400; line-height: 1.2;
+}
+html[data-layout="halftone"] .ht-deck .proj-name i { display: none; }
+html[data-layout="halftone"] .ht-deck .proj-desc { margin: 0 0 16px; }
+html[data-layout="halftone"] .ht-deck .proj-url,
+html[data-layout="halftone"] .ht-deck .proj:hover .proj-url {
+  padding: 7px 12px;
+  color: var(--bg);
+  background: var(--text);
+  border-radius: 8px;
+}
+html[data-layout="halftone"] .ht-deck .proj-url::after { content: '\00a0\2197'; }
+
+html[data-layout="halftone"] .ht-deck-bar {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  font-family: var(--ht-mono);
+  font-size: 11px; letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+html[data-layout="halftone"] .ht-deck-bar button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0;
+  font-size: 10px;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 200ms, border-color 200ms;
+}
+html[data-layout="halftone"] .ht-deck-bar button:hover { color: var(--text); border-color: var(--border-strong); }
+html[data-layout="halftone"] .ht-deck-bar button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+html[data-layout="halftone"] .ht-deck-count { min-width: 64px; text-align: center; }
+
+@media (max-width: 559px) {
+  html[data-layout="halftone"] .proj-grid.ht-deck { --ht-fan-x: 34px; }
+  html[data-layout="halftone"] .ht-deck .proj { width: min(300px, 84%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-layout="halftone"] .ht-deck .proj,
+  html[data-layout="halftone"] .ht-deck .proj > * { transition: none; }
+  html[data-layout="halftone"] .ht-deck .proj.ht-deal-r,
+  html[data-layout="halftone"] .ht-deck .proj.ht-deal-l { animation: none; }
+}
+
 /* --- 03 experience: year | title | organisation rows ------------------- */
 html[data-layout="halftone"] .exp-list { border-bottom: 1px solid var(--border); }
 html[data-layout="halftone"] .exp-item {
