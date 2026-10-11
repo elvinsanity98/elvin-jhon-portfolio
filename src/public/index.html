@@ -1030,6 +1030,7 @@
       <div class="ht-keys">
         <div>Toggle theme <kbd>D</kbd></div>
         <div>Back to top <kbd>T</kbd></div>
+        <div><button type="button" class="ht-tour-start" id="ht-tour-start">Take the tour</button> <kbd>G</kbd></div>
       </div>
       <div class="ht-mode" role="group" aria-label="Color mode">
         <button type="button" data-ht-mode="system" aria-label="Match system" title="Match system"><i class="fas fa-display"></i></button>
@@ -1734,43 +1735,53 @@
         <a href="#" class="view-all">View All <i class="fas fa-chevron-right" style="font-size:9px"></i></a>
       </h2>
       <div class="cert-list">
-        <a class="cert" href="https://www.testdome.com/certificates/da3718a929c24df8bfe48ed26d85be9a" target="_blank" rel="noopener">
+        <a class="cert" href="https://www.testdome.com/certificates/da3718a929c24df8bfe48ed26d85be9a" target="_blank" rel="noopener" data-icon="fab fa-python">
           <div class="cert-title">Python</div>
           <div class="cert-org">TestDome &middot; Issued May 2026</div>
         </a>
-        <a class="cert" href="https://www.testdome.com/certificates/7c75e226841e4601997195ae1a0c38cf" target="_blank" rel="noopener">
+        <a class="cert" href="https://www.testdome.com/certificates/7c75e226841e4601997195ae1a0c38cf" target="_blank" rel="noopener" data-icon="fas fa-code">
           <div class="cert-title">Software Engineering</div>
           <div class="cert-org">TestDome &middot; Issued May 2026</div>
         </a>
-        <a class="cert" href="https://www.testdome.com/certificates/c11a51e67a1b43e78b2df66eb66df225" target="_blank" rel="noopener">
+        <a class="cert" href="https://www.testdome.com/certificates/c11a51e67a1b43e78b2df66eb66df225" target="_blank" rel="noopener" data-icon="fab fa-php">
           <div class="cert-title">PHP</div>
           <div class="cert-org">TestDome &middot; Issued May 2026</div>
         </a>
-        <a class="cert" href="https://www.testdome.com/certificates/bda8bd38bfb24aef856576bcc79220a5" target="_blank" rel="noopener">
+        <a class="cert" href="https://www.testdome.com/certificates/bda8bd38bfb24aef856576bcc79220a5" target="_blank" rel="noopener" data-icon="fas fa-database">
           <div class="cert-title">SQL</div>
           <div class="cert-org">TestDome &middot; Issued May 2026</div>
         </a>
-        <a class="cert" href="https://drive.google.com/file/d/1tj0t1rzwirbeLd-N6_G7mPuW9fZfaCL_/view?usp=sharing" target="_blank" rel="noopener">
+        <a class="cert" href="https://drive.google.com/file/d/1tj0t1rzwirbeLd-N6_G7mPuW9fZfaCL_/view?usp=sharing" target="_blank" rel="noopener" data-icon="fas fa-award">
           <div class="cert-title">Huawei Developer Expert</div>
           <div class="cert-org">Huawei</div>
         </a>
-        <a class="cert" href="https://drive.google.com/file/d/1DLukjYvYqvDHguJo3HUJQVffCFezdu7N/view?usp=sharing" target="_blank" rel="noopener">
+        <a class="cert" href="https://drive.google.com/file/d/1DLukjYvYqvDHguJo3HUJQVffCFezdu7N/view?usp=sharing" target="_blank" rel="noopener" data-icon="fas fa-network-wired">
           <div class="cert-title">Cisco Certified Network Technician</div>
           <div class="cert-org">Cisco</div>
         </a>
-        <a class="cert" href="https://drive.google.com/file/d/1xOgsxgqUHTyVRNKBzW_L_UFkppQqYY8B/view?usp=sharing" target="_blank" rel="noopener">
+        <a class="cert" href="https://drive.google.com/file/d/1xOgsxgqUHTyVRNKBzW_L_UFkppQqYY8B/view?usp=sharing" target="_blank" rel="noopener" data-icon="fas fa-gears">
           <div class="cert-title">ITIL Foundation in IT Service Management</div>
           <div class="cert-org">EXIN &amp; Axelos</div>
         </a>
-        <a class="cert" href="https://drive.google.com/file/d/17_buPaQ4AOaBq2u1Qq5nOtAs7BAh0k_b/view?usp=sharing" target="_blank" rel="noopener">
+        <a class="cert" href="https://drive.google.com/file/d/17_buPaQ4AOaBq2u1Qq5nOtAs7BAh0k_b/view?usp=sharing" target="_blank" rel="noopener" data-icon="fab fa-microsoft">
           <div class="cert-title">Microsoft 365 Fundamentals</div>
           <div class="cert-org">Microsoft</div>
         </a>
-        <a class="cert" href="https://drive.google.com/file/d/18fzKY1cP1s7QPtjmWPMTrSyLgZOtlpWT/view?usp=sharing" target="_blank" rel="noopener">
+        <a class="cert" href="https://drive.google.com/file/d/18fzKY1cP1s7QPtjmWPMTrSyLgZOtlpWT/view?usp=sharing" target="_blank" rel="noopener" data-icon="fas fa-shield-halved">
           <div class="cert-title">BSP Cybersecurity &amp; IT Risk Roadshow 2024</div>
           <div class="cert-org">Bangko Sentral ng Pilipinas</div>
         </a>
-        <a class="cert" href="https://drive.google.com/file/d/1A0ae28hqVNPPlFymetMrCywrRvbrgYlQ/view?usp=sharing" target="_blank" rel="noopener">
+        <!-- Halftone layout only: two more from the full list so its 3-column grid ends on a full row.
+             Kept before the last item so the classic list's :last-child rule still hits RBAP. -->
+        <a class="cert ht-only" href="https://drive.google.com/file/d/1_Vmde6IHk3_pjBrR0o-o5K41GFZwFB38/view?usp=sharing" target="_blank" rel="noopener" data-icon="fas fa-house-laptop">
+          <div class="cert-title">Remote Worker Professional Certificate</div>
+          <div class="cert-org">CertiProf</div>
+        </a>
+        <a class="cert ht-only" href="https://drive.google.com/file/d/1lc2m_n2OrRI-v7jl1ZOkOLT-P3JuqfGg/view?usp=sharing" target="_blank" rel="noopener" data-icon="fas fa-pen-nib">
+          <div class="cert-title">Visual Graphic Design NC III</div>
+          <div class="cert-org">TESDA</div>
+        </a>
+        <a class="cert" href="https://drive.google.com/file/d/1A0ae28hqVNPPlFymetMrCywrRvbrgYlQ/view?usp=sharing" target="_blank" rel="noopener" data-icon="fas fa-file-code">
           <div class="cert-title">RBAP API-XML Report Strengthening</div>
           <div class="cert-org">RBAP</div>
         </a>

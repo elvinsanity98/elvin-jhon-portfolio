@@ -11,6 +11,11 @@
   var GH_USER = 'elvinsanity98';
   var CACHE_MS = 60 * 60 * 1000;        // GitHub's anonymous API allows 60 requests/hour per visitor
 
+  // Shared between the portrait and the tour: while the tour runs, its stand-in cursor
+  // steers the portrait's head instead of the real pointer.
+  var touring = false;
+  var portraitLookAt = null;            // function (x, y), or (null) to face forward
+
   // === Colour mode: system / light / dark ===
   // Dispatches the same 'themechange' event as the classic toggle.
   (function () {
@@ -105,9 +110,11 @@
       var sector = Math.round(Math.atan2(dy, dx) / (Math.PI / 4));
       return [5, 8, 7, 6, 3, 0, 1, 2][(sector + 8) % 8];
     }
-    function reset() { queueFrame(CENTER); }
+    function reset() { if (!touring) queueFrame(CENTER); }
+    portraitLookAt = function (x, y) { queueFrame(x == null ? CENTER : frameFromPoint(x, y)); };
 
     window.addEventListener('pointermove', function (e) {
+      if (touring) return;
       // Touch only steers the head while the finger is on the portrait
       if (e.pointerType === 'touch' && !portrait.contains(e.target)) return;
       queueFrame(frameFromPoint(e.clientX, e.clientY));
@@ -261,6 +268,275 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(measure, 150);
     });
+  })();
+
+  // === Certifications: icon tile on top of each card (from its data-icon) ===
+  (function () {
+    Array.prototype.forEach.call(document.querySelectorAll('#certs .cert'), function (card) {
+      var cls = card.getAttribute('data-icon') || '';
+      if (!/^fa[bs] fa-[a-z0-9-]+$/.test(cls)) cls = 'fas fa-certificate';
+      var tile = document.createElement('span');
+      tile.className = 'ht-cert-icon';
+      tile.setAttribute('aria-hidden', 'true');
+      var icon = document.createElement('i');
+      icon.className = cls;
+      tile.appendChild(icon);
+      card.insertBefore(tile, card.firstChild);
+    });
+  })();
+
+  // === Tour: a stand-in cursor walks the page and types a line at each stop ===
+  // Plays by itself on a visitor's first desktop visit. "Take the tour" in the sidebar,
+  // the G key, or the pill it leaves at the bottom replays it. Any click, key press,
+  // scroll or touch ends it. Add ?tour=1 to the URL to force it.
+  (function () {
+    var NAME = 'Elvin';
+    var SEEN_KEY = 'ejg-tour-seen', PILL_KEY = 'ejg-tour-pill';
+    // sel: what to point at; several matches make the cursor sweep across them
+    // at:  where on the element the cursor rests, as [x, y] fractions of its box
+    // say: the line typed at that stop
+    var STOPS = [
+      { sel: '.hero-name', at: [0.02, -0.1], above: true, say: "Hi! I'm Elvin, welcome to my website! 👋" },
+      { sel: '.ht-socials a', at: [0.5, 1.1], say: 'Here are my social links.' },
+      { sel: '.ht-figure', at: [0.3, 0.9], say: 'A few quick numbers about my work.' },
+      { sel: '.ht-side .ht-nav a[href*="github.com"]', at: [1, 0.6], say: 'My code lives on GitHub.' },
+      { sel: '#ht-sections a[href="#projects"]', at: [1, 0.6], say: "Things I've built. Click the cards to shuffle them." },
+      { sel: '#ht-sections a[href="#experience"]', at: [1, 0.6], say: "Where I've worked and studied." },
+      { sel: '#ht-sections a[href="#certs"]', at: [1, 0.6], say: 'My certifications. Each one links to its proof.' },
+      { sel: '#ht-sections a[href="#recs"]', at: [1, 0.6], say: "What people I've worked with say." },
+      { sel: '.ht-mode', at: [1, 0.6], say: 'Light or dark? Pick your theme here.' },
+      { sel: '.ht-mail', at: [1, 0.7], say: "Here's my email." },
+      { sel: '.ht-bio', at: [0, 0.8], say: "That's the tour. Scroll around and enjoy your stay! ✌️" }
+    ];
+
+    var desktop = window.matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var startBtn = document.getElementById('ht-tour-start');
+
+    function make(tag, className, text) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text) node.textContent = text;
+      return node;
+    }
+    function stored(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+    function store(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
+
+    // The stand-in cursor and its bubble are decoration: hidden from assistive tech
+    var cursor = make('div', 'ht-tour-cursor');
+    cursor.setAttribute('aria-hidden', 'true');
+    cursor.innerHTML = '<svg viewBox="0 0 18 18"><path d="M2 1.5 15.6 8 9.4 9.7 7.3 16z"/></svg>';
+    var bubble = make('div', 'ht-tour-bubble');
+    bubble.setAttribute('aria-hidden', 'true');
+    var textEl = make('span', 'ht-tour-text');
+    bubble.appendChild(make('span', 'ht-tour-name', NAME));
+    bubble.appendChild(textEl);
+
+    var pill = make('div', 'ht-tour-pill');
+    pill.hidden = true;
+    var pillMain = make('button');
+    pillMain.type = 'button';
+    var pillIcon = make('i', 'fas fa-rotate-right');
+    pillIcon.setAttribute('aria-hidden', 'true');
+    var pillLabel = make('span');
+    pillMain.appendChild(pillIcon);
+    pillMain.appendChild(pillLabel);
+    var pillClose = make('button');
+    pillClose.type = 'button';
+    pillClose.setAttribute('aria-label', 'Hide this');
+    pillClose.appendChild(make('i', 'fas fa-xmark'));
+    pill.appendChild(pillMain);
+    pill.appendChild(pillClose);
+
+    document.body.appendChild(cursor);
+    document.body.appendChild(bubble);
+    document.body.appendChild(pill);
+
+    var alive = false, timers = [], raf = 0;
+    var settling = false;                 // scrolling back to the top before the first stop
+    var pos = { x: 0, y: 0 }, above = false, flipX = false, hot = [];
+
+    function later(fn, ms) { timers.push(setTimeout(function () { if (alive) fn(); }, ms)); }
+
+    function placeBubble() {
+      var w = bubble.offsetWidth, h = bubble.offsetHeight;
+      var x = flipX ? pos.x - w - 6 : pos.x + 14;
+      var y = above ? pos.y - h - 8 : pos.y + 18;
+      bubble.style.transform = 'translate(' + Math.max(8, Math.round(x)) + 'px,' + Math.max(8, Math.round(y)) + 'px)';
+    }
+    function place() {
+      cursor.style.transform = 'translate(' + pos.x.toFixed(1) + 'px,' + pos.y.toFixed(1) + 'px)';
+      placeBubble();
+      if (portraitLookAt) portraitLookAt(pos.x, pos.y);
+    }
+    function moveTo(x, y, done) {
+      var from = { x: pos.x, y: pos.y };
+      var dist = Math.sqrt(Math.pow(x - from.x, 2) + Math.pow(y - from.y, 2));
+      var dur = Math.max(380, Math.min(1000, dist * 1.5));
+      var t0 = performance.now();
+      (function frame(now) {
+        if (!alive) return;
+        var t = Math.min(1, (now - t0) / dur);
+        var e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // ease in-out
+        pos.x = from.x + (x - from.x) * e;
+        pos.y = from.y + (y - from.y) * e;
+        place();
+        if (t < 1) raf = requestAnimationFrame(frame); else done();
+      })(t0);
+    }
+
+    function cool() {
+      hot.forEach(function (node) { node.classList.remove('ht-tour-hot'); });
+      hot = [];
+    }
+    function heat(node) { node.classList.add('ht-tour-hot'); hot.push(node); }
+    // Back to the bare name tag that rides along with the cursor
+    function hush() {
+      textEl.textContent = '';
+      bubble.classList.remove('is-speaking', 'is-typing');
+      above = false; flipX = false;
+    }
+    function type(line, wantAbove, done) {
+      var chars = Array.from ? Array.from(line) : line.split('');
+      // Measure the finished bubble once so it opens on a side with room and never flips mid-line
+      textEl.textContent = line;
+      bubble.classList.add('is-speaking');
+      var w = bubble.offsetWidth, h = bubble.offsetHeight;
+      flipX = pos.x + 14 + w > window.innerWidth - 10;
+      above = !!wantAbove || pos.y + 18 + h > window.innerHeight - 10;
+      textEl.textContent = '';
+      bubble.classList.add('is-typing');
+      var i = 0;
+      (function tick() {
+        textEl.textContent = chars.slice(0, ++i).join('');
+        placeBubble();
+        if (i < chars.length) later(tick, 26);
+        else { bubble.classList.remove('is-typing'); done(); }
+      })();
+    }
+
+    function onScreen(node) {
+      var r = node.getBoundingClientRect();
+      return r.width > 0 && r.top >= 0 && r.bottom <= window.innerHeight && r.left >= 0 && r.right <= window.innerWidth;
+    }
+    function pointOn(node, at) {
+      var r = node.getBoundingClientRect();
+      return { x: r.left + r.width * at[0] + (at[0] === 1 ? 6 : 0), y: r.top + r.height * at[1] };
+    }
+
+    function runStop(i) {
+      if (i >= STOPS.length) { stop(); return; }
+      var s = STOPS[i];
+      var targets = Array.prototype.filter.call(document.querySelectorAll(s.sel), onScreen);
+      if (!targets.length) { runStop(i + 1); return; }      // not visible at this window size
+      cool();
+      hush();
+      var p = pointOn(targets[0], s.at);
+      moveTo(p.x, p.y, function () {
+        heat(targets[0]);
+        type(s.say, s.above, function () {
+          var k = 1;
+          (function sweep() {
+            if (k >= targets.length) {
+              later(function () { runStop(i + 1); }, targets.length > 1 ? 900 : Math.max(1200, s.say.length * 32));
+              return;
+            }
+            later(function () {
+              var q = pointOn(targets[k], s.at);
+              moveTo(q.x, q.y, function () { cool(); heat(targets[k]); k++; sweep(); });
+            }, 420);
+          })();
+        });
+      });
+    }
+
+    function setPill(mode) {
+      if (mode === 'skip') {
+        pillIcon.className = 'fas fa-stop';
+        pillLabel.textContent = 'skip tour';
+        pillClose.hidden = true;
+        pill.hidden = false;
+      } else {
+        pillIcon.className = 'fas fa-rotate-right';
+        pillLabel.textContent = stored(SEEN_KEY) ? 'take the tour again' : 'take the tour';
+        pillClose.hidden = false;
+        pill.hidden = stored(PILL_KEY) === 'off';
+      }
+    }
+
+    function start() {
+      if (alive || !desktop.matches) return;
+      store(SEEN_KEY, '1');
+      alive = true;
+      touring = true;
+      setPill('skip');
+      var begin = function () {
+        settling = false;
+        pos = { x: window.innerWidth * 0.66, y: window.innerHeight * 0.6 };
+        hush();
+        place();
+        document.body.classList.add('ht-tour-on');
+        later(function () { runStop(0); }, 450);
+      };
+      // Every stop is at the top of the page: scroll there first and wait until it arrives
+      if (window.scrollY > 4) {
+        settling = true;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        var tries = 0;
+        (function waitForTop() {
+          if (window.scrollY <= 4) { begin(); return; }
+          if (++tries > 40) { window.scrollTo(0, 0); begin(); return; }
+          later(waitForTop, 80);
+        })();
+      } else begin();
+    }
+    function stop() {
+      if (!alive) return;
+      alive = false;
+      touring = false;
+      settling = false;
+      timers.forEach(clearTimeout);
+      timers = [];
+      cancelAnimationFrame(raf);
+      cool();
+      hush();
+      document.body.classList.remove('ht-tour-on');
+      if (portraitLookAt) portraitLookAt(null);
+      setPill('again');
+    }
+
+    pillMain.addEventListener('click', function () { if (alive) stop(); else start(); });
+    pillClose.addEventListener('click', function () { store(PILL_KEY, 'off'); pill.hidden = true; });
+    if (startBtn) startBtn.addEventListener('click', start);
+
+    // The visitor taking over ends the tour. The tour's own controls handle themselves.
+    function takeover(e) {
+      if (!alive) return;
+      if (e.target && e.target.closest && e.target.closest('.ht-tour-pill, .ht-tour-start')) return;
+      stop();
+    }
+    ['pointerdown', 'wheel', 'touchstart'].forEach(function (name) {
+      window.addEventListener(name, takeover, { passive: true });
+    });
+    window.addEventListener('scroll', function () { if (alive && !settling && window.scrollY > 40) stop(); }, { passive: true });
+    window.addEventListener('resize', function () { if (alive) stop(); });
+    document.addEventListener('keydown', function (e) {
+      if (alive) { stop(); return; }
+      if (e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
+      var t = e.target;
+      if (t && t.matches && t.matches('input, textarea, select, [contenteditable]')) return;
+      if ((e.key || '').toLowerCase() === 'g') start();
+    });
+
+    var forced = /[?&]tour=1(&|$)/.test(location.search);
+    var firstVisit = !stored(SEEN_KEY) && !reduce && !location.hash && window.scrollY < 40;
+    if (desktop.matches && (forced || firstVisit)) {
+      var kickoff = function () { setTimeout(start, 900); };
+      if (document.readyState === 'complete') kickoff();
+      else window.addEventListener('load', kickoff, { once: true });
+    } else {
+      setPill('again');
+    }
   })();
 
   // === Recommendations: every quote is visible; long ones get a "Read more" ===

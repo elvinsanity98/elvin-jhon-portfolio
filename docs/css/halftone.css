@@ -637,35 +637,145 @@ html[data-layout="halftone"] .stack-chip {
 }
 html[data-layout="halftone"] .stack-chip:hover { color: var(--text); border-color: var(--border-strong); }
 
-/* --- 05 certifications: two-up cards ----------------------------------- */
+/* --- 05 certifications: three-up badge cards --------------------------- */
+/* Icon on top, centred title, issuer in small caps, "‹ verify ›" that inks in on hover.
+   The icon tile is added by js/halftone.js from each card's data-icon. */
 html[data-layout="halftone"] .cert-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 html[data-layout="halftone"] .cert,
 html[data-layout="halftone"] .cert:last-child,
 html[data-layout="halftone"] .cert:hover {
-  padding: 16px 18px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px 14px 16px;
+  text-align: center;
   border-bottom: 1px solid var(--border);
 }
-html[data-layout="halftone"] .cert:hover { border-color: var(--border-strong); }
-html[data-layout="halftone"] .cert-title { font-size: 14px; font-weight: 500; line-height: 1.35; }
+html[data-layout="halftone"] .cert { transition: border-color 200ms, transform 200ms, box-shadow 200ms; }
+html[data-layout="halftone"] .cert:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 30px -20px rgba(0, 0, 0, 0.45);
+}
+/* The two halftone-only cards sit before the last item in the markup; show them last */
+html[data-layout="halftone"] .cert.ht-only { order: 1; }
+html[data-layout="halftone"] .ht-cert-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; margin-bottom: 14px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+html[data-layout="halftone"] .cert-title { font-size: 13.5px; font-weight: 500; line-height: 1.35; }
 html[data-layout="halftone"] .cert-org,
 html[data-layout="halftone"] .cert::after {
   font-family: var(--ht-mono);
-  font-size: 10px; letter-spacing: 0.1em;
+  font-size: 9.5px; letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
-html[data-layout="halftone"] .cert-org { margin-top: 6px; }
+html[data-layout="halftone"] .cert-org { margin: 6px 0 16px; }
 html[data-layout="halftone"] .cert::after {
-  content: 'verify \2197';
-  display: block; margin-top: 14px;
+  content: '\2039\00a0\00a0verify\00a0\00a0\203A';
+  display: block; margin-top: auto;
   color: var(--text-faint);
   transition: color 200ms;
 }
 html[data-layout="halftone"] .cert:hover::after { color: var(--text); }
+
+/* ==========================================================================
+   TOUR: a guided walk-through. js/halftone.js drives a stand-in cursor from
+   element to element and types a short line at each stop.
+   ========================================================================== */
+html[data-layout="halftone"] .ht-tour-cursor,
+html[data-layout="halftone"] .ht-tour-bubble {
+  position: fixed; top: 0; left: 0; z-index: 200;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 250ms ease;
+  will-change: transform;
+}
+html[data-layout="halftone"] .ht-tour-on .ht-tour-cursor,
+html[data-layout="halftone"] .ht-tour-on .ht-tour-bubble { opacity: 1; }
+html[data-layout="halftone"] .ht-tour-cursor svg { display: block; width: 18px; height: 18px; }
+html[data-layout="halftone"] .ht-tour-cursor path {
+  fill: var(--text); stroke: var(--bg);
+  stroke-width: 1.5; stroke-linejoin: round;
+}
+/* Inverted against the page so it reads as an overlay: light bubble on dark, dark on light */
+html[data-layout="halftone"] .ht-tour-bubble {
+  max-width: 250px;
+  padding: 3px 9px;
+  font-size: 12.5px; line-height: 1.45;
+  color: var(--bg);
+  background: var(--text);
+  border-radius: 999px;
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.5);
+}
+html[data-layout="halftone"] .ht-tour-name {
+  display: block;
+  font-family: var(--ht-mono);
+  font-size: 10px; font-weight: 500;
+}
+/* While speaking: the name shrinks to a label above the line */
+html[data-layout="halftone"] .ht-tour-bubble.is-speaking { padding: 7px 11px 8px; border-radius: 10px; }
+html[data-layout="halftone"] .ht-tour-bubble.is-speaking .ht-tour-name { margin-bottom: 2px; font-size: 9px; opacity: 0.55; }
+html[data-layout="halftone"] .ht-tour-text:empty { display: none; }
+html[data-layout="halftone"] .ht-tour-bubble.is-typing .ht-tour-text::after {
+  content: '';
+  display: inline-block; width: 1px; height: 1em; margin-left: 1px;
+  vertical-align: -0.15em;
+  background: currentColor;
+}
+
+/* What the tour cursor is pointing at gets the same emphasis as a hover */
+html[data-layout="halftone"] .ht-tour-hot,
+html[data-layout="halftone"] .ht-tour-hot i,
+html[data-layout="halftone"] .ht-figure.ht-tour-hot span { color: var(--text) !important; }
+
+/* Bottom pill: "take the tour again" after a tour, "skip tour" during one */
+html[data-layout="halftone"] .ht-tour-pill {
+  position: fixed; bottom: 14px; left: 50%; z-index: 60;
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 3px 4px 3px 10px;
+  font-family: var(--ht-mono);
+  font-size: 10.5px; letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transform: translateX(-50%);
+}
+html[data-layout="halftone"] .ht-tour-pill[hidden],
+html[data-layout="halftone"] .ht-tour-pill button[hidden] { display: none; }
+html[data-layout="halftone"] .ht-tour-pill button {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 6px;
+  font: inherit; color: inherit;
+  background: none; border: 0; border-radius: 999px;
+  cursor: pointer;
+  transition: color 200ms;
+}
+html[data-layout="halftone"] .ht-tour-pill button:hover { color: var(--text); }
+html[data-layout="halftone"] .ht-tour-pill button:focus-visible,
+html[data-layout="halftone"] .ht-tour-start:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+html[data-layout="halftone"] .ht-tour-pill i { font-size: 9px; }
+html[data-layout="halftone"] .ht-tour-start {
+  padding: 0;
+  font: inherit; color: inherit;
+  background: none; border: 0;
+  cursor: pointer;
+  transition: color 200ms;
+}
+html[data-layout="halftone"] .ht-tour-start:hover { color: var(--text); }
+@media (min-width: 1024px) {
+  /* centre the pill on the content column, not the whole window */
+  html[data-layout="halftone"] .ht-tour-pill { left: calc(50% + var(--ht-side-w) / 2); }
+}
 
 /* --- 06 recommendations: all shown at once, long quotes clamp ---------- */
 html[data-layout="halftone"] .rc-viewport {
@@ -733,7 +843,11 @@ html[data-layout="halftone"] .rc-controls { display: none; }
 
 @media (max-width: 719px) {
   html[data-layout="halftone"] .rc-viewport { grid-template-columns: minmax(0, 1fr); }
-  html[data-layout="halftone"] .cert-list { grid-template-columns: minmax(0, 1fr); }
+  html[data-layout="halftone"] .cert-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 1023px) {
+  /* The tour needs the sidebar and a mouse, so its controls are desktop-only */
+  html[data-layout="halftone"] .ht-tour-pill { display: none; }
 }
 
 /* --- 07 github: dot-matrix contribution graph + latest repos ----------- */
