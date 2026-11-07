@@ -601,7 +601,15 @@ html[data-layout="halftone"] .ht-deck .proj-name {
   font-size: 17px; font-weight: 400; line-height: 1.2;
 }
 html[data-layout="halftone"] .ht-deck .proj-name i { display: none; }
-html[data-layout="halftone"] .ht-deck .proj-desc { margin: 0 0 16px; }
+/* Capped at four lines: every card is as tall as the tallest one, so one long blurb
+   would leave the rest with a big empty gap (worst on phones, where text wraps more) */
+html[data-layout="halftone"] .ht-deck .proj-desc {
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4; line-clamp: 4;
+  overflow: hidden;
+}
 html[data-layout="halftone"] .ht-deck .proj-url,
 html[data-layout="halftone"] .ht-deck .proj:hover .proj-url {
   padding: 7px 12px;
@@ -976,4 +984,42 @@ html[data-layout="halftone"] .footer-copy {
 @media (prefers-reduced-motion: reduce) {
   html[data-layout="halftone"] .proj,
   html[data-layout="halftone"] .cert { transition: none; transform: none; }
+}
+
+/* ==========================================================================
+   PHONES: tighter rhythm, full-width portrait, compact certificate rows
+   ========================================================================== */
+@media (max-width: 719px) {
+  html[data-layout="halftone"] .hero { padding-bottom: 40px; }
+  /* Portrait spans the text column so its edges line up with the copy below */
+  html[data-layout="halftone"] .ht-portrait { max-width: 360px; }
+  html[data-layout="halftone"] .card { margin-top: 64px !important; }
+  html[data-layout="halftone"] .card-title { margin-bottom: 20px; }
+  html[data-layout="halftone"] .footer-copy { margin-top: 64px; }
+}
+@media (max-width: 559px) {
+  /* Certificates: one row each (icon | title + issuer | verify) instead of tall cards */
+  html[data-layout="halftone"] .cert-list { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  html[data-layout="halftone"] .cert,
+  html[data-layout="halftone"] .cert:last-child,
+  html[data-layout="halftone"] .cert:hover {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    column-gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    text-align: left;
+  }
+  html[data-layout="halftone"] .ht-cert-icon {
+    grid-column: 1; grid-row: 1 / span 2;
+    width: 34px; height: 34px; margin: 0;
+    font-size: 14px;
+  }
+  html[data-layout="halftone"] .cert-title { grid-column: 2; }
+  html[data-layout="halftone"] .cert-org { grid-column: 2; margin: 3px 0 0; letter-spacing: 0.04em; }
+  html[data-layout="halftone"] .cert::after {
+    grid-column: 3; grid-row: 1 / span 2;
+    margin: 0;
+    content: 'verify\00a0\203A';
+  }
 }
