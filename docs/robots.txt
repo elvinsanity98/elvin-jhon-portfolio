@@ -1,0 +1,5 @@
+# Everything here may be crawled. admin.html carries its own noindex.
+User-agent: *
+Allow: /
+
+Sitemap: https://elvinjhongimena.com/sitemap.xml
