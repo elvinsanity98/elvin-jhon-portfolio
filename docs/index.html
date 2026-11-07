@@ -1028,6 +1028,12 @@
         const preview = new URLSearchParams(location.search).get('preview');
         if (LAYOUTS.includes(preview)) layout = preview;
         document.documentElement.setAttribute('data-layout', LAYOUTS.includes(layout) ? layout : 'classic');
+        // Halftone uses a still, grey favicon; classic keeps its own icons (and animated loop).
+        if (layout === 'halftone') {
+          document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach(function (l) {
+            l.setAttribute('href', l.getAttribute('href').replace(/favicon(-\d+)?\.(png|ico)$/, 'favicon-grey$1.$2'));
+          });
+        }
       } catch (e) {}
     })();
   </script>
@@ -2065,6 +2071,7 @@
     // Draws each sampled frame to a 64px canvas, caches PNG data URLs, then
     // ping-pongs a dedicated <link rel="icon"> so the browser tab icon loops.
     (function() {
+      if (document.documentElement.getAttribute('data-layout') === 'halftone') return;
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       var ref = document.querySelector('link[rel="icon"][sizes="32x32"]')
              || document.querySelector('link[rel="icon"]');
