@@ -165,9 +165,22 @@
         // Only a plain fa-* class name is accepted from the attribute
         var icon = /^fa-[a-z0-9-]+$/.test(card.getAttribute('data-icon') || '') ? card.getAttribute('data-icon') : 'fa-cube';
         tile.appendChild(el('i', 'fas ' + icon));
+        // Title with the user count (data-users) underneath, like an app store listing
+        var titles = el('div', 'ht-proj-titles');
         card.insertBefore(head, name);
         head.appendChild(tile);
-        head.appendChild(name);
+        head.appendChild(titles);
+        titles.appendChild(name);
+        var users = parseInt(card.getAttribute('data-users'), 10);
+        if (users > 0) {
+          var count = el('span', 'ht-proj-users');
+          var people = el('i', 'fas fa-users');
+          people.setAttribute('aria-hidden', 'true');
+          count.appendChild(people);
+          count.appendChild(el('b', '', users.toLocaleString('en-US')));
+          count.appendChild(document.createTextNode(' users'));
+          titles.appendChild(count);
+        }
       }
     });
 
@@ -268,6 +281,50 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(measure, 150);
     });
+  })();
+
+  // === Sidebar "N people viewing now" ===
+  // Simulated: there is no backend counting visitors. The number drifts at random
+  // between MIN and MAX every few seconds, and now and then a face swaps.
+  (function () {
+    var countEl = document.getElementById('ht-viewer-count');
+    var moreEl = document.getElementById('ht-viewer-more');
+    if (!countEl) return;
+    var MIN = 3, MAX = 58;
+    var FACES = ['fa-user-astronaut', 'fa-user-tie', 'fa-user-graduate', 'fa-user-ninja',
+                 'fa-user-secret', 'fa-user-doctor', 'fa-user'];
+    var faces = Array.prototype.slice.call(document.querySelectorAll('.ht-viewer-faces i'));
+    var n = MIN + Math.floor(Math.random() * (MAX - MIN + 1));
+
+    function render(animate) {
+      countEl.textContent = String(n);
+      if (moreEl) {
+        moreEl.hidden = n <= faces.length;
+        moreEl.textContent = '+' + Math.max(0, n - faces.length);
+      }
+      if (animate) {
+        countEl.classList.remove('is-ticking');
+        void countEl.offsetWidth;
+        countEl.classList.add('is-ticking');
+      }
+    }
+    function swapFace() {
+      var face = faces[Math.floor(Math.random() * faces.length)];
+      if (!face) return;
+      face.classList.add('is-swapping');
+      setTimeout(function () {
+        face.className = 'fas ' + FACES[Math.floor(Math.random() * FACES.length)];
+      }, 300);
+    }
+    function step() {
+      var delta = (1 + Math.floor(Math.random() * 4)) * (Math.random() < 0.5 ? -1 : 1);
+      n = Math.max(MIN, Math.min(MAX, n + delta));
+      render(true);
+      if (Math.random() < 0.35) swapFace();
+      setTimeout(step, 3500 + Math.random() * 5500);
+    }
+    render(false);
+    setTimeout(step, 3500 + Math.random() * 5500);
   })();
 
   // === Certifications: icon tile on top of each card (from its data-icon) ===

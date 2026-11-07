@@ -169,6 +169,47 @@ html[data-layout="halftone"] .ht-keys {
   display: flex; flex-direction: column; gap: 8px;
   font-size: 11.5px; color: var(--text-muted);
 }
+/* "N people viewing now": overlapping face icons + count (simulated in js/halftone.js) */
+html[data-layout="halftone"] .ht-viewers {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: 20px; padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+html[data-layout="halftone"] .ht-viewer-faces { display: flex; align-items: center; }
+html[data-layout="halftone"] .ht-viewer-faces > * {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  margin-left: -7px;
+  font-size: 11px;
+  color: var(--text);
+  background: var(--card-soft);
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  transition: opacity 300ms ease;
+}
+html[data-layout="halftone"] .ht-viewer-faces > :first-child { margin-left: 0; }
+html[data-layout="halftone"] .ht-viewer-faces .is-swapping { opacity: 0; }
+html[data-layout="halftone"] .ht-viewer-more {
+  width: auto; min-width: 24px; padding: 0 5px;
+  font-family: var(--ht-mono); font-size: 9px; font-weight: 500;
+  border-radius: 999px;
+}
+html[data-layout="halftone"] .ht-viewer-more[hidden] { display: none; }
+html[data-layout="halftone"] .ht-viewer-line { font-size: 11.5px; color: var(--text-muted); }
+html[data-layout="halftone"] .ht-viewer-line b {
+  display: inline-block;
+  font-family: var(--ht-mono); font-weight: 500;
+  color: var(--text);
+}
+html[data-layout="halftone"] .ht-viewer-line b.is-ticking { animation: ht-tick 360ms ease; }
+@keyframes ht-tick {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-layout="halftone"] .ht-viewer-line b.is-ticking { animation: none; }
+}
+
 html[data-layout="halftone"] .ht-keys kbd {
   margin-left: 6px; padding: 1px 6px;
   font-family: var(--ht-mono); font-size: 10px;
@@ -287,10 +328,30 @@ html[data-layout="halftone"] .hero-loc {
 html[data-layout="halftone"] .ht-bio { margin-top: 22px; }
 html[data-layout="halftone"] .ht-bio p {
   margin: 0;
-  font-size: 15px; line-height: 1.625;
+  font-size: 15px; line-height: 2;              /* room for the chips */
   color: var(--text-soft);
 }
-html[data-layout="halftone"] .ht-bio p + p { margin-top: 16px; }
+html[data-layout="halftone"] .ht-bio p + p { margin-top: 14px; }
+/* Key phrases sit in small pills with an icon */
+html[data-layout="halftone"] .ht-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 8px;
+  font-weight: 500; line-height: 1.75;
+  color: var(--text);
+  background: var(--card-soft);
+  border-radius: 7px;
+  white-space: nowrap;
+}
+html[data-layout="halftone"] .ht-chip i { font-size: 0.78em; }
+/* A small cluster of AI marks in front of "AI-assisted development" */
+html[data-layout="halftone"] .ht-ai {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-right: 3px;
+  vertical-align: -0.08em;
+  color: var(--text);
+}
+html[data-layout="halftone"] .ht-ai svg { width: 13px; height: 13px; fill: currentColor; }
+html[data-layout="halftone"] .ht-ai i { font-size: 12px; }
 html[data-layout="halftone"] .ht-socials {
   display: flex; flex-wrap: wrap; gap: 6px 18px;
   margin-top: 26px;
@@ -551,6 +612,16 @@ html[data-layout="halftone"] .ht-deck .proj:hover .proj-url {
   border-radius: 8px;
 }
 html[data-layout="halftone"] .ht-deck .proj-url::after { content: '\00a0\2197'; }
+/* Title stacked over its user count, beside the icon tile */
+html[data-layout="halftone"] .ht-proj-titles { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+html[data-layout="halftone"] .ht-proj-users {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--ht-mono); font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+html[data-layout="halftone"] .ht-proj-users i { font-size: 10px; }
+html[data-layout="halftone"] .ht-proj-users b { font-weight: 500; color: var(--text); }
 
 html[data-layout="halftone"] .ht-deck-bar {
   display: flex; align-items: center; justify-content: center; gap: 14px;

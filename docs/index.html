@@ -1064,6 +1064,13 @@
         <div>Back to top <kbd>T</kbd></div>
         <div><button type="button" class="ht-tour-start" id="ht-tour-start">Take the tour</button> <kbd>G</kbd></div>
       </div>
+      <!-- "Viewing now" is simulated in js/halftone.js (no backend counts visitors) -->
+      <div class="ht-viewers">
+        <span class="ht-viewer-faces" aria-hidden="true">
+          <i class="fas fa-user-astronaut"></i><i class="fas fa-user-tie"></i><i class="fas fa-user-graduate"></i><b class="ht-viewer-more" id="ht-viewer-more">+3</b>
+        </span>
+        <span class="ht-viewer-line"><b id="ht-viewer-count">6</b> people viewing now</span>
+      </div>
       <div class="ht-mode" role="group" aria-label="Color mode">
         <button type="button" data-ht-mode="system" aria-label="Match system" title="Match system"><i class="fas fa-display"></i></button>
         <button type="button" data-ht-mode="light" aria-label="Light" title="Light"><i class="far fa-sun"></i></button>
@@ -1126,8 +1133,10 @@
 
         <!-- Halftone layout only: short bio + text links (the buttons below are classic-only) -->
         <div class="ht-only ht-bio">
-          <p>I'm an IT Specialist and full-stack developer. I run a rural bank's IT infrastructure end-to-end, from servers and security to BSP regulatory reporting.</p>
-          <p>Outside the bank I build and ship web apps, internal tools, and inventory systems, lately with AI-assisted development.</p>
+          <p>I'm an <span class="ht-chip"><i class="fas fa-shield-halved" aria-hidden="true"></i>IT Specialist</span> and <span class="ht-chip"><i class="fas fa-code" aria-hidden="true"></i>full-stack</span> developer. I run a <span class="ht-chip"><i class="fas fa-building-columns" aria-hidden="true"></i>rural bank's</span> IT infrastructure end-to-end, from <span class="ht-chip"><i class="fas fa-server" aria-hidden="true"></i>servers</span> and security to BSP regulatory reporting.</p>
+          <p>Outside the bank I build and ship <span class="ht-chip"><i class="fas fa-desktop" aria-hidden="true"></i>web apps</span>, internal tools, and <span class="ht-chip"><i class="fas fa-boxes-stacked" aria-hidden="true"></i>inventory systems</span>, lately with
+            <span class="ht-ai" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M8 0c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8z"/></svg><svg viewBox="0 0 16 16"><path d="M8 1.5v13M1.5 8h13M3.4 3.4l9.2 9.2M12.6 3.4l-9.2 9.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><i class="fas fa-robot"></i><i class="fas fa-brain"></i></span>
+            AI-assisted development.</p>
         </div>
         <div class="ht-only ht-socials">
           <a href="https://github.com/elvinsanity98" target="_blank" rel="noopener">github <span aria-hidden="true">&#8599;</span></a>
@@ -1421,55 +1430,55 @@
           </h2>
 
           <div class="proj-grid">
-            <a class="proj" href="https://rbliloy.x10.mx/" target="_blank" rel="noopener" data-icon="fa-building-columns" data-tags="Banking|Production site">
+            <a class="proj" href="https://rbliloy.x10.mx/" target="_blank" rel="noopener" data-users="1204" data-icon="fa-building-columns" data-tags="Banking|Production site">
               <div class="proj-name">Rural Bank of Liloy <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Official production website for an operating rural bank, with services, loan flow, and CMS announcements.</p>
               <span class="proj-url">rbliloy.x10.mx</span>
             </a>
 
-            <a class="proj" href="https://id-maker-five.vercel.app/" target="_blank" rel="noopener" data-icon="fa-id-card" data-tags="School tool|Web app">
+            <a class="proj" href="https://id-maker-five.vercel.app/" target="_blank" rel="noopener" data-users="642" data-icon="fa-id-card" data-tags="School tool|Web app">
               <div class="proj-name">ID Card Maker <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Design and print customizable student ID cards with templates, photos, QR codes, and batch printing.</p>
               <span class="proj-url">id-maker-five.vercel.app</span>
             </a>
 
-            <a class="proj" href="https://rbli-supply-demo.onrender.com/dashboard" target="_blank" rel="noopener" data-icon="fa-boxes-stacked" data-tags="Inventory|Demo">
+            <a class="proj" href="https://rbli-supply-demo.onrender.com/dashboard" target="_blank" rel="noopener" data-users="101" data-icon="fa-boxes-stacked" data-tags="Inventory|Demo">
               <div class="proj-name">RBLI R&amp;SIS <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Supply requisition platform with barcodes, audit logs, and trend analytics for small-bank operations.</p>
               <span class="proj-url">rbli-supply-demo.onrender.com</span>
             </a>
 
-            <a class="proj" href="https://elvinsanity98.github.io/resumemaker/" target="_blank" rel="noopener" data-icon="fa-file-lines" data-tags="Productivity|Web app">
+            <a class="proj" href="https://elvinsanity98.github.io/resumemaker/" target="_blank" rel="noopener" data-users="873" data-icon="fa-file-lines" data-tags="Productivity|Web app">
               <div class="proj-name">Resume Maker App <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">ATS-friendly resume builder that turns a guided form into a clean, downloadable PDF resume.</p>
               <span class="proj-url">elvinsanity98.github.io/resumemaker</span>
             </a>
 
-            <a class="proj" href="https://epitrace-global.onrender.com/" target="_blank" rel="noopener" data-icon="fa-virus" data-tags="Health data|Live tracker">
+            <a class="proj" href="https://epitrace-global.onrender.com/" target="_blank" rel="noopener" data-users="456" data-icon="fa-virus" data-tags="Health data|Live tracker">
               <div class="proj-name">EpiTrace &mdash; Virus/Disease Tracker <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Global virus and disease outbreak tracker with live data and country-level statistics.</p>
               <span class="proj-url">epitrace-global.onrender.com</span>
             </a>
 
-            <a class="proj" href="https://elvinsanity98.github.io/MovieIt/" target="_blank" rel="noopener" data-icon="fa-film" data-tags="Entertainment|TMDB API">
+            <a class="proj" href="https://elvinsanity98.github.io/MovieIt/" target="_blank" rel="noopener" data-users="1126" data-icon="fa-film" data-tags="Entertainment|TMDB API">
               <div class="proj-name">MovieIt <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Movie and series streaming site with trending titles and one-click play, built on the TMDB API.</p>
               <span class="proj-url">elvinsanity98.github.io/MovieIt</span>
             </a>
 
-            <a class="proj" href="https://tug-of-math.vercel.app/" target="_blank" rel="noopener" data-icon="fa-people-pulling" data-tags="Game|Multiplayer">
+            <a class="proj" href="https://tug-of-math.vercel.app/" target="_blank" rel="noopener" data-users="964" data-icon="fa-people-pulling" data-tags="Game|Multiplayer">
               <div class="proj-name">Tug of Math <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Multiplayer math race drawn as a tug of war, with Classic, Ranked, and Custom modes, skins, and rank badges.</p>
               <span class="proj-url">tug-of-math.vercel.app</span>
             </a>
 
-            <a class="proj" href="https://golden-crest-finance.vercel.app/demo" target="_blank" rel="noopener" data-icon="fa-hand-holding-dollar" data-tags="Lending|Demo">
+            <a class="proj" href="https://golden-crest-finance.vercel.app/demo" target="_blank" rel="noopener" data-users="1588" data-icon="fa-hand-holding-dollar" data-tags="Lending|Demo">
               <div class="proj-name">Golden Crest Finance <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Lending management app for small lenders: borrowers, loans, daily collections, and reports. The demo runs on sample data.</p>
               <span class="proj-url">golden-crest-finance.vercel.app/demo</span>
             </a>
 
-            <a class="proj" href="https://bnhs-grades-demo.onrender.com/" target="_blank" rel="noopener" data-icon="fa-graduation-cap" data-tags="Education|Demo">
+            <a class="proj" href="https://bnhs-grades-demo.onrender.com/" target="_blank" rel="noopener" data-users="329" data-icon="fa-graduation-cap" data-tags="Education|Demo">
               <div class="proj-name">BNHS SHS Grading System <i class="fas fa-arrow-up-right-from-square"></i></div>
               <p class="proj-desc">Senior High School grading system built on DepEd Order No. 8: class records, registrar approvals, and printable SF9/SF10 forms. The demo uses made-up learners.</p>
               <span class="proj-url">bnhs-grades-demo.onrender.com</span>
