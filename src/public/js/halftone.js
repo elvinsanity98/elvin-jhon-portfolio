@@ -758,4 +758,335 @@
       }
     }).catch(function () { /* graph stays hidden */ });
   })();
+
+  // === Typing test: Alt+J (Option+J on a Mac), or "Typing test" in the sidebar ===
+  // A short run of common words with live WPM / accuracy / time, an on-screen keyboard
+  // that outlines the next key, and a result card that compares the score with Elvin's.
+  // While it is open it takes every key press, so the page shortcuts (D, T, G) stay quiet.
+  (function () {
+    var ELVIN_WPM = 85;                   // the score visitors try to beat
+    var WORD_COUNT = 25;
+    var MAX_EXTRA = 8;                    // wrong letters allowed past the end of a word
+    var WORDS = ('the be to of and in that have it for not on with he as you do at this but his by ' +
+      'from they we say her she or an will my one all would there their what so up out if about who ' +
+      'get which go me when make can like time no just him know take people into year your good some ' +
+      'could them see other than then now look only come its over think also back after use two how ' +
+      'our work first well way even new want because any these give day most us find here thing many ' +
+      'tell place where must while home small hand high keep turn start show every under never last ' +
+      'long great little world own old right big still child house point change line part few ' +
+      'open seem together next white begin both paper group always music those often until mile river ' +
+      'car feet care second book carry took science eat room friend began idea fish mountain stop once ' +
+      'base hear horse cut sure watch color face wood main enough plain girl usual young ready above ' +
+      'ever red list though feel talk bird soon body dog family direct pose leave song measure door ' +
+      'product black short class wind question happen complete ship area half rock order fire south ' +
+      'problem piece told knew pass since top whole king space heard best hour better true during ' +
+      'hundred five remember step early hold west ground interest reach fast verb sing listen six table ' +
+      'travel less morning ten simple several toward war lay against pattern slow center love person ' +
+      'money serve appear road map rain rule govern pull cold notice voice unit power town fine certain ' +
+      'fly fall lead cry dark machine note wait plan figure star box noun field rest correct able pound ' +
+      'done beauty drive stood contain front teach week final gave green quick develop ocean warm free ' +
+      'minute strong special mind behind clear tail produce fact street inch nothing course stay wheel ' +
+      'full force blue object decide surface deep moon island foot system busy test record boat common ' +
+      'gold possible plane dry wonder laugh thousand ago ran check game shape yes hot miss brought heat ' +
+      'snow tire bring distant fill east paint language among').split(' ');
+    var ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    var opener = document.getElementById('ht-tt-open');
+    var modKey = document.getElementById('ht-tt-mod');
+    if (modKey && /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || '')) {
+      modKey.textContent = '⌥';     // Option
+    }
+
+    var overlay = null, ui = {}, wordNodes = [], keyNodes = {};
+    var words = [], typed = [], wi = 0;
+    var keys = 0, goodKeys = 0;           // letter + space presses, and the ones that were right
+    var t0 = 0, tEnd = 0, ticker = 0, running = false, done = false, confirming = false;
+    var open = false, lastFocus = null, hideTimer = 0, shift = -1;
+
+    function make(tag, className, text) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text != null) node.textContent = text;
+      return node;
+    }
+
+    function build() {
+      overlay = make('div', 'ht-tt');
+      overlay.hidden = true;
+      overlay.tabIndex = -1;
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-label', 'Typing test');
+      overlay.innerHTML =
+        '<div class="ht-tt-veil" data-tt="veil"></div>' +
+        '<div class="ht-tt-body">' +
+          '<div class="ht-tt-stats">' +
+            '<div><b data-tt="wpm">0</b><span>wpm</span></div>' +
+            '<div><b><span data-tt="acc">100</span><i>%</i></b><span>acc</span></div>' +
+            '<div><b><span data-tt="time">0</span><i>s</i></b><span>time</span></div>' +
+          '</div>' +
+          '<div class="ht-tt-text" aria-hidden="true"><div class="ht-tt-lines" data-tt="lines"></div></div>' +
+          '<div class="ht-tt-board" aria-hidden="true" data-tt="board"></div>' +
+          '<div class="ht-tt-result" aria-live="polite">' +
+            '<div class="ht-tt-main"><b class="ht-tt-big" data-tt="rwpm">0</b><span class="ht-tt-cap">words per minute</span></div>' +
+            '<div class="ht-tt-grid">' +
+              '<div><b><span data-tt="racc">0</span><i>%</i></b><span>accuracy</span></div>' +
+              '<div><b data-tt="rraw">0</b><span>raw</span></div>' +
+              '<div><b><span data-tt="rtime">0</span><i>s</i></b><span>time</span></div>' +
+            '</div>' +
+            '<p class="ht-tt-verdict" data-tt="verdict"></p>' +
+            '<button type="button" class="ht-tt-again" data-tt="again"><i class="fas fa-rotate-right" aria-hidden="true"></i> try again</button>' +
+          '</div>' +
+          '<p class="ht-tt-hint"><span><kbd>tab</kbd> restart</span><span><kbd>esc</kbd> close</span></p>' +
+          '<p class="ht-tt-confirm">restart test? <kbd>enter</kbd> confirm <span aria-hidden="true">·</span> <kbd>esc</kbd> cancel</p>' +
+        '</div>';
+      Array.prototype.forEach.call(overlay.querySelectorAll('[data-tt]'), function (node) {
+        ui[node.getAttribute('data-tt')] = node;
+      });
+      ui.caret = make('span', 'ht-tt-caret');
+
+      var n = 0;
+      ROWS.concat([' ']).forEach(function (row) {
+        var rowNode = make('div', 'ht-tt-row');
+        row.split('').forEach(function (ch) {
+          var key = make('span', 'ht-tt-key' + (ch === ' ' ? ' is-space' : ''), ch === ' ' ? 'space' : ch);
+          key.style.setProperty('--i', n++);
+          keyNodes[ch] = key;
+          rowNode.appendChild(key);
+        });
+        ui.board.appendChild(rowNode);
+      });
+
+      ui.veil.addEventListener('click', close);
+      ui.again.addEventListener('click', reset);
+      document.body.appendChild(overlay);
+    }
+
+    function pickWords() {
+      var out = [];
+      while (out.length < WORD_COUNT) {
+        var w = WORDS[Math.floor(Math.random() * WORDS.length)];
+        if (w && w !== out[out.length - 1]) out.push(w);
+      }
+      return out;
+    }
+
+    // Letters are a-z only, so building the markup as a string is safe
+    function paint(i) {
+      var w = words[i], t = typed[i], html = '';
+      for (var j = 0; j < Math.max(w.length, t.length); j++) {
+        var cls = j >= t.length ? '' : j >= w.length ? 'is-extra' : t[j] === w[j] ? 'is-ok' : 'is-bad';
+        html += (cls ? '<span class="' + cls + '">' : '<span>') + (j < w.length ? w[j] : t[j]) + '</span>';
+      }
+      wordNodes[i].innerHTML = html;
+      wordNodes[i].classList.toggle('is-wrong', i < wi && t !== w);
+    }
+    function renderAll() {
+      ui.lines.textContent = '';
+      wordNodes = words.map(function (w, i) {
+        var node = make('span', 'ht-tt-word');
+        ui.lines.appendChild(node);
+        return node;
+      });
+      words.forEach(function (w, i) { paint(i); });
+      ui.lines.appendChild(ui.caret);
+    }
+
+    function placeCaret() {
+      var chars = wordNodes[wi] && wordNodes[wi].children;
+      if (!chars || !chars.length) return;
+      var j = typed[wi].length, ref = chars[Math.min(j, chars.length - 1)];
+      var x = ref.offsetLeft + (j >= chars.length ? ref.offsetWidth : 0);
+      var lineH = parseFloat(getComputedStyle(ui.lines).lineHeight) || 40;
+      var line = Math.floor((ref.offsetTop + ref.offsetHeight / 2) / lineH);
+      var caretH = ui.caret.offsetHeight;
+      ui.caret.style.transform = 'translate(' + x + 'px,' + (line * lineH + (lineH - caretH) / 2) + 'px)';
+      // Keep the current line second from the top once the first line is done
+      var next = Math.max(0, line - 1) * lineH;
+      if (next !== shift) { shift = next; ui.lines.style.transform = 'translateY(' + (-next) + 'px)'; }
+    }
+    function markNext() {
+      Object.keys(keyNodes).forEach(function (k) { keyNodes[k].classList.remove('is-next'); });
+      if (done) return;
+      var w = words[wi], t = typed[wi], want = null;
+      if (t.length < w.length) want = w[t.length];
+      else if (wi < words.length - 1) want = ' ';
+      if (want && keyNodes[want]) keyNodes[want].classList.add('is-next');
+    }
+    function flash(ch) {
+      var key = keyNodes[ch];
+      if (!key) return;
+      key.classList.add('is-down');
+      setTimeout(function () { key.classList.remove('is-down'); }, 110);
+    }
+    function refresh() { placeCaret(); markNext(); }
+
+    // Characters of fully correct words (plus the space after each), and the correct
+    // start of the word in progress. Backspaced mistakes do not count twice.
+    function goodChars() {
+      var n = 0;
+      for (var i = 0; i <= wi; i++) {
+        var w = words[i], t = typed[i];
+        if (i < wi || done) {
+          if (t === w) n += w.length + (i < words.length - 1 ? 1 : 0);
+        } else {
+          for (var j = 0; j < t.length && t[j] === w[j]; j++) n++;
+        }
+      }
+      return n;
+    }
+    function allChars() {
+      var n = wi;                         // spaces between the words typed so far
+      for (var i = 0; i <= wi; i++) n += typed[i].length;
+      return n;
+    }
+    function seconds() { return running ? (performance.now() - t0) / 1000 : done ? (tEnd - t0) / 1000 : 0; }
+    function perMinute(chars, s) { return s > 0 ? chars / 5 / (s / 60) : 0; }
+
+    function tick() {
+      var s = seconds();
+      ui.wpm.textContent = s >= 1 ? Math.round(perMinute(goodChars(), s)) : 0;
+      ui.acc.textContent = keys ? Math.round(goodKeys / keys * 100) : 100;
+      ui.time.textContent = Math.floor(s);
+    }
+    function begin() {
+      running = true;
+      t0 = performance.now();
+      overlay.classList.add('is-typing');
+      ticker = setInterval(tick, 250);
+    }
+    function countUp(node, to) {
+      if (reduce.matches) { node.textContent = to; return; }
+      var start = performance.now();
+      (function step(now) {
+        var p = Math.min(1, (now - start) / 700);
+        node.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+        if (p < 1 && open) requestAnimationFrame(step); else node.textContent = to;
+      })(start);
+    }
+    function finish() {
+      tEnd = performance.now();
+      running = false;
+      done = true;
+      clearInterval(ticker);
+      overlay.classList.remove('is-typing');
+      var s = Math.max(0.1, (tEnd - t0) / 1000);
+      var wpm = Math.round(perMinute(goodChars(), s));
+      ui.racc.textContent = keys ? Math.round(goodKeys / keys * 100) : 100;
+      ui.rraw.textContent = Math.round(perMinute(allChars(), s));
+      ui.rtime.textContent = s.toFixed(1);
+      var beat = wpm > ELVIN_WPM;
+      ui.verdict.className = 'ht-tt-verdict' + (beat ? ' is-beat' : '');
+      ui.verdict.innerHTML = '<i class="fas fa-' + (beat ? 'check' : 'xmark') + '" aria-hidden="true"></i><span></span>';
+      ui.verdict.lastChild.textContent = (beat ? 'you beat elvin' : "you didn't beat elvin") + ' · ' + ELVIN_WPM + ' wpm';
+      overlay.classList.add('is-result');
+      markNext();
+      countUp(ui.rwpm, wpm);
+    }
+
+    function setConfirm(on) {
+      confirming = on;
+      overlay.classList.toggle('is-confirming', on);
+    }
+    function reset() {
+      clearInterval(ticker);
+      running = false; done = false;
+      keys = goodKeys = 0; wi = 0; shift = -1;
+      setConfirm(false);
+      overlay.classList.remove('is-result', 'is-typing');
+      words = pickWords();
+      typed = words.map(function () { return ''; });
+      ui.wpm.textContent = '0'; ui.acc.textContent = '100'; ui.time.textContent = '0';
+      renderAll();
+      refresh();
+      overlay.focus({ preventScroll: true });
+    }
+
+    function typeLetter(ch) {
+      if (done) return;
+      var w = words[wi], t = typed[wi];
+      if (t.length >= w.length + MAX_EXTRA) return;
+      if (!running) begin();
+      keys++;
+      if (t.length < w.length && w[t.length] === ch) goodKeys++;
+      typed[wi] = t + ch;
+      paint(wi);
+      refresh();
+      if (wi === words.length - 1 && typed[wi] === w) finish();   // last word right: done
+    }
+    function typeSpace() {
+      if (done || !running || !typed[wi].length) return;
+      keys++;
+      if (typed[wi] === words[wi]) goodKeys++;
+      if (wi === words.length - 1) { finish(); return; }
+      wi++;
+      paint(wi - 1);
+      refresh();
+    }
+    function erase(wholeWord) {
+      if (done) return;
+      if (typed[wi].length) {
+        typed[wi] = wholeWord ? '' : typed[wi].slice(0, -1);
+      } else if (wi > 0 && typed[wi - 1] !== words[wi - 1]) {
+        wi--;                             // step back only into a word that has a mistake
+        if (wholeWord) typed[wi] = '';
+        paint(wi + 1);
+      } else return;
+      paint(wi);
+      refresh();
+    }
+
+    function openTest() {
+      if (open) return;
+      if (!overlay) build();
+      open = true;
+      clearTimeout(hideTimer);
+      lastFocus = document.activeElement;
+      overlay.hidden = false;
+      html.classList.add('ht-tt-lock');
+      reset();
+      requestAnimationFrame(function () { if (open) overlay.classList.add('is-open'); });
+      // Web fonts can land after the first measure
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (open) refresh(); });
+    }
+    function close() {
+      if (!open) return;
+      open = false;
+      clearInterval(ticker);
+      running = false;
+      setConfirm(false);
+      overlay.classList.remove('is-open');
+      html.classList.remove('ht-tt-lock');
+      hideTimer = setTimeout(function () { overlay.hidden = true; }, reduce.matches ? 0 : 340);
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    }
+
+    if (opener) opener.addEventListener('click', openTest);
+    window.addEventListener('resize', function () { if (open && !done) refresh(); });
+
+    // Capture phase on window: runs before the page's own shortcuts, so while the test
+    // is open no other handler sees the key.
+    window.addEventListener('keydown', function (e) {
+      var k = e.key;
+      if (e.code === 'KeyJ' && e.altKey && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        if (open) { e.stopImmediatePropagation(); close(); } else openTest();
+        return;
+      }
+      if (!open) return;
+      e.stopImmediatePropagation();
+      if (k === 'Escape') { e.preventDefault(); if (confirming) setConfirm(false); else close(); return; }
+      if (k === 'Tab') { e.preventDefault(); if (running) setConfirm(true); else reset(); return; }
+      if (k === 'Enter') { if (confirming || done) { e.preventDefault(); reset(); } return; }
+      if (confirming) { e.preventDefault(); return; }
+      if (k === 'Backspace') { e.preventDefault(); flash('backspace'); erase(e.ctrlKey || e.altKey || e.metaKey); return; }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;     // copy, zoom and friends still work
+      if (k === ' ') { e.preventDefault(); flash(' '); typeSpace(); return; }   // a stray space never wipes the result
+      if (k && k.length === 1) {
+        var ch = k.toLowerCase();
+        if (ch >= 'a' && ch <= 'z') { e.preventDefault(); flash(ch); typeLetter(ch); }
+      }
+    }, true);
+  })();
 })();
