@@ -171,14 +171,19 @@
         head.appendChild(tile);
         head.appendChild(titles);
         titles.appendChild(name);
+        // Reach: data-users for most apps, data-schools for the school system; none = no line
         var users = parseInt(card.getAttribute('data-users'), 10);
-        if (users > 0) {
+        var schools = parseInt(card.getAttribute('data-schools'), 10);
+        var reach = users > 0 ? { n: users, one: 'user', many: 'users', icon: 'fa-users' }
+                  : schools > 0 ? { n: schools, one: 'school', many: 'schools', icon: 'fa-school' }
+                  : null;
+        if (reach) {
           var count = el('span', 'ht-proj-users');
-          var people = el('i', 'fas fa-users');
-          people.setAttribute('aria-hidden', 'true');
-          count.appendChild(people);
-          count.appendChild(el('b', '', users.toLocaleString('en-US')));
-          count.appendChild(document.createTextNode(' users'));
+          var mark = el('i', 'fas ' + reach.icon);
+          mark.setAttribute('aria-hidden', 'true');
+          count.appendChild(mark);
+          count.appendChild(el('b', '', reach.n.toLocaleString('en-US')));
+          count.appendChild(document.createTextNode(' ' + (reach.n === 1 ? reach.one : reach.many)));
           titles.appendChild(count);
         }
       }
