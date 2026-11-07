@@ -305,11 +305,9 @@ html[data-layout="halftone"] .ht-portrait {
   cursor: crosshair;
   -webkit-user-select: none; user-select: none;
 }
-html[data-layout="halftone"][data-theme="light"] .ht-portrait {
-  background-image: url("../images/portrait-halftone-light.webp");
-}
-html[data-layout="halftone"][data-theme="dark"] .ht-portrait {
-  background-image: url("../images/portrait-halftone-dark.webp");
+/* Photo sprite with a transparent background, so one file serves both colour modes */
+html[data-layout="halftone"] .ht-portrait {
+  background-image: url("../images/portrait-photo.webp");
 }
 
 html[data-layout="halftone"] .hero-name {
