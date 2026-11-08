@@ -1043,7 +1043,7 @@
         // Halftone uses a still, grey favicon; classic keeps its own icons (and animated loop).
         if (layout === 'halftone') {
           document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach(function (l) {
-            l.setAttribute('href', l.getAttribute('href').replace(/favicon(-\d+)?\.(png|ico)$/, 'favicon-grey$1.$2'));
+            l.setAttribute('href', l.getAttribute('href').replace(/favicon(-\d+)?\.(png|ico)$/, 'favicon-grey$1.$2?v=2'));
           });
         }
       } catch (e) {}
