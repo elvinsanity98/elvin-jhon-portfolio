@@ -1107,12 +1107,64 @@
     var MAX_SHOWN = 60;
     var FACES = ['fa-user-astronaut', 'fa-user-tie', 'fa-user-graduate', 'fa-user-ninja',
                  'fa-user-secret', 'fa-user-doctor', 'fa-user'];
-    var PEOPLE = ['kape_at_code', 'lodi.jm', 'tita_debugger', 'pandesal.js', 'sinigang.py',
+    // Two kinds of chatter: Taglish, mostly from playful handles, and plain English, mostly
+    // from formal usernames (see nextChat).
+    var CASUAL = ['kape_at_code', 'lodi.jm', 'tita_debugger', 'pandesal.js', 'sinigang.py',
                   'bisaya_coder', 'zambo_tech', 'night_shift_ph', 'adobo_stack', 'halo_halo_ui',
                   'kuya_keyboard', 'ate_mae', 'batang_90s', 'jeepney_devops', 'taga_liloy',
                   'ctrl_alt_kain', 'merienda_mode', 'ube_byte', 'boss_404', 'lumpia_loop',
-                  'titser_ana', 'barako_brew', 'kalamansi.css', 'tambay_sa_terminal'];
-    var LINES = [
+                  'titser_ana', 'barako_brew', 'kalamansi.css', 'tambay_sa_terminal',
+                  'mamshie_dev', 'beshie.js', 'kuya_wifi', 'gising_pa_ako', 'chill_lang_ph',
+                  'pancit_canton.py', 'ate_girl_ux', 'sorbetes_stack', 'tricycle_tech', 'bunso_codes',
+                  'lola_loading', 'kuya_kodigo', 'mangga_mode', 'puyat_dev', 'silog_server'];
+    var FORMAL = ['j.reyes', 'm.santos', 'carlo.mendoza', 'anna.villanueva', 'rgarcia.dev',
+                  'p.lim', 'kristine.tan', 'mark.bautista', 'd.navarro', 'joanna.cruz',
+                  'l.ramos', 'miguel.torres', 'sofia.delrosario', 'a.fernandez', 'b.castillo',
+                  'e.gonzales', 'chris.ocampo', 'r.pascual', 'hannah.dizon', 'jdelacruz',
+                  'v.salazar', 'k.morales', 'paolo.manalo', 'grace.yu', 'daniel.brooks',
+                  'sarah.kim', 'emma.wright', 'liam.chen', 'olivia.park', 'noah.patel',
+                  'james.carter', 'h.nakamura', 'isabel.ortega', 'ryan.mitchell', 'claire.dumas'];
+    var ENGLISH = [
+      'This is one of the cleanest portfolios I have seen this year.',
+      'The halftone portrait following my cursor is such a nice touch.',
+      'Love the attention to detail on the typography.',
+      'Really impressive range, from bank infrastructure to web apps.',
+      'The typing test is addictive. Just did three rounds.',
+      'Great work on the dark mode, very easy on the eyes.',
+      'Very well organized. Easy to find everything I needed.',
+      'The project card deck is so satisfying to swipe through.',
+      'Bookmarking this as inspiration for my own portfolio.',
+      'Impressive list of certifications. Respect.',
+      'Smooth animations and it still loads fast. Nicely done.',
+      'The minimal black and white style really works here.',
+      'Clear, professional, and still fun to explore.',
+      'Kudos on the guided tour feature, very creative.',
+      'Rare to see someone handle both servers and frontend this well.',
+      'Shared this with my team. Everyone liked the design.',
+      'The school grading system project is seriously impressive.',
+      'Tug of Math is a fun idea. My kids enjoyed it.',
+      'Excellent portfolio. Wishing you continued success.',
+      'The experience section reads really well.',
+      'Looks great on mobile too.',
+      'Thanks for sharing your work so openly on GitHub.',
+      'The resume maker helped me a lot, thank you!',
+      'Would love to collaborate on a project someday.',
+      'Very inspiring for someone just starting out in IT.',
+      'This site has great energy. Well done!',
+      'The details here show real craftsmanship.',
+      'Just beat your typing score. Rematch?',
+      'Such a thoughtful design. Everything feels intentional.',
+      'Great to see talent from Zamboanga del Norte.',
+      'Clean code, clean design. Love it.',
+      'Impressive work balancing a full-time IT role with side projects.',
+      'I came for the portfolio and stayed for the typing test.',
+      'Respect for building systems that banks and schools actually use.',
+      'Very polished. Feels like a product, not just a portfolio.',
+      'What font is that? It looks great.',
+      'Congrats on all your projects, keep it up!',
+      'Simple, elegant, and fast. Exactly how a portfolio should be.'
+    ];
+    var TAGLISH = [
       'grabe ang linis ng portfolio mo boss 🔥',
       'sana all ganito ka-organized yung site 😭',
       'idol! yung typing test nakakaadik haha',
@@ -1154,10 +1206,28 @@
       'panalo yung card deck ng projects, ang satisfying i-swipe',
       'ganito pala dapat ang portfolio, take notes ako',
       'boss, open ka ba sa freelance? 👀',
-      'ang wholesome ng site, good vibes lang'
+      'ang wholesome ng site, good vibes lang',
+      'ang ganda ng contrast ng black and white, classy tingnan',
+      'grabe yung GitHub section, ang active mo pala',
+      'pa-tour ulit, natuwa ako sa cursor na naglalakad haha',
+      'ang neat ng typography, parang magazine',
+      'sana ma-feature ka sa tech news, deserve mo',
+      'idol, paano mo na-balance yung work sa bank at side projects?',
+      'pati favicon pinag-isipan, grabe sa detail',
+      'ang sarap i-scroll, ang smooth',
+      'binasa ko lahat ng recommendations, ang ganda ng feedback sa’yo',
+      'mabuhay ang mga IT sa probinsya! 🙌',
+      'legit inspiration para sa mga IT students',
+      'kahit di ako techy, na-enjoy ko yung site haha',
+      'nag-typing test ako, 40 wpm lang ako huhu',
+      'pinakita ko sa boss ko, ganito raw dapat website namin'
     ];
-    var AGREE = ['trueee', '+1 dito', 'korek!', 'agree ako dyan', 'real 💯', 'same thoughts',
-                 'this ^', 'omsim', "totoo 'to", 'facts'];
+    var AGREE = {
+      tl: ['trueee', '+1 dito', 'korek!', 'agree ako dyan', 'real 💯', 'same thoughts',
+           'this ^', 'omsim', "totoo 'to", 'facts'],
+      en: ['Agreed!', 'Same here.', '+1', "Couldn't agree more.", 'This.', 'Exactly.',
+           '100%', 'Seconded.', 'So true.', 'Totally.']
+    };
     // Short codes raised by the database guard (supabase/chat.sql), in plain words
     var ERRORS = {
       slow_down: 'Easy lang 🙂 wait a few seconds before sending again.',
@@ -1170,7 +1240,8 @@
 
     var root, panel, pill, list, typingRow, typingWho, hereEl, unreadEl, timer;
     var form, asRow, asName, nameRow, nameInput, msgInput, sendBtn, errEl, countEl;
-    var open = false, unread = 0, bag = [], lastPerson = '', lastKind = '';   // 'line' | 'agree' | 'real'
+    var open = false, unread = 0, bags = {}, lastPerson = '', lastKind = '';   // 'line' | 'agree' | 'real'
+    var lastLang = 'tl';
     var online = false, lastId = 0, seen = {}, pollTimer, sending = false;
     var myName = '';
     try { myName = localStorage.getItem(NAME_KEY) || ''; } catch (e) {}
@@ -1181,20 +1252,28 @@
       for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) | 0;
       return FACES[Math.abs(h) % FACES.length];
     }
-    function nextLine() {
-      if (!bag.length) {
-        bag = LINES.slice();
+    // Shuffled bag per list: nothing repeats until the whole list has been used
+    function draw(key, arr) {
+      var bag = bags[key];
+      if (!bag || !bag.length) {
+        bag = bags[key] = arr.slice();
         for (var i = bag.length - 1; i > 0; i--) {
           var j = Math.floor(Math.random() * (i + 1)), t = bag[i]; bag[i] = bag[j]; bag[j] = t;
         }
       }
       return bag.pop();
     }
-    function nextPerson() {
-      var p;
-      do { p = pick(PEOPLE); } while (p === lastPerson);
+    function nextPerson(lang) {
+      var formal = Math.random() < (lang === 'en' ? 0.75 : 0.15);
+      var p = formal ? draw('formal', FORMAL) : draw('casual', CASUAL);
+      if (p === lastPerson) p = formal ? draw('formal', FORMAL) : draw('casual', CASUAL);
       lastPerson = p;
       return p;
+    }
+    // Half Taglish, half plain English
+    function nextChat() {
+      var lang = Math.random() < 0.5 ? 'en' : 'tl';
+      return { lang: lang, name: nextPerson(lang), body: lang === 'en' ? draw('en', ENGLISH) : draw('tl', TAGLISH) };
     }
     function el(tag, cls, text) {
       var n = document.createElement(tag);
@@ -1379,6 +1458,7 @@
         unreadEl.hidden = false;
       }
       lastKind = opts.real ? 'real' : (opts.agree ? 'agree' : 'line');
+      if (opts.lang) lastLang = opts.lang;
     }
     function addReal(rows, quiet) {
       rows.forEach(function (r) {
@@ -1477,14 +1557,15 @@
                  (root.contains(document.activeElement) && document.activeElement.tagName === 'INPUT');
       if (busy) { timer = setTimeout(beat, 3000); return; }
       var agree = lastKind === 'line' && Math.random() < 0.18;   // only ever agree with the chatter
-      var name = nextPerson();
-      var text = agree ? pick(AGREE) : nextLine();
-      typingWho.textContent = name;
+      var chat = agree                                          // and in the same language
+        ? { lang: lastLang, name: nextPerson(lastLang), body: pick(AGREE[lastLang]) }
+        : nextChat();
+      typingWho.textContent = chat.name;
       typingRow.classList.add('is-on');
       timer = setTimeout(function () {
         typingRow.classList.remove('is-on');
         syncHere();
-        post({ name: name, body: text }, { agree: agree });
+        post({ name: chat.name, body: chat.body }, { agree: agree, lang: chat.lang });
         timer = setTimeout(beat, 4500 + Math.random() * 6500);
       }, agree ? 700 : 1000 + Math.random() * 1400);
     }
@@ -1499,8 +1580,10 @@
       .then(function () {
         // Start mid-conversation rather than empty
         if (list.children.length < 3) {
-          post({ name: nextPerson(), body: nextLine() }, { quiet: true });
-          post({ name: nextPerson(), body: nextLine() }, { quiet: true });
+          for (var s = 0; s < 2; s++) {
+            var c = nextChat();
+            post({ name: c.name, body: c.body }, { quiet: true, lang: c.lang });
+          }
         }
         timer = setTimeout(beat, 2500);
         schedulePoll();
