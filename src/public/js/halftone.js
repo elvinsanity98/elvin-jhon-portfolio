@@ -1089,4 +1089,228 @@
       }
     }, true);
   })();
+
+  // === Live chat: random Taglish compliments in a corner panel (C toggles it) ===
+  // Simulated like the viewer count: there is no backend and nobody else sees these.
+  // Lines come from a shuffled bag, so none repeats until every one has been shown.
+  (function () {
+    var KEY = 'ejg-chat';                                   // 'open' | 'min': the visitor's last choice
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var roomy = window.matchMedia('(min-width: 1500px)');  // wide enough to sit beside the column
+    var MAX_SHOWN = 40;
+    var FACES = ['fa-user-astronaut', 'fa-user-tie', 'fa-user-graduate', 'fa-user-ninja',
+                 'fa-user-secret', 'fa-user-doctor', 'fa-user'];
+    var PEOPLE = ['kape_at_code', 'lodi.jm', 'tita_debugger', 'pandesal.js', 'sinigang.py',
+                  'bisaya_coder', 'zambo_tech', 'night_shift_ph', 'adobo_stack', 'halo_halo_ui',
+                  'kuya_keyboard', 'ate_mae', 'batang_90s', 'jeepney_devops', 'taga_liloy',
+                  'ctrl_alt_kain', 'merienda_mode', 'ube_byte', 'boss_404', 'lumpia_loop',
+                  'titser_ana', 'barako_brew', 'kalamansi.css', 'tambay_sa_terminal'];
+    var LINES = [
+      'grabe ang linis ng portfolio mo boss 🔥',
+      'sana all ganito ka-organized yung site 😭',
+      'idol! yung typing test nakakaadik haha',
+      'lodi, pa-share naman ng tips sa web dev',
+      'astig nung halftone portrait, sumusunod yung ulo sa cursor ko lol',
+      'nakaka-inspire ka po sir, taga-ZN din ako!',
+      'solid ng projects, legit pang-production talaga',
+      'kung may company lang ako, hired ka na agad',
+      'ganda ng dark mode, easy on the eyes',
+      'ang smooth ng animations, walang lag kahit sa phone ko',
+      "pinakita ko 'to sa classmates ko as inspo hehe",
+      'minimal pero may dating, galing ng design',
+      'certified IT god 🙌',
+      'BSP reporting tapos web dev pa? ang lupet',
+      'nilaro namin ng kapatid ko yung Tug of Math, ang saya!',
+      'first time ko makakita ng portfolio na may typing test, astig',
+      'the vibes are immaculate, sobrang aesthetic',
+      'nakaka-motivate mag-aral ulit ng JavaScript',
+      'ang galing pero humble pa rin 🙏',
+      'proud Zamboanga del Norte! 💪',
+      'na-beat ko wpm mo boss hehe, rematch?',
+      'dito na lang ako tatambay, ang chill ng site',
+      'pa-collab naman sa next project mo',
+      'laking tulong nung resume maker, salamat po!',
+      'ganda ng font, anong font gamit mo?',
+      'sheesh, ang daming certificates 😮',
+      'bank IT tapos 13 schools pa gumagamit ng system mo? galing',
+      'kinilig ako sa UI, charot 😂',
+      'yung tour mode, parang may sariling tour guide haha',
+      "bookmark ko 'to, reference ko sa sarili kong portfolio",
+      'ang bilis mag-load, walang arte',
+      'pang-Silicon Valley yung dating pero gawang Liloy 🇵🇭',
+      'sir pa-mentor naman po 🥺',
+      'ito yung portfolio na hindi boring basahin',
+      'ang ganda ng pagka-organize ng experience section',
+      'servers hanggang frontend, sobrang daming alam',
+      'na-share ko na sa GC namin, wow daw lahat',
+      'nag-dark mode ako tapos light ulit, parehong maganda haha',
+      'panalo yung card deck ng projects, ang satisfying i-swipe',
+      'ganito pala dapat ang portfolio, take notes ako',
+      'boss, open ka ba sa freelance? 👀',
+      'ang wholesome ng site, good vibes lang'
+    ];
+    var AGREE = ['trueee', '+1 dito', 'korek!', 'agree ako dyan', 'real 💯', 'same thoughts',
+                 'this ^', 'omsim', "totoo 'to", 'facts'];
+
+    var root, panel, pill, list, typingRow, typingWho, hereEl, unreadEl, timer;
+    var open = false, unread = 0, bag = [], lastPerson = '';
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function faceFor(name) {
+      var h = 0;
+      for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) | 0;
+      return FACES[Math.abs(h) % FACES.length];
+    }
+    function nextLine() {
+      if (!bag.length) {
+        bag = LINES.slice();
+        for (var i = bag.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1)), t = bag[i]; bag[i] = bag[j]; bag[j] = t;
+        }
+      }
+      return bag.pop();
+    }
+    function nextPerson() {
+      var p;
+      do { p = pick(PEOPLE); } while (p === lastPerson);
+      lastPerson = p;
+      return p;
+    }
+    function el(tag, cls, text) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    }
+
+    function build() {
+      root = el('aside', 'ht-chat');
+      root.setAttribute('aria-label', 'Live chat');
+
+      pill = el('button', 'ht-chat-pill');
+      pill.type = 'button';
+      pill.setAttribute('aria-controls', 'ht-chat-panel');
+      pill.setAttribute('aria-label', 'Open live chat');
+      pill.innerHTML = '<i class="fas fa-comment-dots" aria-hidden="true"></i><span class="ht-chat-pill-label">Live chat</span>';
+      unreadEl = el('b', 'ht-chat-unread');
+      unreadEl.hidden = true;
+      pill.appendChild(unreadEl);
+
+      panel = el('div', 'ht-chat-panel');
+      panel.id = 'ht-chat-panel';
+      var head = el('div', 'ht-chat-head');
+      head.appendChild(el('span', 'ht-chat-live'));
+      head.appendChild(el('span', 'ht-chat-title', 'Live chat'));
+      hereEl = el('span', 'ht-chat-here');
+      head.appendChild(hereEl);
+      var minBtn = el('button', 'ht-chat-min');
+      minBtn.type = 'button';
+      minBtn.setAttribute('aria-label', 'Minimize chat');
+      minBtn.innerHTML = '<i class="fas fa-minus" aria-hidden="true"></i>';
+      head.appendChild(minBtn);
+
+      list = el('ol', 'ht-chat-list');
+      list.setAttribute('aria-live', 'off');               // a stream of chatter would flood screen readers
+
+      typingRow = el('div', 'ht-chat-typing');
+      typingRow.setAttribute('aria-hidden', 'true');
+      typingRow.innerHTML = '<span class="ht-chat-dots"><i></i><i></i><i></i></span>';
+      typingWho = el('span', 'ht-chat-who');
+      typingRow.appendChild(typingWho);
+      typingRow.appendChild(document.createTextNode(' is typing'));
+
+      panel.appendChild(head);
+      panel.appendChild(list);
+      panel.appendChild(typingRow);
+      panel.appendChild(el('p', 'ht-chat-note', 'auto-generated · just for fun'));
+
+      root.appendChild(panel);
+      root.appendChild(pill);
+      document.body.appendChild(root);
+
+      pill.addEventListener('click', function () { setOpen(true, true); });
+      minBtn.addEventListener('click', function () { setOpen(false, true); });
+    }
+
+    function syncHere() {
+      var src = document.getElementById('ht-viewer-count');
+      hereEl.textContent = (src ? src.textContent : '') + ' here';
+    }
+    function setOpen(next, remember) {
+      open = next;
+      root.classList.toggle('is-open', open);
+      pill.setAttribute('aria-expanded', String(open));
+      if (open) {
+        unread = 0;
+        unreadEl.hidden = true;
+        list.scrollTop = list.scrollHeight;
+      }
+      if (remember) { try { localStorage.setItem(KEY, open ? 'open' : 'min'); } catch (e) {} }
+      var side = document.getElementById('ht-chat-open');
+      if (side) side.setAttribute('aria-expanded', String(open));
+    }
+
+    function post(name, text, quiet) {
+      var li = el('li', 'ht-chat-msg' + (quiet || reduce ? '' : ' is-new'));
+      var av = el('span', 'ht-chat-av');
+      av.setAttribute('aria-hidden', 'true');
+      av.appendChild(el('i', 'fas ' + faceFor(name)));
+      var body = el('div', 'ht-chat-body');
+      body.appendChild(el('span', 'ht-chat-name', name));
+      body.appendChild(el('p', 'ht-chat-text', text));
+      li.appendChild(av);
+      li.appendChild(body);
+
+      var nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 48;
+      list.appendChild(li);
+      while (list.children.length > MAX_SHOWN) list.removeChild(list.firstChild);
+      if (nearBottom || quiet) list.scrollTop = list.scrollHeight;
+
+      if (!open && !quiet) {
+        unread = Math.min(unread + 1, 99);
+        unreadEl.textContent = String(unread);
+        unreadEl.hidden = false;
+      }
+    }
+
+    // One beat: someone "types" for a moment, then the line lands. Paused while the tab
+    // is hidden or the typing test is up, so the chat doesn't pile up unseen.
+    function beat() {
+      if (document.hidden || html.classList.contains('ht-tt-lock')) { timer = setTimeout(beat, 3000); return; }
+      var agree = list.children.length && Math.random() < 0.18;
+      var name = nextPerson();
+      var text = agree ? pick(AGREE) : nextLine();
+      typingWho.textContent = name;
+      typingRow.classList.add('is-on');
+      timer = setTimeout(function () {
+        typingRow.classList.remove('is-on');
+        syncHere();
+        post(name, text, false);
+        timer = setTimeout(beat, 3500 + Math.random() * 5500);
+      }, agree ? 700 : 1000 + Math.random() * 1400);
+    }
+
+    build();
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    setOpen(saved ? saved === 'open' : roomy.matches, false);
+    syncHere();
+    // Start mid-conversation rather than empty
+    post(nextPerson(), nextLine(), true);
+    post(nextPerson(), nextLine(), true);
+    timer = setTimeout(beat, 2500);
+
+    var sideBtn = document.getElementById('ht-chat-open');
+    if (sideBtn) {
+      sideBtn.setAttribute('aria-controls', 'ht-chat-panel');
+      sideBtn.setAttribute('aria-expanded', String(open));
+      sideBtn.addEventListener('click', function () { setOpen(!open, true); });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
+      var t = e.target;
+      if (t && t.matches && t.matches('input, textarea, select, [contenteditable]')) return;
+      if ((e.key || '').toLowerCase() === 'c') setOpen(!open, true);
+    });
+  })();
 })();
