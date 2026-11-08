@@ -1090,14 +1090,21 @@
     }, true);
   })();
 
-  // === Live chat: random Taglish compliments in a corner panel (C toggles it) ===
-  // Simulated like the viewer count: there is no backend and nobody else sees these.
-  // Lines come from a shuffled bag, so none repeats until every one has been shown.
+  // === Live chat: a corner panel (C toggles it) ===
+  // Visitors pick a name and post; messages are stored in Supabase (table portfolio_chat,
+  // set up by supabase/chat.sql) and everyone's panel polls for new ones. Between real
+  // messages, random Taglish compliments keep the room lively (like the viewer count,
+  // those are simulated and never stored). If the table isn't reachable the type box hides
+  // and only the random chatter runs.
   (function () {
+    var CHAT_API = 'https://irtnucbqbkddvrqbiaru.supabase.co/rest/v1/portfolio_chat';
+    var CHAT_KEY = 'sb_publishable_jZsZg8jId_AwSA1LMliBvg_kpGwxNwS';   // public "publishable" key; RLS guards the table
+    var COLS = 'id,name,body,is_owner,created_at';
     var KEY = 'ejg-chat';                                   // 'open' | 'min': the visitor's last choice
+    var NAME_KEY = 'ejg-chat-name';
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var roomy = window.matchMedia('(min-width: 1500px)');  // wide enough to sit beside the column
-    var MAX_SHOWN = 40;
+    var MAX_SHOWN = 60;
     var FACES = ['fa-user-astronaut', 'fa-user-tie', 'fa-user-graduate', 'fa-user-ninja',
                  'fa-user-secret', 'fa-user-doctor', 'fa-user'];
     var PEOPLE = ['kape_at_code', 'lodi.jm', 'tita_debugger', 'pandesal.js', 'sinigang.py',
@@ -1151,9 +1158,22 @@
     ];
     var AGREE = ['trueee', '+1 dito', 'korek!', 'agree ako dyan', 'real 💯', 'same thoughts',
                  'this ^', 'omsim', "totoo 'to", 'facts'];
+    // Short codes raised by the database guard (supabase/chat.sql), in plain words
+    var ERRORS = {
+      slow_down: 'Easy lang 🙂 wait a few seconds before sending again.',
+      too_many: "That's a lot of messages for now. Try again in a bit.",
+      duplicate: 'You already sent that one.',
+      no_links: "Links aren't allowed in the chat.",
+      blocked_word: "Let's keep it friendly 🙂",
+      name_taken: 'That name is reserved. Pick another one.'
+    };
 
     var root, panel, pill, list, typingRow, typingWho, hereEl, unreadEl, timer;
-    var open = false, unread = 0, bag = [], lastPerson = '';
+    var form, asRow, asName, nameRow, nameInput, msgInput, sendBtn, errEl, countEl;
+    var open = false, unread = 0, bag = [], lastPerson = '', lastKind = '';   // 'line' | 'agree' | 'real'
+    var online = false, lastId = 0, seen = {}, pollTimer, sending = false;
+    var myName = '';
+    try { myName = localStorage.getItem(NAME_KEY) || ''; } catch (e) {}
 
     function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     function faceFor(name) {
@@ -1182,6 +1202,7 @@
       if (text != null) n.textContent = text;
       return n;
     }
+    function tidy(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
 
     function build() {
       root = el('aside', 'ht-chat');
@@ -1219,10 +1240,60 @@
       typingRow.appendChild(typingWho);
       typingRow.appendChild(document.createTextNode(' is typing'));
 
+      // Type box: a name (remembered on this device) and the message
+      form = el('form', 'ht-chat-form');
+      form.hidden = true;                                  // shown once the chat server answers
+      form.setAttribute('novalidate', '');
+
+      nameRow = el('label', 'ht-chat-namerow');
+      nameRow.appendChild(el('span', 'ht-chat-label', 'Name'));
+      nameInput = el('input', 'ht-chat-name-input');
+      nameInput.type = 'text';
+      nameInput.maxLength = 24;
+      nameInput.placeholder = 'Your name';
+      nameInput.autocomplete = 'nickname';
+      nameInput.setAttribute('enterkeyhint', 'next');
+      nameRow.appendChild(nameInput);
+
+      asRow = el('div', 'ht-chat-as');
+      asRow.appendChild(document.createTextNode('as '));
+      asName = el('b');
+      asRow.appendChild(asName);
+      var change = el('button', 'ht-chat-change', 'change');
+      change.type = 'button';
+      asRow.appendChild(change);
+
+      var row = el('div', 'ht-chat-row');
+      msgInput = el('input', 'ht-chat-input');
+      msgInput.type = 'text';
+      msgInput.maxLength = 200;
+      msgInput.placeholder = 'Say something…';
+      msgInput.autocomplete = 'off';
+      msgInput.setAttribute('aria-label', 'Message');
+      msgInput.setAttribute('enterkeyhint', 'send');
+      sendBtn = el('button', 'ht-chat-send');
+      sendBtn.type = 'submit';
+      sendBtn.setAttribute('aria-label', 'Send');
+      sendBtn.innerHTML = '<i class="fas fa-paper-plane" aria-hidden="true"></i>';
+      row.appendChild(msgInput);
+      row.appendChild(sendBtn);
+
+      var foot = el('div', 'ht-chat-foot');
+      errEl = el('p', 'ht-chat-err');
+      errEl.setAttribute('role', 'status');
+      countEl = el('span', 'ht-chat-count');
+      foot.appendChild(errEl);
+      foot.appendChild(countEl);
+
+      form.appendChild(nameRow);
+      form.appendChild(asRow);
+      form.appendChild(row);
+      form.appendChild(foot);
+
       panel.appendChild(head);
       panel.appendChild(list);
       panel.appendChild(typingRow);
-      panel.appendChild(el('p', 'ht-chat-note', 'auto-generated · just for fun'));
+      panel.appendChild(form);
 
       root.appendChild(panel);
       root.appendChild(pill);
@@ -1230,6 +1301,31 @@
 
       pill.addEventListener('click', function () { setOpen(true, true); });
       minBtn.addEventListener('click', function () { setOpen(false, true); });
+      change.addEventListener('click', function () { showName(true); nameInput.focus(); nameInput.select(); });
+      nameInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); msgInput.focus(); }
+      });
+      msgInput.addEventListener('input', function () {
+        var left = 200 - msgInput.value.length;
+        countEl.textContent = left <= 40 ? String(left) : '';
+        if (errEl.textContent) say('');
+      });
+      [nameInput, msgInput].forEach(function (input) {
+        input.addEventListener('keydown', function (e) { if (e.key === 'Escape') input.blur(); });
+      });
+      form.addEventListener('submit', function (e) { e.preventDefault(); send(); });
+      showName(!myName);
+    }
+
+    function showName(editing) {
+      if (editing && nameRow.hidden) nameInput.value = myName;   // "change": start from the saved name
+      nameRow.hidden = !editing;
+      asRow.hidden = editing;
+      asName.textContent = myName;
+    }
+    function say(text, isError) {
+      errEl.textContent = text;
+      errEl.classList.toggle('is-error', !!isError);
     }
 
     function syncHere() {
@@ -1244,40 +1340,143 @@
         unread = 0;
         unreadEl.hidden = true;
         list.scrollTop = list.scrollHeight;
+      } else if (root.contains(document.activeElement)) {
+        pill.focus();
       }
       if (remember) { try { localStorage.setItem(KEY, open ? 'open' : 'min'); } catch (e) {} }
       var side = document.getElementById('ht-chat-open');
       if (side) side.setAttribute('aria-expanded', String(open));
+      schedulePoll(400);
     }
 
-    function post(name, text, quiet) {
-      var li = el('li', 'ht-chat-msg' + (quiet || reduce ? '' : ' is-new'));
+    function post(msg, opts) {
+      opts = opts || {};
+      var li = el('li', 'ht-chat-msg' + (opts.quiet || reduce ? '' : ' is-new') + (opts.mine ? ' is-mine' : ''));
       var av = el('span', 'ht-chat-av');
       av.setAttribute('aria-hidden', 'true');
-      av.appendChild(el('i', 'fas ' + faceFor(name)));
+      av.appendChild(el('i', 'fas ' + (msg.is_owner ? 'fa-user-check' : faceFor(msg.name))));
       var body = el('div', 'ht-chat-body');
-      body.appendChild(el('span', 'ht-chat-name', name));
-      body.appendChild(el('p', 'ht-chat-text', text));
+      var nm = el('span', 'ht-chat-name', msg.name);
+      if (msg.is_owner) {
+        nm.classList.add('is-owner');
+        var badge = el('i', 'fas fa-circle-check');
+        badge.setAttribute('aria-label', 'Site owner');
+        nm.appendChild(badge);
+      }
+      body.appendChild(nm);
+      body.appendChild(el('p', 'ht-chat-text', msg.body));
       li.appendChild(av);
       li.appendChild(body);
 
       var nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 48;
       list.appendChild(li);
       while (list.children.length > MAX_SHOWN) list.removeChild(list.firstChild);
-      if (nearBottom || quiet) list.scrollTop = list.scrollHeight;
+      if (nearBottom || opts.quiet || opts.mine) list.scrollTop = list.scrollHeight;
 
-      if (!open && !quiet) {
+      if (!open && !opts.quiet && !opts.mine) {
         unread = Math.min(unread + 1, 99);
         unreadEl.textContent = String(unread);
         unreadEl.hidden = false;
       }
+      lastKind = opts.real ? 'real' : (opts.agree ? 'agree' : 'line');
+    }
+    function addReal(rows, quiet) {
+      rows.forEach(function (r) {
+        if (seen[r.id]) return;
+        seen[r.id] = true;
+        if (r.id > lastId) lastId = r.id;
+        post(r, { quiet: quiet, real: true });
+      });
     }
 
-    // One beat: someone "types" for a moment, then the line lands. Paused while the tab
-    // is hidden or the typing test is up, so the chat doesn't pile up unseen.
+    // --- Server: plain REST calls to Supabase (no client library needed) ---
+    function api(query, init) {
+      init = init || {};
+      var headers = { apikey: CHAT_KEY, Accept: 'application/json' };
+      if (init.body) { headers['Content-Type'] = 'application/json'; headers.Prefer = 'return=representation'; }
+      return fetch(CHAT_API + query, { method: init.method || 'GET', headers: headers, body: init.body })
+        .then(function (res) {
+          return res.json().catch(function () { return null; }).then(function (data) {
+            if (!res.ok) {
+              var err = new Error((data && data.message) || ('HTTP ' + res.status));
+              err.status = res.status;
+              err.code = data && data.code;
+              throw err;
+            }
+            return data;
+          });
+        });
+    }
+    function loadHistory() {
+      return api('?select=' + COLS + '&order=id.desc&limit=20').then(function (rows) {
+        online = true;
+        form.hidden = false;
+        addReal((rows || []).reverse(), true);
+      });
+    }
+    function poll() {
+      if (!online || document.hidden) return schedulePoll();
+      api('?select=' + COLS + '&id=gt.' + lastId + '&order=id.asc&limit=30')
+        .then(function (rows) { addReal(rows || [], false); })
+        .catch(function () {})
+        .then(function () { schedulePoll(); });
+    }
+    function schedulePoll(delay) {
+      clearTimeout(pollTimer);
+      if (!online) return;
+      pollTimer = setTimeout(poll, delay != null ? delay : (open ? 6000 : 30000));
+    }
+
+    function send() {
+      if (sending) return;
+      var name = tidy(nameRow.hidden ? myName : nameInput.value);
+      var text = tidy(msgInput.value);
+      if (name.length < 2) {
+        showName(true);
+        say('Pick a name first (2 to 24 characters).', true);
+        nameInput.focus();
+        return;
+      }
+      if (!text) { msgInput.focus(); return; }
+      sending = true;
+      sendBtn.disabled = true;
+      say('Sending…');
+      api('?select=' + COLS, { method: 'POST', body: JSON.stringify({ name: name, body: text }) })
+        .then(function (rows) {
+          var row = rows && rows[0];
+          myName = name;
+          try { localStorage.setItem(NAME_KEY, myName); } catch (e) {}
+          showName(false);
+          msgInput.value = '';
+          countEl.textContent = '';
+          say('');
+          if (row && !seen[row.id]) {
+            seen[row.id] = true;
+            if (row.id > lastId) lastId = row.id;
+            post(row, { mine: true, real: true });
+          }
+        })
+        .catch(function (err) {
+          var msg = ERRORS[err.message];
+          if (!msg && err.code === '23514') msg = 'Names need 2 to 24 characters; messages up to 200.';
+          if (!msg && err.code === 'PGRST205') msg = 'The chat is offline right now.';
+          say(msg || "Couldn't send. Check your connection and try again.", true);
+          if (err.message === 'name_taken') { showName(true); nameInput.focus(); nameInput.select(); }
+        })
+        .then(function () {
+          sending = false;
+          sendBtn.disabled = false;
+          if (open && document.activeElement !== nameInput) msgInput.focus();
+        });
+    }
+
+    // --- Random chatter: someone "types" for a moment, then a line lands. Paused while the
+    // tab is hidden, the typing test is up, or the visitor is typing a message of their own.
     function beat() {
-      if (document.hidden || html.classList.contains('ht-tt-lock')) { timer = setTimeout(beat, 3000); return; }
-      var agree = list.children.length && Math.random() < 0.18;
+      var busy = document.hidden || html.classList.contains('ht-tt-lock') ||
+                 (root.contains(document.activeElement) && document.activeElement.tagName === 'INPUT');
+      if (busy) { timer = setTimeout(beat, 3000); return; }
+      var agree = lastKind === 'line' && Math.random() < 0.18;   // only ever agree with the chatter
       var name = nextPerson();
       var text = agree ? pick(AGREE) : nextLine();
       typingWho.textContent = name;
@@ -1285,8 +1484,8 @@
       timer = setTimeout(function () {
         typingRow.classList.remove('is-on');
         syncHere();
-        post(name, text, false);
-        timer = setTimeout(beat, 3500 + Math.random() * 5500);
+        post({ name: name, body: text }, { agree: agree });
+        timer = setTimeout(beat, 4500 + Math.random() * 6500);
       }, agree ? 700 : 1000 + Math.random() * 1400);
     }
 
@@ -1295,10 +1494,17 @@
     try { saved = localStorage.getItem(KEY); } catch (e) {}
     setOpen(saved ? saved === 'open' : roomy.matches, false);
     syncHere();
-    // Start mid-conversation rather than empty
-    post(nextPerson(), nextLine(), true);
-    post(nextPerson(), nextLine(), true);
-    timer = setTimeout(beat, 2500);
+    loadHistory()
+      .catch(function () {})                               // no table / offline: chatter only
+      .then(function () {
+        // Start mid-conversation rather than empty
+        if (list.children.length < 3) {
+          post({ name: nextPerson(), body: nextLine() }, { quiet: true });
+          post({ name: nextPerson(), body: nextLine() }, { quiet: true });
+        }
+        timer = setTimeout(beat, 2500);
+        schedulePoll();
+      });
 
     var sideBtn = document.getElementById('ht-chat-open');
     if (sideBtn) {
@@ -1312,5 +1518,6 @@
       if (t && t.matches && t.matches('input, textarea, select, [contenteditable]')) return;
       if ((e.key || '').toLowerCase() === 'c') setOpen(!open, true);
     });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) schedulePoll(300); });
   })();
 })();
