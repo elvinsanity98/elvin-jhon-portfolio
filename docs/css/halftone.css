@@ -224,8 +224,7 @@ html[data-layout="halftone"] .ht-mode {
   border: 1px solid var(--border);
   border-radius: 999px;
 }
-html[data-layout="halftone"] .ht-mode button,
-html[data-layout="halftone"] .ht-top-mode {
+html[data-layout="halftone"] .ht-mode button {
   display: inline-flex; align-items: center; justify-content: center;
   width: 28px; height: 24px; padding: 0;
   font-size: 11px;
@@ -234,14 +233,12 @@ html[data-layout="halftone"] .ht-top-mode {
   cursor: pointer;
   transition: color 200ms, background-color 200ms;
 }
-html[data-layout="halftone"] .ht-mode button:hover,
-html[data-layout="halftone"] .ht-top-mode:hover { color: var(--text); }
+html[data-layout="halftone"] .ht-mode button:hover { color: var(--text); }
 html[data-layout="halftone"] .ht-mode button[aria-pressed="true"] {
   color: var(--text);
   background: var(--accent-soft);
 }
 html[data-layout="halftone"] .ht-mode button:focus-visible,
-html[data-layout="halftone"] .ht-top-mode:focus-visible,
 html[data-layout="halftone"] .ht-more:focus-visible {
   outline: 2px solid var(--text); outline-offset: 2px;
 }
@@ -262,14 +259,83 @@ html[data-layout="halftone"] .ht-mail:hover { opacity: 0.6; }
 html[data-layout="halftone"] .ht-top {
   position: sticky; top: 0; z-index: 40;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 24px;
+  padding: 10px 16px 10px 24px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
-html[data-layout="halftone"] .ht-top-mode {
-  width: 32px; height: 28px;
-  border: 1px solid var(--border);
-  font-size: 12px;
+
+/* Brand row at the top of the sidebar; on phones it doubles as the menu's header */
+html[data-layout="halftone"] .ht-side-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-shrink: 0;
+}
+/* Hamburger (top bar) and close (menu) */
+html[data-layout="halftone"] .ht-menu-btn,
+html[data-layout="halftone"] .ht-menu-close {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 0;
+  color: var(--text-soft);
+  background: none; border: 0; border-radius: 8px;
+  cursor: pointer;
+  transition: color 200ms, background-color 200ms;
+}
+html[data-layout="halftone"] .ht-menu-btn svg,
+html[data-layout="halftone"] .ht-menu-close svg { width: 20px; height: 20px; }
+html[data-layout="halftone"] .ht-menu-btn path,
+html[data-layout="halftone"] .ht-menu-close path {
+  fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round;
+}
+html[data-layout="halftone"] .ht-menu-btn:hover,
+html[data-layout="halftone"] .ht-menu-close:hover { color: var(--text); background: var(--card-soft); }
+html[data-layout="halftone"] .ht-menu-btn:focus-visible,
+html[data-layout="halftone"] .ht-menu-close:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+html[data-layout="halftone"] .ht-menu-close { display: none; }
+
+/* ==========================================================================
+   MOBILE MENU: below 1024px the sidebar opens full-screen from the hamburger.
+   Same links, sections, viewers, colour mode and email as on desktop.
+   ========================================================================== */
+@media (max-width: 1023px) {
+  /* Section links land below the sticky top bar */
+  html[data-layout="halftone"] { scroll-padding-top: 76px; }
+  html[data-layout="halftone"].ht-menu-open { overflow: hidden; }
+  html[data-layout="halftone"].ht-menu-open .ht-side {
+    display: flex;
+    right: 0; width: auto; z-index: 90;          /* over the chat and tour pill, under the typing test */
+    padding: 0 28px 32px;
+    border-right: 0;
+    overscroll-behavior: contain;
+    animation: ht-menu-in 200ms ease;
+  }
+  html[data-layout="halftone"].ht-menu-open .ht-side-head {
+    position: sticky; top: 0; z-index: 1;
+    margin: 0 -28px;
+    padding: 10px 16px 10px 24px;                 /* same box as the top bar, so nothing jumps */
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  html[data-layout="halftone"] .ht-menu-close { display: inline-flex; }
+  html[data-layout="halftone"].ht-menu-open .ht-nav { gap: 16px; margin-top: 28px; }
+  html[data-layout="halftone"].ht-menu-open .ht-nav + .ht-nav { margin-top: 24px; padding-top: 24px; }
+  html[data-layout="halftone"].ht-menu-open .ht-nav a { font-size: 16px; gap: 12px; }
+  html[data-layout="halftone"].ht-menu-open .ht-nav a i { width: 18px; font-size: 15px; }
+  html[data-layout="halftone"].ht-menu-open .ht-keys { display: none; }   /* keyboard shortcuts don't apply on touch */
+  html[data-layout="halftone"].ht-menu-open .ht-viewers { margin-top: 0; padding-top: 0; border-top: 0; }
+  /* Groups drift in one after another */
+  html[data-layout="halftone"].ht-menu-open .ht-nav,
+  html[data-layout="halftone"].ht-menu-open .ht-side-foot > * {
+    animation: ht-menu-item 380ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+  html[data-layout="halftone"].ht-menu-open .ht-nav:nth-of-type(2) { animation-delay: 60ms; }
+  html[data-layout="halftone"].ht-menu-open .ht-nav-sections { animation-delay: 120ms; }
+  html[data-layout="halftone"].ht-menu-open .ht-side-foot > * { animation-delay: 180ms; }
+}
+@keyframes ht-menu-in   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ht-menu-item { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  html[data-layout="halftone"].ht-menu-open .ht-side,
+  html[data-layout="halftone"].ht-menu-open .ht-nav,
+  html[data-layout="halftone"].ht-menu-open .ht-side-foot > * { animation: none; }
 }
 @media (min-width: 1024px) {
   html[data-layout="halftone"] .ht-top { display: none; }
@@ -342,15 +408,36 @@ html[data-layout="halftone"] .ht-chip {
   white-space: nowrap;
 }
 html[data-layout="halftone"] .ht-chip i { font-size: 0.78em; }
-/* A small cluster of AI marks in front of "AI-assisted development" */
+/* ChatGPT, Claude and Gemini marks on small tilted tiles in front of "AI-assisted development" */
 html[data-layout="halftone"] .ht-ai {
-  display: inline-flex; align-items: center; gap: 5px;
-  margin-right: 3px;
-  vertical-align: -0.08em;
-  color: var(--text);
+  display: inline-flex; align-items: center;
+  margin: 0 3px 0 1px; padding: 0.15em 0.1em;
+  vertical-align: middle;
 }
-html[data-layout="halftone"] .ht-ai svg { width: 13px; height: 13px; fill: currentColor; }
-html[data-layout="halftone"] .ht-ai i { font-size: 12px; }
+html[data-layout="halftone"] .ht-ai-logo {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.8em; height: 1.8em;
+  color: var(--text);
+  background: #f5f5f5;
+  border-radius: 0.5em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+  transform: rotate(-12deg);
+  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), margin 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+html[data-layout="halftone"][data-theme="dark"] .ht-ai-logo {
+  background: #1e1e22;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55), inset 0 0 0 1px #2e2e35;
+}
+html[data-layout="halftone"] .ht-ai-logo + .ht-ai-logo { margin-left: -0.4em; }
+html[data-layout="halftone"] .ht-ai-logo:nth-child(2) { transform: rotate(9deg); }
+html[data-layout="halftone"] .ht-ai-logo:nth-child(3) { transform: rotate(-7deg); }
+html[data-layout="halftone"] .ht-ai-logo svg { width: 1.1em; height: 1.1em; fill: currentColor; }
+/* Pointing at the stack straightens and spreads it */
+html[data-layout="halftone"] .ht-ai:hover .ht-ai-logo { transform: translateY(-2px); }
+html[data-layout="halftone"] .ht-ai:hover .ht-ai-logo + .ht-ai-logo { margin-left: 0.2em; }
+@media (prefers-reduced-motion: reduce) {
+  html[data-layout="halftone"] .ht-ai-logo { transition: none; }
+}
 html[data-layout="halftone"] .ht-socials {
   display: flex; flex-wrap: wrap; gap: 6px 18px;
   margin-top: 26px;

@@ -21,7 +21,6 @@
   (function () {
     var mq = window.matchMedia('(prefers-color-scheme: dark)');
     var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-ht-mode]'));
-    var topBtn = document.getElementById('ht-top-mode');
 
     function stored() {
       try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; }
@@ -31,11 +30,6 @@
       buttons.forEach(function (b) {
         b.setAttribute('aria-pressed', String(b.getAttribute('data-ht-mode') === mode));
       });
-      if (topBtn) {
-        var dark = html.getAttribute('data-theme') === 'dark';
-        topBtn.innerHTML = '<i class="far fa-' + (dark ? 'sun' : 'moon') + '"></i>';
-        topBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-      }
     }
     function apply(next) {
       var prev = html.getAttribute('data-theme');
@@ -59,7 +53,6 @@
     buttons.forEach(function (b) {
       b.addEventListener('click', function () { setMode(b.getAttribute('data-ht-mode')); });
     });
-    if (topBtn) topBtn.addEventListener('click', flip);
     if (mq.addEventListener) {
       mq.addEventListener('change', function () {
         if (!stored()) apply(mq.matches ? 'dark' : 'light');
@@ -1602,5 +1595,58 @@
       if ((e.key || '').toLowerCase() === 'c') setOpen(!open, true);
     });
     document.addEventListener('visibilitychange', function () { if (!document.hidden) schedulePoll(300); });
+  })();
+
+  // === Mobile menu: below 1024px the hamburger opens the sidebar full-screen ===
+  (function () {
+    var btn = document.getElementById('ht-menu-btn');
+    var side = document.getElementById('ht-side');
+    var closeBtn = document.getElementById('ht-menu-close');
+    if (!btn || !side) return;
+    var wide = window.matchMedia('(min-width: 1024px)');
+    var isOpen = false;
+
+    function setOpen(next, restoreFocus) {
+      if (next === isOpen) return;
+      isOpen = next;
+      html.classList.toggle('ht-menu-open', isOpen);
+      btn.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) {
+        side.scrollTop = 0;
+        if (closeBtn) closeBtn.focus({ preventScroll: true });
+      } else if (restoreFocus) {
+        btn.focus({ preventScroll: true });
+      }
+    }
+    function focusables() {
+      return Array.prototype.filter.call(side.querySelectorAll('a[href], button'), function (n) {
+        return n.offsetParent !== null && !n.disabled;
+      });
+    }
+
+    btn.addEventListener('click', function () { setOpen(true); });
+    if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false, true); });
+    // Following any link closes the menu; section links then scroll as usual
+    side.addEventListener('click', function (e) {
+      if (isOpen && e.target.closest && e.target.closest('a[href]')) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!isOpen) return;
+      if (e.key === 'Escape') { setOpen(false, true); return; }
+      if (e.key !== 'Tab') return;
+      // Keep Tab inside the menu while it covers the page
+      var list = focusables();
+      if (!list.length) return;
+      var first = list[0], last = list[list.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !side.contains(document.activeElement))) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !side.contains(document.activeElement))) {
+        e.preventDefault(); first.focus();
+      }
+    });
+    // Widening past the breakpoint brings the real sidebar back
+    function onWide() { if (wide.matches) setOpen(false); }
+    if (wide.addEventListener) wide.addEventListener('change', onWide);
+    else if (wide.addListener) wide.addListener(onWide);
   })();
 })();
